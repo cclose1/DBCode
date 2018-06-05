@@ -1,7 +1,9 @@
+USE BloodPressure;
+
 DROP TABLE IF EXISTS Battery;
 
 CREATE TABLE Battery(
-	Date date        NULL,
+	Date date        NOT NULL,
 	Make varchar(50) NULL,
 	PRIMARY KEY (Date ASC)
 );

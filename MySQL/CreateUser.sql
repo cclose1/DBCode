@@ -1,4 +1,4 @@
-DROP TABLE Expenditure.User;
+DROP TABLE IF EXISTS Expenditure.User;
 
 CREATE TABLE Expenditure.User (
   `UserId`           varchar(50) NOT NULL DEFAULT '',
@@ -22,7 +22,7 @@ CREATE TRIGGER setcreated BEFORE INSERT ON User
 FOR EACH ROW
   SET NEW.Created = CURRENT_TIMESTAMP();
 
-INSERT Expenditure.User(UserId, Forname, Surname, MaxIdleTime) VALUES ('cclose', 'Chris', 'Close', 60);
+INSERT Expenditure.User(UserId, Forname, Surname, MaxIdleTime) VALUES ('cclose', 'Chris', 'Close', 15);
 
 
 

@@ -5,16 +5,16 @@ BEGIN
 	DROP Procedure dbo.SynchronizeBloodPressure
 END
 GO
-CREATE PROCEDURE SynchronizeBloodPressure(@SQLServer AS sysname, @MySQL AS sysname, @mode AS CHAR = 'I')
+CREATE PROCEDURE SynchronizeBloodPressure(@SQLServer AS sysname, @MySQL AS sysname, @mode AS CHAR = 'I', @batch AS INT = null)
 AS
 BEGIN
 	SET NOCOUNT ON;
 	
 	BEGIN TRY
-		EXEC SynchronizeTable @SQLServer, @MySQL, 'Battery',     @mode = @mode
-		EXEC SynchronizeTable @SQLServer, @MySQL, 'Measure',     @mode = @mode
-		EXEC SynchronizeTable @SQLServer, @MySQL, 'MeasureABPM', @mode = @mode
-		EXEC SynchronizeTable @SQLServer, @MySQL, 'DrugHistory', @mode = @mode
+		EXEC SynchronizeTable @SQLServer, @MySQL, 'Battery',     @mode = @mode, @batch = @batch
+		EXEC SynchronizeTable @SQLServer, @MySQL, 'Measure',     @mode = @mode, @batch = @batch
+		EXEC SynchronizeTable @SQLServer, @MySQL, 'MeasureABPM', @mode = @mode, @batch = @batch
+		EXEC SynchronizeTable @SQLServer, @MySQL, 'DrugHistory', @mode = @mode, @batch = @batch
 	END TRY
 	BEGIN CATCH
 		EXEC ReportError

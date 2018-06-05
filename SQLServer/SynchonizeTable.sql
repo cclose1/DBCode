@@ -5,7 +5,14 @@ BEGIN
 	DROP Procedure dbo.SynchronizeTable
 END
 GO
-CREATE PROCEDURE SynchronizeTable(@SQLServer AS sysname, @MySQL AS sysname, @table AS sysname, @toAndFrom AS CHAR = 'Y', @mode AS CHAR = 'I', @key AS SYSNAME = NULL)
+CREATE PROCEDURE SynchronizeTable(
+					@SQLServer AS sysname, 
+					@MySQL     AS sysname, 
+					@table     AS sysname, 
+					@toAndFrom AS CHAR    = 'Y', 
+					@mode      AS CHAR    = 'I', 
+					@key       AS SYSNAME = NULL,
+					@batch     AS INT     = NULL)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -33,16 +40,19 @@ BEGIN
 			
 	SET @SQLServer += '.dbo'
 	SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
-	EXEC SynchronizeTableByFields @SQLServer, @MySQL, @table, @mode
+	EXEC SynchronizeTableByFields @SQLServer, @MySQL, @table, @mode, @batch
 	
 	IF @toAndFrom = 'Y' 
 	BEGIN
 		SET TRANSACTION ISOLATION LEVEL READ COMMITTED
-		EXEC SynchronizeTableByFields @MySQL, @SQLServer, @table, @mode
+		EXEC SynchronizeTableByFields @MySQL, @SQLServer, @table, @mode, @batch
 	END
 	END TRY
 	BEGIN CATCH
-		EXEC ReportError
+		DECLARE @msg AS VARCHAR(max)
+		
+		SET @msg = 'On table ' + @table
+		EXEC ReportError @msg
 		RAISERROR ('Error reported', 16, 1);
 	END CATCH
 END

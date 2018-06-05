@@ -10,6 +10,7 @@ SELECT
 	[End],
 	Modified,
 	Calories,
+	4 * (ISNULL(Carbohydrate, 0) + ISNULL(Protein, 0)) + 9 * ISNULL(Fat, 0) AS CalculateCalories,
 	Protein,
 	Fat,
 	Saturated,
@@ -32,6 +33,7 @@ SELECT
 	NC.Start,
 	MIN(NC.[End])                 AS [End],
 	MIN(NC.Modified)              AS Modified,
+	4 * (ISNULL(SUM(Quantity * Carbohydrate), 0) + ISNULL(SUM(Quantity * Protein), 0)) + 9 * ISNULL(SUM(Quantity * Fat), 0) + 56 * ISNULL(SUM(Quantity * NR.ABV / 1000), 0) AS CalculateCalories,
 	SUM(Quantity * Calories)      AS Calories,
 	SUM(Quantity * Protein)       AS Protein,
 	SUM(Quantity * Fat)           AS Fat,
@@ -68,6 +70,7 @@ SELECT
 	Day,
 	Week,
 	Weekday,
+    CAST(DATEADD(D, -DATEPART(w, EV.Timestamp), EV.Timestamp) AS DATE) AS WeekStart,
 	'New'   AS Type,
 	Description,
 	Comment,
@@ -116,6 +119,7 @@ SELECT
 	Day,
 	Week,
 	Weekday,
+    CAST(DATEADD(D, -DATEPART(w, timestamp), Timestamp) AS DATE) AS WeekStart,
 	'Old'   AS Type,
 	Description,
 	NULL AS Comment,
@@ -197,6 +201,43 @@ FROM (
 		SUM(Units)                                      AS Units
 	FROM NutritionEventSummary
 	GROUP BY Year, Week) J1
+LEFT JOIN Weight WT
+ON J1.Date = WT.Date
+GO
+DROP VIEW NutritionEventsWeeklyNew
+GO
+CREATE VIEW NutritionEventsWeeklyNew
+AS
+SELECT 
+	J1.*,
+	WT.Kilos,
+	CAST(Calories     / Days AS INT)            AS DailyCalories,
+	CAST(Protein      / Days AS NUMERIC(10, 1)) AS DailyProtein,
+	CAST(Fat          / Days AS NUMERIC(10, 1)) AS DailyFat,
+	CAST(Saturated    / Days AS NUMERIC(10, 1)) AS DailySaturated,
+	CAST(Carbohydrate / Days AS NUMERIC(10, 1)) AS DailyCarbohydrate,
+	CAST(Sugar        / Days AS NUMERIC(10, 1)) AS DailySugar,
+	CAST(Fibre        / Days AS NUMERIC(10, 1)) AS DailyFibre,
+	CAST(Cholesterol  / Days AS NUMERIC(10, 1)) AS DailyCholesterol,
+	CAST(Salt         / Days AS NUMERIC(10, 1)) AS DailySalt,
+	CAST(Units        / Days AS NUMERIC(10, 1)) AS DailyUnits
+FROM (
+	SELECT
+		WeekStart,
+		CAST(MIN(Timestamp) AS DATE) AS Date,
+		DATEDIFF(D, MIN(Timestamp), MAX(Timestamp)) + 1 AS Days,
+		SUM(Calories)                                   AS Calories,
+		SUM(Protein)                                    AS Protein,
+		SUM(Fat)                                        AS Fat,
+		SUM(Saturated)                                  AS Saturated,
+		SUM(Carbohydrate)                               AS Carbohydrate,
+		SUM(Sugar)                                      AS Sugar,
+		SUM(Fibre)                                      AS Fibre,	
+		SUM(Cholesterol)                                AS Cholesterol,
+		SUM(Salt)                                       AS Salt,
+		SUM(Units)                                      AS Units
+	FROM NutritionEventSummary
+	GROUP BY WeekStart) J1
 LEFT JOIN Weight WT
 ON J1.Date = WT.Date
 GO

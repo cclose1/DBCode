@@ -9,19 +9,16 @@ CREATE PROCEDURE SynchronizeTableByFields(
 			@source AS sysname, 
 			@target AS sysname, 
 			@table  AS sysname,
-			@mode   AS CHAR = 'C',
-			@batch  AS INT  = 2)
+			@mode   AS CHAR = 'C')
 AS
 BEGIN
 	SET NOCOUNT ON;
 	
-	DECLARE @sql     AS NVARCHAR(max)
-	DECLARE @time    AS DATETIME = CURRENT_TIMESTAMP;
-	DECLARE @last    AS INT = -1
-	DECLARE @count   AS INT = 0
-	DECLARE @batches AS INT = 0
-	DECLARE @list    AS VARCHAR(max)
-	DECLARE @fields  AS VARCHAR(max) = NULL
+	DECLARE @sql    AS NVARCHAR(max)
+	DECLARE @time   AS DATETIME = CURRENT_TIMESTAMP;
+	DECLARE @count  AS INT
+	DECLARE @list   AS VARCHAR(max)
+	DECLARE @fields AS VARCHAR(max) = NULL
 	
 	SELECT @fields = COALESCE(@fields + ',', '') + dbo.AddSelectField([Column], NULL, '', 5, 20)        FROM #TableDetails ORDER BY Id
 	SELECT @list   = COALESCE(@list + ',', '')   + dbo.AddSelectField('S.' + [Column], NULL, '', 5, 20) FROM #TableDetails ORDER BY Id
@@ -33,11 +30,7 @@ BEGIN
 	END
 	
 	IF @mode <> 'C'	
-	BEGIN
-		SET @sql = 'INSERT ' + @target + '.' + @table + ' (' + @fields + ') ' + CHAR(13)
-		
-		IF @batch IS NOT NULL SET @list = ' TOP ' + CAST(@batch AS VARCHAR) + ' ' + @list
-	END
+		SET @sql = 'INSERT ' + @target + '.' + @table + ' (' + @fields + ') ' + CHAR(13) 
 	ELSE
 	BEGIN
 		SET @sql = ''
@@ -45,7 +38,6 @@ BEGIN
 	END
 	
 	SET @sql += 'SELECT' + @list
-	
 	EXEC dbo.AddFromJoin
 			@sql       OUTPUT,
 			@target,
@@ -56,7 +48,7 @@ BEGIN
 			'RIGHT JOIN',
 			'AND',
 			'IS NULL'
-		
+	
 	IF @mode = 'S'
 		PRINT @sql
 	ELSE
@@ -67,25 +59,15 @@ BEGIN
 			SELECT @fields = COALESCE(@fields + ',', '') + [Column] FROM #TableDetails WHERE [Key] = 'Y'
 			SET @sql += ' ORDER BY ' + @fields
 		END
-		WHILE (@last <> 0)
-		BEGIN
-			EXEC sp_executesql @sql
-			SET @last   = @@ROWCOUNT
-			SET @count += @last
-			
-			IF @batch IS NULL
-				SET @last = 0
-			ELSE IF @last <> 0 SET @batches += 1
-		END
+		
+		EXEC sp_executesql @sql
+		SET @count = @@ROWCOUNT
 		
 		IF @mode = 'C'
 			SET @list  = 'Found ' + CAST(@count AS VARCHAR) + ' rows in table ' + @table + ' of ' +  dbo.FirstField(@source, '.', 'N') + ' not in ' + dbo.FirstField(@target, '.', 'N')
 		ELSE
-		BEGIN
 			SET @list  = 'Copied ' + CAST(@count AS VARCHAR) + ' row(s) of table ' + @table + ' from database ' + dbo.FirstField(@source, '.', 'N') + ' to ' + dbo.FirstField(@target, '.', 'N')
 			
-			IF @batches <> 0 AND @batches > 1 SET @list += ' in ' + CAST(@batches AS VARCHAR) + ' batches'
-		END
 		EXEC ReportTimeTaken @list, @time OUTPUT
 	END
 END

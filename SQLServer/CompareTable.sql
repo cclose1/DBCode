@@ -25,7 +25,7 @@ BEGIN
 
 	IF @type IN ('VARCHAR', 'NCHAR') 
 		SET @type += '(' + CASE WHEN @size = -1 THEN 'max' ELSE + CAST(@size AS VARCHAR) END + ')'
-	ELSE IF @type = 'DECIMAL' AND @precision <> 0
+	ELSE IF @type IN ('DECIMAL', 'NUMERIC') AND @precision <> 0
 		SET @type += '(' + CAST(@precision AS VARCHAR) + ', ' + CAST(@scale AS VARCHAR) + ')'
 	
 	SET @sql += dbo.rpad(@type, @typePad, ' ') + ' '

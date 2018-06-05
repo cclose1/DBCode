@@ -1,7 +1,7 @@
 DELIMITER $$
-DROP PROCEDURE IF EXISTS `Summary`;
+DROP PROCEDURE IF EXISTS `Expenditure.Summary`;
 
-CREATE PROCEDURE `Summary`(adjustDay INT, adjustAmount DECIMAL(10, 2), latest CHAR)
+CREATE PROCEDURE `Expenditure.Summary`(adjustDay INT, adjustAmount DECIMAL(10, 2), latest CHAR)
 BEGIN
 	DECLARE lMonth    INT;
 	DECLARE mSpend    DECIMAL(10, 2);

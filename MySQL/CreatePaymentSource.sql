@@ -1,7 +1,7 @@
-DROP TABLE Expenditure.PaymentSource;
+DROP TABLE IF EXISTS Expenditure.PaymentSource;
 
 CREATE TABLE Expenditure.PaymentSource(
-	`Code`    varchar(20) NULL,
+	`Code`    varchar(20) NOT NULL,
 	`Account` varchar(20) NULL,
 	`Type`    varchar(20) NULL,
 	`Comment` varchar(1000) NULL,

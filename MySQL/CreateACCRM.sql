@@ -299,3 +299,17 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+DELIMITER $$
+DROP FUNCTION IF EXISTS MilesPer1DegreeLongitude$$
+
+CREATE FUNCTION MilesPer1DegreeLongitude(
+        lat FLOAT
+     ) RETURNS FLOAT
+    DETERMINISTIC
+    COMMENT 'Returns miles between 1 degree longitude at lat'
+BEGIN
+	RETURN cos(lat * PI() /180) * 2 * PI() * 3959 / 360;
+END$$
+
+DELIMITER ;

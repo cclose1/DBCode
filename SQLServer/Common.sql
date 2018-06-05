@@ -300,6 +300,29 @@ BEGIN
 END
 GO
 
+IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'dbo.ReportError') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	DROP PROCEDURE dbo.ReportError
+GO
+CREATE PROCEDURE dbo.ReportError(@suffix VARCHAR(max) = NULL)
+AS 
+BEGIN
+	IF ERROR_NUMBER() IS NULL RETURN ;
+
+	IF ERROR_MESSAGE() = 'Error reported' RETURN
+	
+	DECLARE	@message   NVARCHAR(max)
+
+	SELECT @message =
+		'Error '      + CAST(ERROR_NUMBER()   AS VARCHAR)   + 
+		' Severity '  + CAST(ERROR_SEVERITY() AS VARCHAR) + 
+		' State '     + CAST(ERROR_STATE()    AS VARCHAR)    +
+		' Procedure ' + ISNULL(ERROR_PROCEDURE(), '-') + '(' + CAST(ERROR_LINE() AS VARCHAR) + ')' +
+		' Message '   + ERROR_MESSAGE()
+	IF @suffix IS NOT NULL SET @message = @message + ' ' + @suffix
+	
+	PRINT @message
+END
+GO
 IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'dbo.NextField') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
 	DROP PROCEDURE dbo.NextField
 GO

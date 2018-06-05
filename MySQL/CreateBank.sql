@@ -1,4 +1,4 @@
-DROP TABLE Expenditure.Bank;
+DROP TABLE IF EXISTS Expenditure.Bank;
 
 CREATE TABLE Expenditure.Bank(
 	`Code`          varchar(20) NOT NULL,
