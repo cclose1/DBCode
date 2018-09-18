@@ -24,7 +24,7 @@ CREATE FUNCTION dbo.lpad(
 RETURNS VARCHAR(max)
 AS 
 BEGIN
-	IF LEN(@value) < @length
+	IF LEN(@value) < @length	
 	BEGIN
 		SET @padChar = ISNULL(@padChar, '0');
     
@@ -173,6 +173,36 @@ BEGIN
 END
 GO
 
+IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'dbo.RoundDownToDay') and OBJECTPROPERTY(id, N'IsScalarFunction') = 1)
+	DROP FUNCTION dbo.RoundDownToDay
+GO
+
+CREATE FUNCTION dbo.RoundDownToDay(@day AS Varchar(3))
+   RETURNS DATE
+AS
+BEGIN
+	DECLARE @now  AS Date
+	DECLARE @nDay AS VARCHAR(3)
+
+	SET @now  = CURRENT_TIMESTAMP
+
+	WHILE 1=1
+	BEGIN
+		SET @nDay = DATENAME(dw, @now)
+
+		IF @nDay = @day
+			BREAK
+		ELSE
+			SET @now  = DATEADD(d, -1, @now)
+	END
+
+	RETURN @now
+END
+GO
+
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_NAME = N'ExtractField' AND ROUTINE_TYPE = N'FUNCTION')
+	DROP FUNCTION dbo.ExtractField
+GO
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_NAME = N'ExtractField' AND ROUTINE_TYPE = N'FUNCTION')
 	DROP FUNCTION dbo.ExtractField
 GO

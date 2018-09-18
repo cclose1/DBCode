@@ -1,6 +1,7 @@
 USE BloodPressure;
 SOURCE /tmp/sqlscripts/CreateBPTables.sql;
 SOURCE /tmp/sqlscripts/CreateNutritionTables.sql;
+SOURCE /tmp/sqlscripts/NutritionSps.sql;
 
 # Create views
 \! echo CreateNutritionViews.sql

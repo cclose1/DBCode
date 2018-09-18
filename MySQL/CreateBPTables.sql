@@ -11,7 +11,7 @@ CREATE TABLE Battery(
 DROP TABLE IF EXISTS Measure;
 
 CREATE TABLE Measure(
-	Individual  nchar(100)    NOT NULL,
+	Individual  varchar(100)  NOT NULL,
 	Session     datetime      NOT NULL,
 	Timestamp   datetime      NOT NULL,
 	Side        varchar(5)    NOT NULL,
@@ -29,14 +29,14 @@ CREATE TABLE Measure(
 DROP TABLE IF EXISTS MeasureABPM;
 
 CREATE TABLE MeasureABPM(
-	Individual nchar(100) NOT NULL,
-	Timestamp  datetime   NOT NULL,
-	Session    int        NOT NULL,
-	Side       varchar(5) NOT NULL,
-	Systolic   int        NULL,
-	Diastolic  int        NULL,
-	Pulse      int        NULL,
-	MAP int NULL,
+	Individual varchar(100) NOT NULL,
+	Timestamp  datetime     NOT NULL,
+	Session    int          NOT NULL,
+	Side       varchar(5)   NOT NULL,
+	Systolic   int          NULL,
+	Diastolic  int          NULL,
+	Pulse      int          NULL,
+	MAP        int          NULL,
 	PRIMARY KEY (
 		Individual ASC,
 		Timestamp ASC,

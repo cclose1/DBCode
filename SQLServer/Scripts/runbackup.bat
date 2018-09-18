@@ -1,0 +1,1 @@
+sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql

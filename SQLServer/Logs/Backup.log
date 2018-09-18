@@ -1,0 +1,720 @@
+
+C:\Windows\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 02-Sep-18 22:15:00
+02-Sep-18 22:15:01.087  0.10 Copied   0 row(s) of table Bank                 from database Expenditure     to MYSQL
+02-Sep-18 22:15:01.187  0.01 Copied   0 row(s) of table Bank                 from database MYSQL           to Expenditure
+02-Sep-18 22:15:01.270  0.04 Copied   0 row(s) of table PaymentSource        from database Expenditure     to MYSQL
+02-Sep-18 22:15:01.313  0.02 Copied   0 row(s) of table PaymentSource        from database MYSQL           to Expenditure
+02-Sep-18 22:15:01.400  0.58 Copied   0 row(s) of table SpendData            from database Expenditure     to MYSQL
+02-Sep-18 22:15:01.980  0.52 Copied   0 row(s) of table SpendData            from database MYSQL           to Expenditure
+02-Sep-18 22:15:02.593  0.08 Copied   0 row(s) of table NutritionSources     from database BloodPressure   to MYSQLBp
+02-Sep-18 22:15:02.673  0.02 Copied   0 row(s) of table NutritionSources     from database MYSQLBp         to BloodPressure
+02-Sep-18 22:15:02.760  0.04 Copied   0 row(s) of table NutritionTypes       from database BloodPressure   to MYSQLBp
+02-Sep-18 22:15:02.800  0.01 Copied   0 row(s) of table NutritionTypes       from database MYSQLBp         to BloodPressure
+02-Sep-18 22:15:02.880  0.11 Copied   0 row(s) of table NutritionDetail      from database BloodPressure   to MYSQLBp
+02-Sep-18 22:15:02.987  0.06 Copied   0 row(s) of table NutritionDetail      from database MYSQLBp         to BloodPressure
+02-Sep-18 22:15:03.113  0.45 Copied   0 row(s) of table NutritionEvent       from database BloodPressure   to MYSQLBp
+02-Sep-18 22:15:03.560  0.48 Copied   0 row(s) of table NutritionEvent       from database MYSQLBp         to BloodPressure
+02-Sep-18 22:15:04.100  1.00 Copied   0 row(s) of table NutritionRecord      from database BloodPressure   to MYSQLBp
+02-Sep-18 22:15:05.100  2.11 Copied   0 row(s) of table NutritionRecord      from database MYSQLBp         to BloodPressure
+02-Sep-18 22:15:07.277  0.04 Copied   0 row(s) of table NutritionComposite   from database BloodPressure   to MYSQLBp
+02-Sep-18 22:15:07.317  0.02 Copied   0 row(s) of table NutritionComposite   from database MYSQLBp         to BloodPressure
+02-Sep-18 22:15:07.400  0.11 Copied   0 row(s) of table Weight               from database BloodPressure   to MYSQLBp
+02-Sep-18 22:15:07.507  0.08 Copied   0 row(s) of table Weight               from database MYSQLBp         to BloodPressure
+02-Sep-18 22:15:07.647  0.04 Copied   0 row(s) of table Battery              from database BloodPressure   to MYSQLBp
+02-Sep-18 22:15:07.687  0.02 Copied   0 row(s) of table Battery              from database MYSQLBp         to BloodPressure
+02-Sep-18 22:15:07.767  1.91 Copied   4 row(s) of table Measure              from database BloodPressure   to MYSQLBp
+02-Sep-18 22:15:09.680  2.52 Copied   0 row(s) of table Measure              from database MYSQLBp         to BloodPressure
+02-Sep-18 22:15:12.260  0.04 Copied   0 row(s) of table MeasureABPM          from database BloodPressure   to MYSQLBp
+02-Sep-18 22:15:12.303  0.02 Copied   0 row(s) of table MeasureABPM          from database MYSQLBp         to BloodPressure
+02-Sep-18 22:15:12.387  0.04 Copied   0 row(s) of table DrugHistory          from database BloodPressure   to MYSQLBp
+02-Sep-18 22:15:12.427  0.02 Copied   0 row(s) of table DrugHistory          from database MYSQLBp         to BloodPressure
+Table NutritionSources     matches in databases BloodPressure   and MYSQLBp
+Table NutritionTypes       matches in databases BloodPressure   and MYSQLBp
+Table NutritionDetail      matches in databases BloodPressure   and MYSQLBp
+Table NutritionEvent       matches in databases BloodPressure   and MYSQLBp
+Table NutritionRecord      matches in databases BloodPressure   and MYSQLBp
+Table NutritionComposite   matches in databases BloodPressure   and MYSQLBp
+Table Weight               matches in databases BloodPressure   and MYSQLBp
+Table Battery              matches in databases BloodPressure   and MYSQLBp
+Table Measure              matches in databases BloodPressure   and MYSQLBp
+Table MeasureABPM          matches in databases BloodPressure   and MYSQLBp
+Table DrugHistory          matches in databases BloodPressure   and MYSQLBp
+Table Bank                 matches in databases Expenditure     and MYSQL
+Table PaymentSource        matches in databases Expenditure     and MYSQL
+Table SpendData            matches in databases Expenditure     and MYSQL
+Processed 41712 pages for database 'BloodPressure', file 'BloodPressure' on file 1.
+Processed 5 pages for database 'BloodPressure', file 'BloodPressure_log' on file 1.
+BACKUP DATABASE successfully processed 41717 pages in 2.555 seconds (127.559 MB/sec).
+Processed 696 pages for database 'Expenditure', file 'Expenditure' on file 1.
+Processed 4 pages for database 'Expenditure', file 'Expenditure_log' on file 1.
+BACKUP DATABASE successfully processed 700 pages in 0.058 seconds (94.288 MB/sec).
+
+C:\Windows\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 03-Sep-18 22:15:01
+03-Sep-18 22:15:01.493  1.04 Copied   0 row(s) of table Bank                 from database Expenditure     to MYSQL
+03-Sep-18 22:15:02.530  0.01 Copied   0 row(s) of table Bank                 from database MYSQL           to Expenditure
+03-Sep-18 22:15:02.600  0.04 Copied   0 row(s) of table PaymentSource        from database Expenditure     to MYSQL
+03-Sep-18 22:15:02.637  0.01 Copied   0 row(s) of table PaymentSource        from database MYSQL           to Expenditure
+03-Sep-18 22:15:02.710  0.49 Copied   4 row(s) of table SpendData            from database Expenditure     to MYSQL
+03-Sep-18 22:15:03.200  0.44 Copied   0 row(s) of table SpendData            from database MYSQL           to Expenditure
+03-Sep-18 22:15:03.710  0.07 Copied   0 row(s) of table NutritionSources     from database BloodPressure   to MYSQLBp
+03-Sep-18 22:15:03.780  0.01 Copied   0 row(s) of table NutritionSources     from database MYSQLBp         to BloodPressure
+03-Sep-18 22:15:03.847  0.03 Copied   0 row(s) of table NutritionTypes       from database BloodPressure   to MYSQLBp
+03-Sep-18 22:15:03.877  0.01 Copied   0 row(s) of table NutritionTypes       from database MYSQLBp         to BloodPressure
+03-Sep-18 22:15:03.940  0.11 Copied   1 row(s) of table NutritionDetail      from database BloodPressure   to MYSQLBp
+03-Sep-18 22:15:04.053  0.05 Copied   0 row(s) of table NutritionDetail      from database MYSQLBp         to BloodPressure
+03-Sep-18 22:15:04.157  0.34 Copied   7 row(s) of table NutritionEvent       from database BloodPressure   to MYSQLBp
+03-Sep-18 22:15:04.500  0.32 Copied   0 row(s) of table NutritionEvent       from database MYSQLBp         to BloodPressure
+03-Sep-18 22:15:04.873  0.77 Copied  13 row(s) of table NutritionRecord      from database BloodPressure   to MYSQLBp
+03-Sep-18 22:15:05.643  1.45 Copied   0 row(s) of table NutritionRecord      from database MYSQLBp         to BloodPressure
+03-Sep-18 22:15:07.150  0.04 Copied   0 row(s) of table NutritionComposite   from database BloodPressure   to MYSQLBp
+03-Sep-18 22:15:07.190  0.02 Copied   0 row(s) of table NutritionComposite   from database MYSQLBp         to BloodPressure
+03-Sep-18 22:15:07.260  0.09 Copied   1 row(s) of table Weight               from database BloodPressure   to MYSQLBp
+03-Sep-18 22:15:07.350  0.06 Copied   0 row(s) of table Weight               from database MYSQLBp         to BloodPressure
+03-Sep-18 22:15:07.460  0.03 Copied   0 row(s) of table Battery              from database BloodPressure   to MYSQLBp
+03-Sep-18 22:15:07.490  0.01 Copied   0 row(s) of table Battery              from database MYSQLBp         to BloodPressure
+03-Sep-18 22:15:07.550  1.41 Copied  20 row(s) of table Measure              from database BloodPressure   to MYSQLBp
+03-Sep-18 22:15:08.963  1.75 Copied   0 row(s) of table Measure              from database MYSQLBp         to BloodPressure
+03-Sep-18 22:15:10.763  0.04 Copied   0 row(s) of table MeasureABPM          from database BloodPressure   to MYSQLBp
+03-Sep-18 22:15:10.803  0.02 Copied   0 row(s) of table MeasureABPM          from database MYSQLBp         to BloodPressure
+03-Sep-18 22:15:10.867  0.04 Copied   0 row(s) of table DrugHistory          from database BloodPressure   to MYSQLBp
+03-Sep-18 22:15:10.903  0.01 Copied   0 row(s) of table DrugHistory          from database MYSQLBp         to BloodPressure
+Table NutritionSources     matches in databases BloodPressure   and MYSQLBp
+Table NutritionTypes       matches in databases BloodPressure   and MYSQLBp
+Table NutritionDetail      matches in databases BloodPressure   and MYSQLBp
+Id          Target               Table                Server Timestamp               Modified                Description                                                                                          Comment                                                                                                                                                                                                                                                         
+----------- -------------------- -------------------- ------ ----------------------- ----------------------- ---------------------------------------------------------------------------------------------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+          1 MYSQLBp..            NutritionEvent       MySQL  2018-09-02 12:20:00.000 2018-09-02 14:35:42.000 Sausage Roll & Salad                                                                                 The Goodlife                                                                                                                                                                                                                                                    
+          1 MYSQLBp..            NutritionEvent       SQL    2018-09-02 12:20:00.000 2018-09-03 11:22:05.000 Sausage Roll & Salad                                                                                 The Goodlife                                                                                                                                                                                                                                                    
+                                                                         
+-------------------------------------------------------------------------
+Updated 1 row(s) in MYSQLBp...NutritionEvent                             
+Table NutritionRecord      matches in databases BloodPressure   and MYSQLBp
+Table NutritionComposite   matches in databases BloodPressure   and MYSQLBp
+Table Weight               matches in databases BloodPressure   and MYSQLBp
+Table Battery              matches in databases BloodPressure   and MYSQLBp
+Table Measure              matches in databases BloodPressure   and MYSQLBp
+Table MeasureABPM          matches in databases BloodPressure   and MYSQLBp
+Table DrugHistory          matches in databases BloodPressure   and MYSQLBp
+Table Bank                 matches in databases Expenditure     and MYSQL
+Table PaymentSource        matches in databases Expenditure     and MYSQL
+Table SpendData            matches in databases Expenditure     and MYSQL
+Processed 62 pages for database 'BloodPressure', file 'BloodPressure_log' on file 2.
+BACKUP LOG successfully processed 62 pages in 0.015 seconds (32.291 MB/sec).
+Processed 144 pages for database 'Expenditure', file 'Expenditure_log' on file 2.
+BACKUP LOG successfully processed 144 pages in 0.023 seconds (48.743 MB/sec).
+
+C:\Windows\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 04-Sep-18 22:15:00
+04-Sep-18 22:15:00.997  1.37 Copied   0 row(s) of table Bank                 from database Expenditure     to MYSQL
+04-Sep-18 22:15:02.367  0.02 Copied   0 row(s) of table Bank                 from database MYSQL           to Expenditure
+04-Sep-18 22:15:02.433  0.04 Copied   0 row(s) of table PaymentSource        from database Expenditure     to MYSQL
+04-Sep-18 22:15:02.477  0.01 Copied   0 row(s) of table PaymentSource        from database MYSQL           to Expenditure
+04-Sep-18 22:15:02.540  0.63 Copied   5 row(s) of table SpendData            from database Expenditure     to MYSQL
+04-Sep-18 22:15:03.173  0.46 Copied   0 row(s) of table SpendData            from database MYSQL           to Expenditure
+04-Sep-18 22:15:03.697  0.13 Copied   0 row(s) of table NutritionSources     from database BloodPressure   to MYSQLBp
+04-Sep-18 22:15:03.827  0.01 Copied   0 row(s) of table NutritionSources     from database MYSQLBp         to BloodPressure
+04-Sep-18 22:15:03.897  0.03 Copied   0 row(s) of table NutritionTypes       from database BloodPressure   to MYSQLBp
+04-Sep-18 22:15:03.930  0.01 Copied   0 row(s) of table NutritionTypes       from database MYSQLBp         to BloodPressure
+04-Sep-18 22:15:03.990  0.07 Copied   0 row(s) of table NutritionDetail      from database BloodPressure   to MYSQLBp
+04-Sep-18 22:15:04.063  0.06 Copied   0 row(s) of table NutritionDetail      from database MYSQLBp         to BloodPressure
+04-Sep-18 22:15:04.177  0.41 Copied   6 row(s) of table NutritionEvent       from database BloodPressure   to MYSQLBp
+04-Sep-18 22:15:04.587  0.36 Copied   0 row(s) of table NutritionEvent       from database MYSQLBp         to BloodPressure
+04-Sep-18 22:15:05.00  0.88 Copied  12 row(s) of table NutritionRecord      from database BloodPressure   to MYSQLBp
+04-Sep-18 22:15:05.883  1.83 Copied   0 row(s) of table NutritionRecord      from database MYSQLBp         to BloodPressure
+04-Sep-18 22:15:07.770  0.03 Copied   0 row(s) of table NutritionComposite   from database BloodPressure   to MYSQLBp
+04-Sep-18 22:15:07.800  0.02 Copied   0 row(s) of table NutritionComposite   from database MYSQLBp         to BloodPressure
+04-Sep-18 22:15:07.870  0.14 Copied   1 row(s) of table Weight               from database BloodPressure   to MYSQLBp
+04-Sep-18 22:15:08.013  0.11 Copied   0 row(s) of table Weight               from database MYSQLBp         to BloodPressure
+04-Sep-18 22:15:08.180  0.06 Copied   0 row(s) of table Battery              from database BloodPressure   to MYSQLBp
+04-Sep-18 22:15:08.237  0.04 Copied   0 row(s) of table Battery              from database MYSQLBp         to BloodPressure
+04-Sep-18 22:15:08.367  1.69 Copied  20 row(s) of table Measure              from database BloodPressure   to MYSQLBp
+04-Sep-18 22:15:10.053  2.17 Copied   0 row(s) of table Measure              from database MYSQLBp         to BloodPressure
+04-Sep-18 22:15:12.277  0.05 Copied   0 row(s) of table MeasureABPM          from database BloodPressure   to MYSQLBp
+04-Sep-18 22:15:12.330  0.02 Copied   0 row(s) of table MeasureABPM          from database MYSQLBp         to BloodPressure
+04-Sep-18 22:15:12.393  0.05 Copied   0 row(s) of table DrugHistory          from database BloodPressure   to MYSQLBp
+04-Sep-18 22:15:12.440  0.01 Copied   0 row(s) of table DrugHistory          from database MYSQLBp         to BloodPressure
+Table NutritionSources     matches in databases BloodPressure   and MYSQLBp
+Table NutritionTypes       matches in databases BloodPressure   and MYSQLBp
+Table NutritionDetail      matches in databases BloodPressure   and MYSQLBp
+Table NutritionEvent       matches in databases BloodPressure   and MYSQLBp
+Table NutritionRecord      matches in databases BloodPressure   and MYSQLBp
+Table NutritionComposite   matches in databases BloodPressure   and MYSQLBp
+Table Weight               matches in databases BloodPressure   and MYSQLBp
+Table Battery              matches in databases BloodPressure   and MYSQLBp
+Table Measure              matches in databases BloodPressure   and MYSQLBp
+Table MeasureABPM          matches in databases BloodPressure   and MYSQLBp
+Table DrugHistory          matches in databases BloodPressure   and MYSQLBp
+Table Bank                 matches in databases Expenditure     and MYSQL
+Table PaymentSource        matches in databases Expenditure     and MYSQL
+Id          Target               Table                Server Timestamp               Modified                IncurredBy           Category             Type                 Description                                                                                                                                                                                                                                                      Location                                                                                                                                                                                                                                                         Amount       Ignore Period Payment                        BankCorrection
+----------- -------------------- -------------------- ------ ----------------------- ----------------------- -------------------- -------------------- -------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ------------ ------ ------ ------------------------------ --------------
+          1 MYSQL..              SpendData            MySQL  2018-09-02 00:00:00.000 2018-09-01 10:57:34.000 Chris                Fixed                Home                 Insurance                                                                                                                                                                                                                                                        LV=                                                                                                                                                                                                                                                                  145.9600 NULL   Y      HCCDD                                   .0000
+          1 MYSQL..              SpendData            SQL    2018-09-02 00:00:00.000 2018-09-04 09:42:18.000 Chris                Fixed                Home                 Insurance                                                                                                                                                                                                                                                        LV=                                                                                                                                                                                                                                                                  169.6700 NULL   Y      HCCDD                                   .0000
+                                                                  
+------------------------------------------------------------------
+Updated 1 row(s) in MYSQL...SpendData                             
+Processed 33 pages for database 'BloodPressure', file 'BloodPressure_log' on file 3.
+BACKUP LOG successfully processed 33 pages in 0.013 seconds (19.831 MB/sec).
+Processed 103 pages for database 'Expenditure', file 'Expenditure_log' on file 3.
+BACKUP LOG successfully processed 103 pages in 0.029 seconds (27.747 MB/sec).
+
+C:\Windows\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 07-Sep-18 22:15:01
+07-Sep-18 22:15:01.850  1.15 Copied   0 row(s) of table Bank                 from database Expenditure     to MYSQL
+07-Sep-18 22:15:03.03  0.01 Copied   0 row(s) of table Bank                 from database MYSQL           to Expenditure
+07-Sep-18 22:15:03.077  0.04 Copied   0 row(s) of table PaymentSource        from database Expenditure     to MYSQL
+07-Sep-18 22:15:03.117  0.01 Copied   0 row(s) of table PaymentSource        from database MYSQL           to Expenditure
+07-Sep-18 22:15:03.187  0.56 Copied   9 row(s) of table SpendData            from database Expenditure     to MYSQL
+07-Sep-18 22:15:03.747  0.44 Copied   0 row(s) of table SpendData            from database MYSQL           to Expenditure
+07-Sep-18 22:15:04.260  0.08 Copied   0 row(s) of table NutritionSources     from database BloodPressure   to MYSQLBp
+07-Sep-18 22:15:04.343  0.01 Copied   0 row(s) of table NutritionSources     from database MYSQLBp         to BloodPressure
+07-Sep-18 22:15:04.407  0.03 Copied   0 row(s) of table NutritionTypes       from database BloodPressure   to MYSQLBp
+07-Sep-18 22:15:04.433  0.01 Copied   0 row(s) of table NutritionTypes       from database MYSQLBp         to BloodPressure
+07-Sep-18 22:15:04.500  0.09 Copied   0 row(s) of table NutritionDetail      from database BloodPressure   to MYSQLBp
+07-Sep-18 22:15:04.590  0.05 Copied   0 row(s) of table NutritionDetail      from database MYSQLBp         to BloodPressure
+07-Sep-18 22:15:04.690  0.40 Copied  12 row(s) of table NutritionEvent       from database BloodPressure   to MYSQLBp
+07-Sep-18 22:15:05.087  0.36 Copied   0 row(s) of table NutritionEvent       from database MYSQLBp         to BloodPressure
+07-Sep-18 22:15:05.493  0.84 Copied  28 row(s) of table NutritionRecord      from database BloodPressure   to MYSQLBp
+07-Sep-18 22:15:06.337  1.76 Copied   0 row(s) of table NutritionRecord      from database MYSQLBp         to BloodPressure
+07-Sep-18 22:15:08.143  0.03 Copied   0 row(s) of table NutritionComposite   from database BloodPressure   to MYSQLBp
+07-Sep-18 22:15:08.173  0.02 Copied   0 row(s) of table NutritionComposite   from database MYSQLBp         to BloodPressure
+07-Sep-18 22:15:08.240  0.09 Copied   3 row(s) of table Weight               from database BloodPressure   to MYSQLBp
+07-Sep-18 22:15:08.333  0.08 Copied   0 row(s) of table Weight               from database MYSQLBp         to BloodPressure
+07-Sep-18 22:15:08.463  0.04 Copied   0 row(s) of table Battery              from database BloodPressure   to MYSQLBp
+07-Sep-18 22:15:08.503  0.01 Copied   0 row(s) of table Battery              from database MYSQLBp         to BloodPressure
+07-Sep-18 22:15:08.563  1.58 Copied  44 row(s) of table Measure              from database BloodPressure   to MYSQLBp
+07-Sep-18 22:15:10.147  2.06 Copied   0 row(s) of table Measure              from database MYSQLBp         to BloodPressure
+07-Sep-18 22:15:12.260  0.05 Copied   0 row(s) of table MeasureABPM          from database BloodPressure   to MYSQLBp
+07-Sep-18 22:15:12.313  0.02 Copied   0 row(s) of table MeasureABPM          from database MYSQLBp         to BloodPressure
+07-Sep-18 22:15:12.380  0.04 Copied   0 row(s) of table DrugHistory          from database BloodPressure   to MYSQLBp
+07-Sep-18 22:15:12.423  0.01 Copied   0 row(s) of table DrugHistory          from database MYSQLBp         to BloodPressure
+Table NutritionSources     matches in databases BloodPressure   and MYSQLBp
+Table NutritionTypes       matches in databases BloodPressure   and MYSQLBp
+Table NutritionDetail      matches in databases BloodPressure   and MYSQLBp
+Table NutritionEvent       matches in databases BloodPressure   and MYSQLBp
+Table NutritionRecord      matches in databases BloodPressure   and MYSQLBp
+Table NutritionComposite   matches in databases BloodPressure   and MYSQLBp
+Table Weight               matches in databases BloodPressure   and MYSQLBp
+Table Battery              matches in databases BloodPressure   and MYSQLBp
+Table Measure              matches in databases BloodPressure   and MYSQLBp
+Table MeasureABPM          matches in databases BloodPressure   and MYSQLBp
+Table DrugHistory          matches in databases BloodPressure   and MYSQLBp
+Table Bank                 matches in databases Expenditure     and MYSQL
+Table PaymentSource        matches in databases Expenditure     and MYSQL
+Id          Target               Table                Server Timestamp               Modified                IncurredBy           Category             Type                 Description                                                                                                                                                                                                                                                      Location                                                                                                                                                                                                                                                         Amount       Ignore Period Payment                        BankCorrection
+----------- -------------------- -------------------- ------ ----------------------- ----------------------- -------------------- -------------------- -------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ------------ ------ ------ ------------------------------ --------------
+          1 MYSQL..              SpendData            MySQL  2018-09-06 00:00:08.000 2018-09-01 10:57:34.000 Chris                Fixed                Phone                EE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     56.3800 NULL   M      SJNDD                                   .0000
+          1 MYSQL..              SpendData            SQL    2018-09-06 00:00:08.000 2018-09-05 09:56:52.000 Chris                Fixed                Phone                EE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     79.8600 NULL   M      SJNDD                                   .0000
+                                                                  
+------------------------------------------------------------------
+Updated 1 row(s) in MYSQL...SpendData                             
+Processed 52 pages for database 'BloodPressure', file 'BloodPressure_log' on file 4.
+BACKUP LOG successfully processed 52 pages in 0.023 seconds (17.493 MB/sec).
+Processed 183 pages for database 'Expenditure', file 'Expenditure_log' on file 4.
+BACKUP LOG successfully processed 183 pages in 0.033 seconds (43.323 MB/sec).
+
+C:\Windows\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 08-Sep-18 22:15:01
+08-Sep-18 22:15:01.920  0.57 Copied   0 row(s) of table Bank                 from database Expenditure     to MYSQL
+08-Sep-18 22:15:02.497  0.01 Copied   0 row(s) of table Bank                 from database MYSQL           to Expenditure
+08-Sep-18 22:15:02.567  0.04 Copied   0 row(s) of table PaymentSource        from database Expenditure     to MYSQL
+08-Sep-18 22:15:02.610  0.01 Copied   0 row(s) of table PaymentSource        from database MYSQL           to Expenditure
+08-Sep-18 22:15:02.680  0.65 Copied   8 row(s) of table SpendData            from database Expenditure     to MYSQL
+08-Sep-18 22:15:03.330  0.47 Copied   0 row(s) of table SpendData            from database MYSQL           to Expenditure
+08-Sep-18 22:15:03.870  0.10 Copied   0 row(s) of table NutritionSources     from database BloodPressure   to MYSQLBp
+08-Sep-18 22:15:03.970  0.02 Copied   0 row(s) of table NutritionSources     from database MYSQLBp         to BloodPressure
+08-Sep-18 22:15:04.037  0.03 Copied   0 row(s) of table NutritionTypes       from database BloodPressure   to MYSQLBp
+08-Sep-18 22:15:04.067  0.01 Copied   0 row(s) of table NutritionTypes       from database MYSQLBp         to BloodPressure
+08-Sep-18 22:15:04.133  0.10 Copied   2 row(s) of table NutritionDetail      from database BloodPressure   to MYSQLBp
+08-Sep-18 22:15:04.233  0.06 Copied   0 row(s) of table NutritionDetail      from database MYSQLBp         to BloodPressure
+08-Sep-18 22:15:04.340  0.45 Copied   9 row(s) of table NutritionEvent       from database BloodPressure   to MYSQLBp
+08-Sep-18 22:15:04.793  0.38 Copied   0 row(s) of table NutritionEvent       from database MYSQLBp         to BloodPressure
+08-Sep-18 22:15:05.220  0.94 Copied  25 row(s) of table NutritionRecord      from database BloodPressure   to MYSQLBp
+08-Sep-18 22:15:06.163  1.94 Copied   0 row(s) of table NutritionRecord      from database MYSQLBp         to BloodPressure
+08-Sep-18 22:15:08.160  0.03 Copied   0 row(s) of table NutritionComposite   from database BloodPressure   to MYSQLBp
+08-Sep-18 22:15:08.193  0.02 Copied   0 row(s) of table NutritionComposite   from database MYSQLBp         to BloodPressure
+08-Sep-18 22:15:08.260  0.11 Copied   2 row(s) of table Weight               from database BloodPressure   to MYSQLBp
+08-Sep-18 22:15:08.370  0.09 Copied   0 row(s) of table Weight               from database MYSQLBp         to BloodPressure
+08-Sep-18 22:15:08.510  0.03 Copied   0 row(s) of table Battery              from database BloodPressure   to MYSQLBp
+08-Sep-18 22:15:08.540  0.01 Copied   0 row(s) of table Battery              from database MYSQLBp         to BloodPressure
+08-Sep-18 22:15:08.603  1.73 Copied  24 row(s) of table Measure              from database BloodPressure   to MYSQLBp
+08-Sep-18 22:15:10.333  2.23 Copied   0 row(s) of table Measure              from database MYSQLBp         to BloodPressure
+08-Sep-18 22:15:12.610  0.04 Copied   0 row(s) of table MeasureABPM          from database BloodPressure   to MYSQLBp
+08-Sep-18 22:15:12.650  0.02 Copied   0 row(s) of table MeasureABPM          from database MYSQLBp         to BloodPressure
+08-Sep-18 22:15:12.717  0.04 Copied   0 row(s) of table DrugHistory          from database BloodPressure   to MYSQLBp
+08-Sep-18 22:15:12.753  0.02 Copied   0 row(s) of table DrugHistory          from database MYSQLBp         to BloodPressure
+Table NutritionSources     matches in databases BloodPressure   and MYSQLBp
+Table NutritionTypes       matches in databases BloodPressure   and MYSQLBp
+Id          Target               Table                Server Start                   Item                                               Source                                             Type                                               End                     Modified                Calories       Protein        Fat            Saturated      Carbohydrate   Sugar          Fibre          Cholesterol    Salt           DefaultSize    ABV            Simple PackSize      
+----------- -------------------- -------------------- ------ ----------------------- -------------------------------------------------- -------------------------------------------------- -------------------------------------------------- ----------------------- ----------------------- -------------- -------------- -------------- -------------- -------------- -------------- -------------- -------------- -------------- -------------- -------------- ------ --------------
+          1 MYSQLBp..            NutritionDetail      MySQL  2014-11-01 00:00:00.000 Chocolate Muffin                                   Costa                                              Sweet                                              3000-01-01 00:00:00.000 2015-07-06 15:20:38.000        441.000          7.100         19.000          5.700         59.000         34.700           NULL           NULL           .700           NULL           NULL NULL             NULL
+          1 MYSQLBp..            NutritionDetail      SQL    2014-11-01 00:00:00.000 Chocolate Muffin                                   Costa                                              Sweet                                              2018-09-07 23:59:59.000 2018-09-08 17:43:26.000          4.050           .076           .201           .043           .474           .253           NULL           NULL           .003          99.00           NULL Y              99.000
+                                                                          
+--------------------------------------------------------------------------
+Updated 1 row(s) in MYSQLBp...NutritionDetail                             
+Table NutritionEvent       matches in databases BloodPressure   and MYSQLBp
+Table NutritionRecord      matches in databases BloodPressure   and MYSQLBp
+Table NutritionComposite   matches in databases BloodPressure   and MYSQLBp
+Table Weight               matches in databases BloodPressure   and MYSQLBp
+Table Battery              matches in databases BloodPressure   and MYSQLBp
+Table Measure              matches in databases BloodPressure   and MYSQLBp
+Table MeasureABPM          matches in databases BloodPressure   and MYSQLBp
+Table DrugHistory          matches in databases BloodPressure   and MYSQLBp
+Table Bank                 matches in databases Expenditure     and MYSQL
+Table PaymentSource        matches in databases Expenditure     and MYSQL
+Table SpendData            matches in databases Expenditure     and MYSQL
+Processed 53 pages for database 'BloodPressure', file 'BloodPressure_log' on file 5.
+BACKUP LOG successfully processed 53 pages in 0.024 seconds (17.252 MB/sec).
+Processed 152 pages for database 'Expenditure', file 'Expenditure_log' on file 5.
+BACKUP LOG successfully processed 152 pages in 0.026 seconds (45.673 MB/sec).
+
+C:\Windows\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 09-Sep-18 22:43:46
+09-Sep-18 22:43:46.240  0.14 Copied   0 row(s) of table Bank                 from database Expenditure     to MYSQL
+09-Sep-18 22:43:46.380  0.01 Copied   0 row(s) of table Bank                 from database MYSQL           to Expenditure
+09-Sep-18 22:43:46.447  0.03 Copied   0 row(s) of table PaymentSource        from database Expenditure     to MYSQL
+09-Sep-18 22:43:46.480  0.01 Copied   0 row(s) of table PaymentSource        from database MYSQL           to Expenditure
+09-Sep-18 22:43:46.553  0.60 Copied   4 row(s) of table SpendData            from database Expenditure     to MYSQL
+09-Sep-18 22:43:47.160  0.51 Copied   0 row(s) of table SpendData            from database MYSQL           to Expenditure
+09-Sep-18 22:43:47.733  0.09 Copied   0 row(s) of table NutritionSources     from database BloodPressure   to MYSQLBp
+09-Sep-18 22:43:47.820  0.02 Copied   0 row(s) of table NutritionSources     from database MYSQLBp         to BloodPressure
+09-Sep-18 22:43:47.907  0.03 Copied   0 row(s) of table NutritionTypes       from database BloodPressure   to MYSQLBp
+09-Sep-18 22:43:47.937  0.01 Copied   0 row(s) of table NutritionTypes       from database MYSQLBp         to BloodPressure
+09-Sep-18 22:43:48.00  0.08 Copied   0 row(s) of table NutritionDetail      from database BloodPressure   to MYSQLBp
+09-Sep-18 22:43:48.080  0.07 Copied   0 row(s) of table NutritionDetail      from database MYSQLBp         to BloodPressure
+09-Sep-18 22:43:48.223  0.43 Copied   5 row(s) of table NutritionEvent       from database BloodPressure   to MYSQLBp
+09-Sep-18 22:43:48.657  0.38 Copied   0 row(s) of table NutritionEvent       from database MYSQLBp         to BloodPressure
+09-Sep-18 22:43:49.090  0.95 Copied   7 row(s) of table NutritionRecord      from database BloodPressure   to MYSQLBp
+09-Sep-18 22:43:50.040  1.94 Copied   0 row(s) of table NutritionRecord      from database MYSQLBp         to BloodPressure
+09-Sep-18 22:43:52.033  0.04 Copied   0 row(s) of table NutritionComposite   from database BloodPressure   to MYSQLBp
+09-Sep-18 22:43:52.070  0.02 Copied   0 row(s) of table NutritionComposite   from database MYSQLBp         to BloodPressure
+09-Sep-18 22:43:52.140  0.09 Copied   0 row(s) of table Weight               from database BloodPressure   to MYSQLBp
+09-Sep-18 22:43:52.230  0.06 Copied   0 row(s) of table Weight               from database MYSQLBp         to BloodPressure
+09-Sep-18 22:43:52.343  0.03 Copied   0 row(s) of table Battery              from database BloodPressure   to MYSQLBp
+09-Sep-18 22:43:52.373  0.01 Copied   0 row(s) of table Battery              from database MYSQLBp         to BloodPressure
+09-Sep-18 22:43:52.433  1.72 Copied  12 row(s) of table Measure              from database BloodPressure   to MYSQLBp
+09-Sep-18 22:43:54.157  2.22 Copied   0 row(s) of table Measure              from database MYSQLBp         to BloodPressure
+09-Sep-18 22:43:56.427  0.04 Copied   0 row(s) of table MeasureABPM          from database BloodPressure   to MYSQLBp
+09-Sep-18 22:43:56.467  0.02 Copied   0 row(s) of table MeasureABPM          from database MYSQLBp         to BloodPressure
+09-Sep-18 22:43:56.537  0.03 Copied   0 row(s) of table DrugHistory          from database BloodPressure   to MYSQLBp
+09-Sep-18 22:43:56.567  0.01 Copied   0 row(s) of table DrugHistory          from database MYSQLBp         to BloodPressure
+Table NutritionSources     matches in databases BloodPressure   and MYSQLBp
+Table NutritionTypes       matches in databases BloodPressure   and MYSQLBp
+Table NutritionDetail      matches in databases BloodPressure   and MYSQLBp
+Id          Target               Table                Server Timestamp               Modified                Description                                                                                          Comment                                                                                                                                                                                                                                                         
+----------- -------------------- -------------------- ------ ----------------------- ----------------------- ---------------------------------------------------------------------------------------------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+          1 MYSQLBp..            NutritionEvent       MySQL  2018-09-09 20:00:00.000 2018-09-08 20:36:50.000 Pork Dinner                                                                                                                                                                                                                                                                                                                                                          
+          1 MYSQLBp..            NutritionEvent       SQL    2018-09-09 20:00:00.000 2018-09-09 19:52:43.000 Pork Dinner                                                                                                                                                                                                                                                                                                                                                          
+                                                                         
+-------------------------------------------------------------------------
+Updated 1 row(s) in MYSQLBp...NutritionEvent                             
+Id          Target               Table                Server Timestamp               Item                                               Source                                             Modified                Quantity       ABV            IsComposite
+----------- -------------------- -------------------- ------ ----------------------- -------------------------------------------------- -------------------------------------------------- ----------------------- -------------- -------------- -----------
+          1 MYSQLBp..            NutritionRecord      MySQL  2018-09-09 20:00:00.000 Broccoli                                           Generic                                            2018-09-08 20:27:27.000         130.00           NULL N          
+          1 MYSQLBp..            NutritionRecord      SQL    2018-09-09 20:00:00.000 Broccoli                                           Generic                                            2018-09-09 19:52:43.000         120.00           NULL N          
+          2 MYSQLBp..            NutritionRecord      MySQL  2018-09-09 20:00:00.000 Carrots                                            Generic                                            2018-09-08 20:27:27.000         109.00           NULL NULL       
+          2 MYSQLBp..            NutritionRecord      SQL    2018-09-09 20:00:00.000 Carrots                                            Generic                                            2018-09-09 16:32:08.000          99.50           NULL NULL       
+          3 MYSQLBp..            NutritionRecord      MySQL  2018-09-09 20:00:00.000 Roast Potato                                       Generic                                            2018-09-08 20:32:03.000         150.00           NULL N          
+          3 MYSQLBp..            NutritionRecord      SQL    2018-09-09 20:00:00.000 Roast Potato                                       Generic                                            2018-09-09 16:36:46.000         123.50           NULL N          
+                                                                          
+--------------------------------------------------------------------------
+Updated 3 row(s) in MYSQLBp...NutritionRecord                             
+Table NutritionComposite   matches in databases BloodPressure   and MYSQLBp
+Id          Target               Table                Server Date             Time                   Kilos       
+----------- -------------------- -------------------- ------ ---------------- ---------------------- ------------
+          1 MYSQLBp..            Weight               MySQL        2018-09-09       20:00:00.0000000        65.30
+          1 MYSQLBp..            Weight               SQL          2018-09-09       20:00:00.0000000        66.10
+                                                                 
+-----------------------------------------------------------------
+Updated 1 row(s) in MYSQLBp...Weight                             
+Table Battery              matches in databases BloodPressure   and MYSQLBp
+Table Measure              matches in databases BloodPressure   and MYSQLBp
+Table MeasureABPM          matches in databases BloodPressure   and MYSQLBp
+Table DrugHistory          matches in databases BloodPressure   and MYSQLBp
+Table Bank                 matches in databases Expenditure     and MYSQL
+Table PaymentSource        matches in databases Expenditure     and MYSQL
+Id          Target               Table                Server Timestamp               Modified                IncurredBy           Category             Type                 Description                                                                                                                                                                                                                                                      Location                                                                                                                                                                                                                                                         Amount       Ignore Period Payment                        BankCorrection
+----------- -------------------- -------------------- ------ ----------------------- ----------------------- -------------------- -------------------- -------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ------------ ------ ------ ------------------------------ --------------
+          1 MYSQL..              SpendData            MySQL  2018-09-07 21:00:00.000 2018-09-08 13:07:53.000 Chris                Discretionary        Meal                                                                                                                                                                                                                                                                                  Light of Bengal                                                                                                                                                                                                                                                      125.0000 NULL   NULL   Cash                                    .0000
+          1 MYSQL..              SpendData            SQL    2018-09-07 21:00:00.000 2018-09-08 22:54:44.000 Chris                Children             Meal                                                                                                                                                                                                                                                                                  Light of Bengal                                                                                                                                                                                                                                                      125.0000 NULL   NULL   Cash                                    .0000
+          2 MYSQL..              SpendData            MySQL  2018-09-08 16:37:08.000 2018-09-08 17:49:45.000 Chris                Essential            Food                 Food                                                                                                                                                                                                                                                             Sainsbury                                                                                                                                                                                                                                                            527.7200 NULL   NULL   HCCDC                                   .0000
+          2 MYSQL..              SpendData            SQL    2018-09-08 16:37:08.000 2018-09-08 22:53:49.000 Chris                Essential            Food                 Food                                                                                                                                                                                                                                                             Sainsbury                                                                                                                                                                                                                                                             27.7200 NULL   NULL   HCCDC                                   .0000
+                                                                  
+------------------------------------------------------------------
+Updated 2 row(s) in MYSQL...SpendData                             
+Processed 41760 pages for database 'BloodPressure', file 'BloodPressure' on file 1.
+Processed 4 pages for database 'BloodPressure', file 'BloodPressure_log' on file 1.
+BACKUP DATABASE successfully processed 41764 pages in 2.305 seconds (141.553 MB/sec).
+Processed 704 pages for database 'Expenditure', file 'Expenditure' on file 1.
+Processed 3 pages for database 'Expenditure', file 'Expenditure_log' on file 1.
+BACKUP DATABASE successfully processed 707 pages in 0.048 seconds (115.071 MB/sec).
+
+C:\Windows\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 10-Sep-18 22:15:00
+10-Sep-18 22:15:01.017  1.51 Copied   0 row(s) of table Bank                 from database Expenditure     to MYSQL
+10-Sep-18 22:15:02.523  0.02 Copied   0 row(s) of table Bank                 from database MYSQL           to Expenditure
+10-Sep-18 22:15:02.610  0.05 Copied   0 row(s) of table PaymentSource        from database Expenditure     to MYSQL
+10-Sep-18 22:15:02.660  0.01 Copied   0 row(s) of table PaymentSource        from database MYSQL           to Expenditure
+10-Sep-18 22:15:02.730  0.64 Copied   6 row(s) of table SpendData            from database Expenditure     to MYSQL
+10-Sep-18 22:15:03.370  0.52 Copied   1 row(s) of table SpendData            from database MYSQL           to Expenditure
+10-Sep-18 22:15:03.970  0.09 Copied   0 row(s) of table NutritionSources     from database BloodPressure   to MYSQLBp
+10-Sep-18 22:15:04.057  0.02 Copied   0 row(s) of table NutritionSources     from database MYSQLBp         to BloodPressure
+10-Sep-18 22:15:04.150  0.05 Copied   0 row(s) of table NutritionTypes       from database BloodPressure   to MYSQLBp
+10-Sep-18 22:15:04.200  0.02 Copied   0 row(s) of table NutritionTypes       from database MYSQLBp         to BloodPressure
+10-Sep-18 22:15:04.320  0.10 Copied   0 row(s) of table NutritionDetail      from database BloodPressure   to MYSQLBp
+10-Sep-18 22:15:04.420  0.06 Copied   0 row(s) of table NutritionDetail      from database MYSQLBp         to BloodPressure
+10-Sep-18 22:15:04.537  0.48 Copied   6 row(s) of table NutritionEvent       from database BloodPressure   to MYSQLBp
+10-Sep-18 22:15:05.017  0.42 Copied   0 row(s) of table NutritionEvent       from database MYSQLBp         to BloodPressure
+10-Sep-18 22:15:05.493  1.04 Copied  13 row(s) of table NutritionRecord      from database BloodPressure   to MYSQLBp
+10-Sep-18 22:15:06.537  2.21 Copied   0 row(s) of table NutritionRecord      from database MYSQLBp         to BloodPressure
+10-Sep-18 22:15:08.807  0.05 Copied   0 row(s) of table NutritionComposite   from database BloodPressure   to MYSQLBp
+10-Sep-18 22:15:08.853  0.02 Copied   0 row(s) of table NutritionComposite   from database MYSQLBp         to BloodPressure
+10-Sep-18 22:15:08.927  0.12 Copied   1 row(s) of table Weight               from database BloodPressure   to MYSQLBp
+10-Sep-18 22:15:09.043  0.08 Copied   0 row(s) of table Weight               from database MYSQLBp         to BloodPressure
+10-Sep-18 22:15:09.183  0.04 Copied   0 row(s) of table Battery              from database BloodPressure   to MYSQLBp
+10-Sep-18 22:15:09.227  0.01 Copied   0 row(s) of table Battery              from database MYSQLBp         to BloodPressure
+10-Sep-18 22:15:09.303  1.87 Copied  24 row(s) of table Measure              from database BloodPressure   to MYSQLBp
+10-Sep-18 22:15:11.173  2.36 Copied   0 row(s) of table Measure              from database MYSQLBp         to BloodPressure
+10-Sep-18 22:15:13.607  0.06 Copied   0 row(s) of table MeasureABPM          from database BloodPressure   to MYSQLBp
+10-Sep-18 22:15:13.663  0.02 Copied   0 row(s) of table MeasureABPM          from database MYSQLBp         to BloodPressure
+10-Sep-18 22:15:13.737  0.04 Copied   0 row(s) of table DrugHistory          from database BloodPressure   to MYSQLBp
+10-Sep-18 22:15:13.777  0.02 Copied   0 row(s) of table DrugHistory          from database MYSQLBp         to BloodPressure
+Table NutritionSources     matches in databases BloodPressure   and MYSQLBp
+Table NutritionTypes       matches in databases BloodPressure   and MYSQLBp
+Table NutritionDetail      matches in databases BloodPressure   and MYSQLBp
+Id          Target               Table                Server Timestamp               Modified                Description                                                                                          Comment                                                                                                                                                                                                                                                         
+----------- -------------------- -------------------- ------ ----------------------- ----------------------- ---------------------------------------------------------------------------------------------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+          1 MYSQLBp..            NutritionEvent       MySQL  2018-09-09 20:00:00.000 2018-09-09 19:52:43.000 Pork Dinner                                                                                                                                                                                                                                                                                                                                                          
+          1 MYSQLBp..            NutritionEvent       SQL    2018-09-09 20:00:00.000 2018-09-09 23:06:46.000 Pork Dinner                                                                                                                                                                                                                                                                                                                                                          
+                                                                         
+-------------------------------------------------------------------------
+Updated 1 row(s) in MYSQLBp...NutritionEvent                             
+Id          Target               Table                Server Timestamp               Item                                               Source                                             Modified                Quantity       ABV            IsComposite
+----------- -------------------- -------------------- ------ ----------------------- -------------------------------------------------- -------------------------------------------------- ----------------------- -------------- -------------- -----------
+          1 MYSQLBp..            NutritionRecord      MySQL  2018-09-09 20:00:00.000 White Wine                                         Generic                                            2018-09-08 20:32:19.000         375.00          10.50 NULL       
+          1 MYSQLBp..            NutritionRecord      SQL    2018-09-09 20:00:00.000 White Wine                                         Generic                                            2018-09-09 23:06:46.000         400.00          10.50 NULL       
+                                                                          
+--------------------------------------------------------------------------
+Updated 1 row(s) in MYSQLBp...NutritionRecord                             
+Table NutritionComposite   matches in databases BloodPressure   and MYSQLBp
+Table Weight               matches in databases BloodPressure   and MYSQLBp
+Table Battery              matches in databases BloodPressure   and MYSQLBp
+Table Measure              matches in databases BloodPressure   and MYSQLBp
+Table MeasureABPM          matches in databases BloodPressure   and MYSQLBp
+Table DrugHistory          matches in databases BloodPressure   and MYSQLBp
+Table Bank                 matches in databases Expenditure     and MYSQL
+Table PaymentSource        matches in databases Expenditure     and MYSQL
+Table SpendData            matches in databases Expenditure     and MYSQL
+Processed 68 pages for database 'BloodPressure', file 'BloodPressure_log' on file 2.
+BACKUP LOG successfully processed 68 pages in 0.019 seconds (27.754 MB/sec).
+Processed 194 pages for database 'Expenditure', file 'Expenditure_log' on file 2.
+BACKUP LOG successfully processed 194 pages in 0.033 seconds (45.809 MB/sec).
+
+C:\Windows\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 11-Sep-18 22:15:01
+
+Sqlcmd: Warning: The last operation was terminated because the user pressed CTRL+C.
+
+C:\Windows\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 12-Sep-18 22:15:00
+12-Sep-18 22:15:00.943  1.63 Copied   0 row(s) of table Bank                 from database Expenditure     to MYSQL
+12-Sep-18 22:15:02.577  0.02 Copied   0 row(s) of table Bank                 from database MYSQL           to Expenditure
+12-Sep-18 22:15:02.677  0.04 Copied   0 row(s) of table PaymentSource        from database Expenditure     to MYSQL
+12-Sep-18 22:15:02.720  0.01 Copied   0 row(s) of table PaymentSource        from database MYSQL           to Expenditure
+12-Sep-18 22:15:02.803  0.64 Copied   4 row(s) of table SpendData            from database Expenditure     to MYSQL
+12-Sep-18 22:15:03.440  0.44 Copied   0 row(s) of table SpendData            from database MYSQL           to Expenditure
+12-Sep-18 22:15:03.937  0.15 Copied   0 row(s) of table NutritionSources     from database BloodPressure   to MYSQLBp
+12-Sep-18 22:15:04.087  0.01 Copied   0 row(s) of table NutritionSources     from database MYSQLBp         to BloodPressure
+12-Sep-18 22:15:04.147  0.04 Copied   0 row(s) of table NutritionTypes       from database BloodPressure   to MYSQLBp
+12-Sep-18 22:15:04.187  0.01 Copied   0 row(s) of table NutritionTypes       from database MYSQLBp         to BloodPressure
+12-Sep-18 22:15:04.247  0.08 Copied   0 row(s) of table NutritionDetail      from database BloodPressure   to MYSQLBp
+12-Sep-18 22:15:04.323  0.05 Copied   0 row(s) of table NutritionDetail      from database MYSQLBp         to BloodPressure
+12-Sep-18 22:15:04.427  0.41 Copied   8 row(s) of table NutritionEvent       from database BloodPressure   to MYSQLBp
+12-Sep-18 22:15:04.837  0.35 Copied   0 row(s) of table NutritionEvent       from database MYSQLBp         to BloodPressure
+12-Sep-18 22:15:05.233  0.86 Copied  10 row(s) of table NutritionRecord      from database BloodPressure   to MYSQLBp
+12-Sep-18 22:15:06.093  1.71 Copied   0 row(s) of table NutritionRecord      from database MYSQLBp         to BloodPressure
+12-Sep-18 22:15:07.857  0.04 Copied   0 row(s) of table NutritionComposite   from database BloodPressure   to MYSQLBp
+12-Sep-18 22:15:07.897  0.01 Copied   0 row(s) of table NutritionComposite   from database MYSQLBp         to BloodPressure
+12-Sep-18 22:15:07.960  0.10 Copied   1 row(s) of table Weight               from database BloodPressure   to MYSQLBp
+12-Sep-18 22:15:08.060  0.08 Copied   0 row(s) of table Weight               from database MYSQLBp         to BloodPressure
+12-Sep-18 22:15:08.190  0.04 Copied   0 row(s) of table Battery              from database BloodPressure   to MYSQLBp
+12-Sep-18 22:15:08.227  0.01 Copied   0 row(s) of table Battery              from database MYSQLBp         to BloodPressure
+12-Sep-18 22:15:08.287  1.60 Copied  19 row(s) of table Measure              from database BloodPressure   to MYSQLBp
+12-Sep-18 22:15:09.883  2.11 Copied   0 row(s) of table Measure              from database MYSQLBp         to BloodPressure
+12-Sep-18 22:15:12.057  0.06 Copied   0 row(s) of table MeasureABPM          from database BloodPressure   to MYSQLBp
+12-Sep-18 22:15:12.113  0.02 Copied   0 row(s) of table MeasureABPM          from database MYSQLBp         to BloodPressure
+12-Sep-18 22:15:12.190  0.05 Copied   0 row(s) of table DrugHistory          from database BloodPressure   to MYSQLBp
+12-Sep-18 22:15:12.237  0.01 Copied   0 row(s) of table DrugHistory          from database MYSQLBp         to BloodPressure
+Table NutritionSources     matches in databases BloodPressure   and MYSQLBp
+Table NutritionTypes       matches in databases BloodPressure   and MYSQLBp
+Table NutritionDetail      matches in databases BloodPressure   and MYSQLBp
+Table NutritionEvent       matches in databases BloodPressure   and MYSQLBp
+Table NutritionRecord      matches in databases BloodPressure   and MYSQLBp
+Table NutritionComposite   matches in databases BloodPressure   and MYSQLBp
+Table Weight               matches in databases BloodPressure   and MYSQLBp
+Table Battery              matches in databases BloodPressure   and MYSQLBp
+Table Measure              matches in databases BloodPressure   and MYSQLBp
+Table MeasureABPM          matches in databases BloodPressure   and MYSQLBp
+Table DrugHistory          matches in databases BloodPressure   and MYSQLBp
+Table Bank                 matches in databases Expenditure     and MYSQL
+Table PaymentSource        matches in databases Expenditure     and MYSQL
+Id          Target               Table                Server Timestamp               Modified                IncurredBy           Category             Type                 Description                                                                                                                                                                                                                                                      Location                                                                                                                                                                                                                                                         Amount       Ignore Period Payment                        BankCorrection
+----------- -------------------- -------------------- ------ ----------------------- ----------------------- -------------------- -------------------- -------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ------------ ------ ------ ------------------------------ --------------
+          1 MYSQL..              SpendData            MySQL  2018-08-11 00:00:00.000 2018-08-01 07:51:26.000 Chris                Discretionary        Entertainment        NL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     30.0000 NULL   M      HCCDD                                   .0000
+          1 MYSQL..              SpendData            SQL    2018-08-11 00:00:00.000 2018-09-11 10:45:04.000 Chris                Discretionary        Entertainment        NL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     24.0000 NULL   M      HCCDD                                   .0000
+                                                                  
+------------------------------------------------------------------
+Updated 1 row(s) in MYSQL...SpendData                             
+Processed 66 pages for database 'BloodPressure', file 'BloodPressure_log' on file 3.
+BACKUP LOG successfully processed 66 pages in 0.018 seconds (28.645 MB/sec).
+Processed 213 pages for database 'Expenditure', file 'Expenditure_log' on file 3.
+BACKUP LOG successfully processed 213 pages in 0.032 seconds (51.879 MB/sec).
+
+C:\Windows\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 13-Sep-18 22:15:00
+13-Sep-18 22:15:00.930  0.22 Copied   0 row(s) of table Bank                 from database Expenditure     to MYSQL
+13-Sep-18 22:15:01.150  0.02 Copied   0 row(s) of table Bank                 from database MYSQL           to Expenditure
+13-Sep-18 22:15:01.247  0.04 Copied   0 row(s) of table PaymentSource        from database Expenditure     to MYSQL
+13-Sep-18 22:15:01.290  8.15 Copied   0 row(s) of table PaymentSource        from database MYSQL           to Expenditure
+13-Sep-18 22:15:09.523  0.55 Copied   6 row(s) of table SpendData            from database Expenditure     to MYSQL
+13-Sep-18 22:15:10.070  0.47 Copied   1 row(s) of table SpendData            from database MYSQL           to Expenditure
+13-Sep-18 22:15:10.623  0.09 Copied   0 row(s) of table NutritionSources     from database BloodPressure   to MYSQLBp
+13-Sep-18 22:15:10.710  0.02 Copied   0 row(s) of table NutritionSources     from database MYSQLBp         to BloodPressure
+13-Sep-18 22:15:10.777  0.03 Copied   0 row(s) of table NutritionTypes       from database BloodPressure   to MYSQLBp
+13-Sep-18 22:15:10.807  0.01 Copied   0 row(s) of table NutritionTypes       from database MYSQLBp         to BloodPressure
+13-Sep-18 22:15:10.870  0.08 Copied   0 row(s) of table NutritionDetail      from database BloodPressure   to MYSQLBp
+13-Sep-18 22:15:10.947  0.05 Copied   0 row(s) of table NutritionDetail      from database MYSQLBp         to BloodPressure
+13-Sep-18 22:15:11.050  0.40 Copied   5 row(s) of table NutritionEvent       from database BloodPressure   to MYSQLBp
+13-Sep-18 22:15:11.450  0.36 Copied   0 row(s) of table NutritionEvent       from database MYSQLBp         to BloodPressure
+13-Sep-18 22:15:11.867  0.88 Copied  17 row(s) of table NutritionRecord      from database BloodPressure   to MYSQLBp
+13-Sep-18 22:15:12.747  1.83 Copied   0 row(s) of table NutritionRecord      from database MYSQLBp         to BloodPressure
+13-Sep-18 22:15:14.630  0.03 Copied   0 row(s) of table NutritionComposite   from database BloodPressure   to MYSQLBp
+13-Sep-18 22:15:14.660  0.01 Copied   0 row(s) of table NutritionComposite   from database MYSQLBp         to BloodPressure
+13-Sep-18 22:15:14.727  0.09 Copied   1 row(s) of table Weight               from database BloodPressure   to MYSQLBp
+13-Sep-18 22:15:14.817  0.09 Copied   0 row(s) of table Weight               from database MYSQLBp         to BloodPressure
+13-Sep-18 22:15:14.953  0.03 Copied   0 row(s) of table Battery              from database BloodPressure   to MYSQLBp
+13-Sep-18 22:15:14.980  0.01 Copied   0 row(s) of table Battery              from database MYSQLBp         to BloodPressure
+13-Sep-18 22:15:15.037  1.59 Copied  21 row(s) of table Measure              from database BloodPressure   to MYSQLBp
+13-Sep-18 22:15:16.630  2.07 Copied   0 row(s) of table Measure              from database MYSQLBp         to BloodPressure
+13-Sep-18 22:15:18.743  0.04 Copied   0 row(s) of table MeasureABPM          from database BloodPressure   to MYSQLBp
+13-Sep-18 22:15:18.780  0.01 Copied   0 row(s) of table MeasureABPM          from database MYSQLBp         to BloodPressure
+13-Sep-18 22:15:18.843  0.03 Copied   0 row(s) of table DrugHistory          from database BloodPressure   to MYSQLBp
+13-Sep-18 22:15:18.870  0.01 Copied   0 row(s) of table DrugHistory          from database MYSQLBp         to BloodPressure
+Table NutritionSources     matches in databases BloodPressure   and MYSQLBp
+Table NutritionTypes       matches in databases BloodPressure   and MYSQLBp
+Table NutritionDetail      matches in databases BloodPressure   and MYSQLBp
+Table NutritionEvent       matches in databases BloodPressure   and MYSQLBp
+Table NutritionRecord      matches in databases BloodPressure   and MYSQLBp
+Table NutritionComposite   matches in databases BloodPressure   and MYSQLBp
+Table Weight               matches in databases BloodPressure   and MYSQLBp
+Table Battery              matches in databases BloodPressure   and MYSQLBp
+Table Measure              matches in databases BloodPressure   and MYSQLBp
+Table MeasureABPM          matches in databases BloodPressure   and MYSQLBp
+Table DrugHistory          matches in databases BloodPressure   and MYSQLBp
+Table Bank                 matches in databases Expenditure     and MYSQL
+Table PaymentSource        matches in databases Expenditure     and MYSQL
+Table SpendData            matches in databases Expenditure     and MYSQL
+Processed 28 pages for database 'BloodPressure', file 'BloodPressure_log' on file 4.
+BACKUP LOG successfully processed 28 pages in 0.016 seconds (13.671 MB/sec).
+Processed 79 pages for database 'Expenditure', file 'Expenditure_log' on file 4.
+BACKUP LOG successfully processed 79 pages in 0.018 seconds (34.288 MB/sec).
+
+C:\Windows\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 14-Sep-18 22:15:00
+14-Sep-18 22:15:01.153  0.26 Copied   0 row(s) of table Bank                 from database Expenditure     to MYSQL
+14-Sep-18 22:15:01.413  0.01 Copied   0 row(s) of table Bank                 from database MYSQL           to Expenditure
+14-Sep-18 22:15:01.490  0.03 Copied   0 row(s) of table PaymentSource        from database Expenditure     to MYSQL
+14-Sep-18 22:15:01.520  0.01 Copied   0 row(s) of table PaymentSource        from database MYSQL           to Expenditure
+14-Sep-18 22:15:01.593  0.68 Copied   3 row(s) of table SpendData            from database Expenditure     to MYSQL
+14-Sep-18 22:15:02.273  0.54 Copied   0 row(s) of table SpendData            from database MYSQL           to Expenditure
+14-Sep-18 22:15:02.900  0.08 Copied   0 row(s) of table NutritionSources     from database BloodPressure   to MYSQLBp
+14-Sep-18 22:15:02.980  0.01 Copied   0 row(s) of table NutritionSources     from database MYSQLBp         to BloodPressure
+14-Sep-18 22:15:03.053  0.03 Copied   0 row(s) of table NutritionTypes       from database BloodPressure   to MYSQLBp
+14-Sep-18 22:15:03.083  0.01 Copied   0 row(s) of table NutritionTypes       from database MYSQLBp         to BloodPressure
+14-Sep-18 22:15:03.157  0.08 Copied   0 row(s) of table NutritionDetail      from database BloodPressure   to MYSQLBp
+14-Sep-18 22:15:03.237  0.06 Copied   0 row(s) of table NutritionDetail      from database MYSQLBp         to BloodPressure
+14-Sep-18 22:15:03.353  0.48 Copied   4 row(s) of table NutritionEvent       from database BloodPressure   to MYSQLBp
+14-Sep-18 22:15:03.837  0.48 Copied   0 row(s) of table NutritionEvent       from database MYSQLBp         to BloodPressure
+14-Sep-18 22:15:04.397  1.19 Copied  11 row(s) of table NutritionRecord      from database BloodPressure   to MYSQLBp
+14-Sep-18 22:15:05.583  2.23 Copied   0 row(s) of table NutritionRecord      from database MYSQLBp         to BloodPressure
+14-Sep-18 22:15:07.867  0.03 Copied   0 row(s) of table NutritionComposite   from database BloodPressure   to MYSQLBp
+14-Sep-18 22:15:07.900  0.02 Copied   0 row(s) of table NutritionComposite   from database MYSQLBp         to BloodPressure
+14-Sep-18 22:15:07.973  0.10 Copied   1 row(s) of table Weight               from database BloodPressure   to MYSQLBp
+14-Sep-18 22:15:08.077  0.09 Copied   0 row(s) of table Weight               from database MYSQLBp         to BloodPressure
+14-Sep-18 22:15:08.230  0.03 Copied   0 row(s) of table Battery              from database BloodPressure   to MYSQLBp
+14-Sep-18 22:15:08.260  0.01 Copied   0 row(s) of table Battery              from database MYSQLBp         to BloodPressure
+14-Sep-18 22:15:08.330  1.89 Copied  20 row(s) of table Measure              from database BloodPressure   to MYSQLBp
+14-Sep-18 22:15:10.220  2.44 Copied   0 row(s) of table Measure              from database MYSQLBp         to BloodPressure
+14-Sep-18 22:15:12.717  0.04 Copied   0 row(s) of table MeasureABPM          from database BloodPressure   to MYSQLBp
+14-Sep-18 22:15:12.757  0.02 Copied   0 row(s) of table MeasureABPM          from database MYSQLBp         to BloodPressure
+14-Sep-18 22:15:12.827  0.03 Copied   0 row(s) of table DrugHistory          from database BloodPressure   to MYSQLBp
+14-Sep-18 22:15:12.860  0.02 Copied   0 row(s) of table DrugHistory          from database MYSQLBp         to BloodPressure
+Table NutritionSources     matches in databases BloodPressure   and MYSQLBp
+Table NutritionTypes       matches in databases BloodPressure   and MYSQLBp
+Table NutritionDetail      matches in databases BloodPressure   and MYSQLBp
+Table NutritionEvent       matches in databases BloodPressure   and MYSQLBp
+Table NutritionRecord      matches in databases BloodPressure   and MYSQLBp
+Table NutritionComposite   matches in databases BloodPressure   and MYSQLBp
+Table Weight               matches in databases BloodPressure   and MYSQLBp
+Table Battery              matches in databases BloodPressure   and MYSQLBp
+Table Measure              matches in databases BloodPressure   and MYSQLBp
+Table MeasureABPM          matches in databases BloodPressure   and MYSQLBp
+Table DrugHistory          matches in databases BloodPressure   and MYSQLBp
+Table Bank                 matches in databases Expenditure     and MYSQL
+Table PaymentSource        matches in databases Expenditure     and MYSQL
+Table SpendData            matches in databases Expenditure     and MYSQL
+Processed 23 pages for database 'BloodPressure', file 'BloodPressure_log' on file 5.
+BACKUP LOG successfully processed 23 pages in 0.014 seconds (12.834 MB/sec).
+Processed 54 pages for database 'Expenditure', file 'Expenditure_log' on file 5.
+BACKUP LOG successfully processed 54 pages in 0.024 seconds (17.578 MB/sec).
+
+C:\Windows\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 15-Sep-18 22:15:00
+15-Sep-18 22:15:01.173  0.43 Copied   0 row(s) of table Bank                 from database Expenditure     to MYSQL
+15-Sep-18 22:15:01.610  0.02 Copied   0 row(s) of table Bank                 from database MYSQL           to Expenditure
+15-Sep-18 22:15:01.703  0.04 Copied   0 row(s) of table PaymentSource        from database Expenditure     to MYSQL
+15-Sep-18 22:15:01.743  0.02 Copied   0 row(s) of table PaymentSource        from database MYSQL           to Expenditure
+15-Sep-18 22:15:01.837  0.83 Copied   7 row(s) of table SpendData            from database Expenditure     to MYSQL
+15-Sep-18 22:15:02.667  0.62 Copied   0 row(s) of table SpendData            from database MYSQL           to Expenditure
+15-Sep-18 22:15:03.383  0.09 Copied   0 row(s) of table NutritionSources     from database BloodPressure   to MYSQLBp
+15-Sep-18 22:15:03.473  0.02 Copied   0 row(s) of table NutritionSources     from database MYSQLBp         to BloodPressure
+15-Sep-18 22:15:03.553  0.03 Copied   0 row(s) of table NutritionTypes       from database BloodPressure   to MYSQLBp
+15-Sep-18 22:15:03.583  0.02 Copied   0 row(s) of table NutritionTypes       from database MYSQLBp         to BloodPressure
+15-Sep-18 22:15:03.680  0.10 Copied   0 row(s) of table NutritionDetail      from database BloodPressure   to MYSQLBp
+15-Sep-18 22:15:03.777  0.06 Copied   0 row(s) of table NutritionDetail      from database MYSQLBp         to BloodPressure
+15-Sep-18 22:15:03.900  0.52 Copied   5 row(s) of table NutritionEvent       from database BloodPressure   to MYSQLBp
+15-Sep-18 22:15:04.420  0.48 Copied   0 row(s) of table NutritionEvent       from database MYSQLBp         to BloodPressure
+15-Sep-18 22:15:04.970  1.20 Copied  15 row(s) of table NutritionRecord      from database BloodPressure   to MYSQLBp
+15-Sep-18 22:15:06.167  2.24 Copied   0 row(s) of table NutritionRecord      from database MYSQLBp         to BloodPressure
+15-Sep-18 22:15:08.480  0.05 Copied   0 row(s) of table NutritionComposite   from database BloodPressure   to MYSQLBp
+15-Sep-18 22:15:08.530  0.02 Copied   0 row(s) of table NutritionComposite   from database MYSQLBp         to BloodPressure
+15-Sep-18 22:15:08.607  0.12 Copied   1 row(s) of table Weight               from database BloodPressure   to MYSQLBp
+15-Sep-18 22:15:08.723  0.10 Copied   0 row(s) of table Weight               from database MYSQLBp         to BloodPressure
+15-Sep-18 22:15:08.880  0.04 Copied   0 row(s) of table Battery              from database BloodPressure   to MYSQLBp
+15-Sep-18 22:15:08.917  0.01 Copied   0 row(s) of table Battery              from database MYSQLBp         to BloodPressure
+15-Sep-18 22:15:08.990  1.98 Copied  18 row(s) of table Measure              from database BloodPressure   to MYSQLBp
+15-Sep-18 22:15:10.967  2.80 Copied   0 row(s) of table Measure              from database MYSQLBp         to BloodPressure
+15-Sep-18 22:15:13.840  0.04 Copied   0 row(s) of table MeasureABPM          from database BloodPressure   to MYSQLBp
+15-Sep-18 22:15:13.883  0.02 Copied   0 row(s) of table MeasureABPM          from database MYSQLBp         to BloodPressure
+15-Sep-18 22:15:13.970  0.04 Copied   0 row(s) of table DrugHistory          from database BloodPressure   to MYSQLBp
+15-Sep-18 22:15:14.07  0.02 Copied   0 row(s) of table DrugHistory          from database MYSQLBp         to BloodPressure
+Table NutritionSources     matches in databases BloodPressure   and MYSQLBp
+Table NutritionTypes       matches in databases BloodPressure   and MYSQLBp
+Table NutritionDetail      matches in databases BloodPressure   and MYSQLBp
+Table NutritionEvent       matches in databases BloodPressure   and MYSQLBp
+Table NutritionRecord      matches in databases BloodPressure   and MYSQLBp
+Table NutritionComposite   matches in databases BloodPressure   and MYSQLBp
+Table Weight               matches in databases BloodPressure   and MYSQLBp
+Table Battery              matches in databases BloodPressure   and MYSQLBp
+Table Measure              matches in databases BloodPressure   and MYSQLBp
+Table MeasureABPM          matches in databases BloodPressure   and MYSQLBp
+Table DrugHistory          matches in databases BloodPressure   and MYSQLBp
+Table Bank                 matches in databases Expenditure     and MYSQL
+Table PaymentSource        matches in databases Expenditure     and MYSQL
+Table SpendData            matches in databases Expenditure     and MYSQL
+Processed 29 pages for database 'BloodPressure', file 'BloodPressure_log' on file 6.
+BACKUP LOG successfully processed 29 pages in 0.015 seconds (14.843 MB/sec).
+Processed 87 pages for database 'Expenditure', file 'Expenditure_log' on file 6.
+BACKUP LOG successfully processed 87 pages in 0.027 seconds (25.173 MB/sec).
+
+C:\Windows\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 16-Sep-18 22:15:01
+16-Sep-18 22:15:01.257  0.26 Copied   0 row(s) of table Bank                 from database Expenditure     to MYSQL
+16-Sep-18 22:15:01.517  0.02 Copied   0 row(s) of table Bank                 from database MYSQL           to Expenditure
+16-Sep-18 22:15:01.593  0.04 Copied   0 row(s) of table PaymentSource        from database Expenditure     to MYSQL
+16-Sep-18 22:15:01.630  0.01 Copied   0 row(s) of table PaymentSource        from database MYSQL           to Expenditure
+16-Sep-18 22:15:01.700  0.55 Copied   2 row(s) of table SpendData            from database Expenditure     to MYSQL
+16-Sep-18 22:15:02.253  0.50 Copied   0 row(s) of table SpendData            from database MYSQL           to Expenditure
+16-Sep-18 22:15:02.823  0.09 Copied   0 row(s) of table NutritionSources     from database BloodPressure   to MYSQLBp
+16-Sep-18 22:15:02.917  0.01 Copied   0 row(s) of table NutritionSources     from database MYSQLBp         to BloodPressure
+16-Sep-18 22:15:02.980  0.03 Copied   0 row(s) of table NutritionTypes       from database BloodPressure   to MYSQLBp
+16-Sep-18 22:15:03.07  0.01 Copied   0 row(s) of table NutritionTypes       from database MYSQLBp         to BloodPressure
+16-Sep-18 22:15:03.070  0.08 Copied   0 row(s) of table NutritionDetail      from database BloodPressure   to MYSQLBp
+16-Sep-18 22:15:03.150  0.05 Copied   0 row(s) of table NutritionDetail      from database MYSQLBp         to BloodPressure
+16-Sep-18 22:15:03.250  0.48 Copied   5 row(s) of table NutritionEvent       from database BloodPressure   to MYSQLBp
+16-Sep-18 22:15:03.727  0.37 Copied   0 row(s) of table NutritionEvent       from database MYSQLBp         to BloodPressure
+16-Sep-18 22:15:04.147  0.94 Copied  15 row(s) of table NutritionRecord      from database BloodPressure   to MYSQLBp
+16-Sep-18 22:15:05.087  1.84 Copied   0 row(s) of table NutritionRecord      from database MYSQLBp         to BloodPressure
+16-Sep-18 22:15:06.980  0.03 Copied   0 row(s) of table NutritionComposite   from database BloodPressure   to MYSQLBp
+16-Sep-18 22:15:07.010  0.01 Copied   0 row(s) of table NutritionComposite   from database MYSQLBp         to BloodPressure
+16-Sep-18 22:15:07.073  0.12 Copied   1 row(s) of table Weight               from database BloodPressure   to MYSQLBp
+16-Sep-18 22:15:07.190  0.07 Copied   0 row(s) of table Weight               from database MYSQLBp         to BloodPressure
+16-Sep-18 22:15:07.310  0.04 Copied   0 row(s) of table Battery              from database BloodPressure   to MYSQLBp
+16-Sep-18 22:15:07.350  0.01 Copied   0 row(s) of table Battery              from database MYSQLBp         to BloodPressure
+16-Sep-18 22:15:07.413  1.72 Copied  20 row(s) of table Measure              from database BloodPressure   to MYSQLBp
+16-Sep-18 22:15:09.130  2.18 Copied   0 row(s) of table Measure              from database MYSQLBp         to BloodPressure
+16-Sep-18 22:15:11.370  0.04 Copied   0 row(s) of table MeasureABPM          from database BloodPressure   to MYSQLBp
+16-Sep-18 22:15:11.407  0.02 Copied   0 row(s) of table MeasureABPM          from database MYSQLBp         to BloodPressure
+16-Sep-18 22:15:11.473  0.03 Copied   0 row(s) of table DrugHistory          from database BloodPressure   to MYSQLBp
+16-Sep-18 22:15:11.507  0.01 Copied   0 row(s) of table DrugHistory          from database MYSQLBp         to BloodPressure
+Table NutritionSources     matches in databases BloodPressure   and MYSQLBp
+Table NutritionTypes       matches in databases BloodPressure   and MYSQLBp
+Table NutritionDetail      matches in databases BloodPressure   and MYSQLBp
+Table NutritionEvent       matches in databases BloodPressure   and MYSQLBp
+Table NutritionRecord      matches in databases BloodPressure   and MYSQLBp
+Table NutritionComposite   matches in databases BloodPressure   and MYSQLBp
+Table Weight               matches in databases BloodPressure   and MYSQLBp
+Table Battery              matches in databases BloodPressure   and MYSQLBp
+Table Measure              matches in databases BloodPressure   and MYSQLBp
+Table MeasureABPM          matches in databases BloodPressure   and MYSQLBp
+Table DrugHistory          matches in databases BloodPressure   and MYSQLBp
+Table Bank                 matches in databases Expenditure     and MYSQL
+Table PaymentSource        matches in databases Expenditure     and MYSQL
+Table SpendData            matches in databases Expenditure     and MYSQL
+Processed 41800 pages for database 'BloodPressure', file 'BloodPressure' on file 1.
+Processed 3 pages for database 'BloodPressure', file 'BloodPressure_log' on file 1.
+BACKUP DATABASE successfully processed 41803 pages in 2.217 seconds (147.309 MB/sec).
+Processed 704 pages for database 'Expenditure', file 'Expenditure' on file 1.
+Processed 4 pages for database 'Expenditure', file 'Expenditure_log' on file 1.
+BACKUP DATABASE successfully processed 708 pages in 0.081 seconds (68.238 MB/sec).
+
+C:\Windows\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 17-Sep-18 22:15:01
+17-Sep-18 22:15:01.237  1.31 Copied   0 row(s) of table Bank                 from database Expenditure     to MYSQL
+17-Sep-18 22:15:02.547  0.01 Copied   0 row(s) of table Bank                 from database MYSQL           to Expenditure
+17-Sep-18 22:15:02.613  0.04 Copied   0 row(s) of table PaymentSource        from database Expenditure     to MYSQL
+17-Sep-18 22:15:02.650  0.01 Copied   0 row(s) of table PaymentSource        from database MYSQL           to Expenditure
+17-Sep-18 22:15:02.720  0.65 Copied   4 row(s) of table SpendData            from database Expenditure     to MYSQL
+17-Sep-18 22:15:03.373  0.50 Copied   0 row(s) of table SpendData            from database MYSQL           to Expenditure
+17-Sep-18 22:15:03.957  0.09 Copied   0 row(s) of table NutritionSources     from database BloodPressure   to MYSQLBp
+17-Sep-18 22:15:04.043  0.02 Copied   0 row(s) of table NutritionSources     from database MYSQLBp         to BloodPressure
+17-Sep-18 22:15:04.113  0.04 Copied   0 row(s) of table NutritionTypes       from database BloodPressure   to MYSQLBp
+17-Sep-18 22:15:04.150  0.01 Copied   0 row(s) of table NutritionTypes       from database MYSQLBp         to BloodPressure
+17-Sep-18 22:15:04.220  0.08 Copied   0 row(s) of table NutritionDetail      from database BloodPressure   to MYSQLBp
+17-Sep-18 22:15:04.303  0.06 Copied   0 row(s) of table NutritionDetail      from database MYSQLBp         to BloodPressure
+17-Sep-18 22:15:04.420  0.45 Copied   8 row(s) of table NutritionEvent       from database BloodPressure   to MYSQLBp
+17-Sep-18 22:15:04.873  0.40 Copied   0 row(s) of table NutritionEvent       from database MYSQLBp         to BloodPressure
+17-Sep-18 22:15:05.323  1.04 Copied  15 row(s) of table NutritionRecord      from database BloodPressure   to MYSQLBp
+17-Sep-18 22:15:06.367  1.91 Copied   0 row(s) of table NutritionRecord      from database MYSQLBp         to BloodPressure
+17-Sep-18 22:15:08.330  0.03 Copied   0 row(s) of table NutritionComposite   from database BloodPressure   to MYSQLBp
+17-Sep-18 22:15:08.360  0.02 Copied   0 row(s) of table NutritionComposite   from database MYSQLBp         to BloodPressure
+17-Sep-18 22:15:08.430  0.12 Copied   1 row(s) of table Weight               from database BloodPressure   to MYSQLBp
+17-Sep-18 22:15:08.547  0.08 Copied   0 row(s) of table Weight               from database MYSQLBp         to BloodPressure
+17-Sep-18 22:15:08.677  0.03 Copied   0 row(s) of table Battery              from database BloodPressure   to MYSQLBp
+17-Sep-18 22:15:08.707  0.01 Copied   0 row(s) of table Battery              from database MYSQLBp         to BloodPressure
+17-Sep-18 22:15:08.770  1.67 Copied  20 row(s) of table Measure              from database BloodPressure   to MYSQLBp
+17-Sep-18 22:15:10.440  2.20 Copied   0 row(s) of table Measure              from database MYSQLBp         to BloodPressure
+17-Sep-18 22:15:12.687  0.04 Copied   0 row(s) of table MeasureABPM          from database BloodPressure   to MYSQLBp
+17-Sep-18 22:15:12.723  0.02 Copied   0 row(s) of table MeasureABPM          from database MYSQLBp         to BloodPressure
+17-Sep-18 22:15:12.790  0.03 Copied   0 row(s) of table DrugHistory          from database BloodPressure   to MYSQLBp
+17-Sep-18 22:15:12.823  0.01 Copied   0 row(s) of table DrugHistory          from database MYSQLBp         to BloodPressure
+Table NutritionSources     matches in databases BloodPressure   and MYSQLBp
+Table NutritionTypes       matches in databases BloodPressure   and MYSQLBp
+Table NutritionDetail      matches in databases BloodPressure   and MYSQLBp
+Table NutritionEvent       matches in databases BloodPressure   and MYSQLBp
+Table NutritionRecord      matches in databases BloodPressure   and MYSQLBp
+Table NutritionComposite   matches in databases BloodPressure   and MYSQLBp
+Table Weight               matches in databases BloodPressure   and MYSQLBp
+Table Battery              matches in databases BloodPressure   and MYSQLBp
+Table Measure              matches in databases BloodPressure   and MYSQLBp
+Table MeasureABPM          matches in databases BloodPressure   and MYSQLBp
+Table DrugHistory          matches in databases BloodPressure   and MYSQLBp
+Table Bank                 matches in databases Expenditure     and MYSQL
+Table PaymentSource        matches in databases Expenditure     and MYSQL
+Table SpendData            matches in databases Expenditure     and MYSQL
+Processed 66 pages for database 'BloodPressure', file 'BloodPressure_log' on file 2.
+BACKUP LOG successfully processed 66 pages in 0.016 seconds (32.226 MB/sec).
+Processed 160 pages for database 'Expenditure', file 'Expenditure_log' on file 2.
+BACKUP LOG successfully processed 160 pages in 0.023 seconds (54.347 MB/sec).

@@ -83,6 +83,20 @@ BEGIN
 	RETURN @sql
 END
 GO
+
+IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'dbo.AddCollate') and OBJECTPROPERTY(id, N'IsScalarFunction') = 1)
+	DROP FUNCTION dbo.AddCollate
+GO
+CREATE FUNCTION dbo.AddCollate(@type AS SYSNAME)
+	RETURNS VARCHAR(max)
+AS
+BEGIN
+	IF @type IN ('char', 'varchar', 'text', 'nchar', 'nvarchar', 'ntext') RETURN ' COLLATE DATABASE_DEFAULT'
+	
+	RETURN ''
+END
+GO
+
 IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'dbo.AddCondition') and OBJECTPROPERTY(id, N'IsScalarFunction') = 1)
 	DROP FUNCTION dbo.AddCondition
 GO
@@ -91,7 +105,7 @@ CREATE FUNCTION dbo.AddCondition(
 					@lAlias    AS SYSNAME,
 					@rAlias    AS SYSNAME,
 					@column    AS SYSNAME, 
-					@type1      AS SYSNAME,
+					@type      AS SYSNAME,
 					@indent    AS INT,
 					@namePad   AS INT,
 					@nullable  AS CHAR)
@@ -131,8 +145,8 @@ BEGIN
 	
 	IF @test <> 'IS NULL'
 	BEGIN
-		SET @sql += dbo.rpad(@rName, @namePad, ' ')
-
+		SET @sql += dbo.rpad(@rName, @namePad, ' ') + dbo.AddCollate(@type)
+		
 		IF @nullable = 'Y'
 		BEGIN			
 			IF @test = '<>' 
@@ -172,7 +186,7 @@ BEGIN
 	SET @whereCond = dbo.rpad(@whereCond, 5, ' ')
 	SET @sql += CHAR(13) + 'FROM ' + @from + '.' + @table + ' AS ' + @fromAlias + CHAR(13) + @join + ' ' + @to + '.' + @table + ' AS ' + @toAlias + CHAR(13) + 'ON  '
 	
-	SELECT @clause = COALESCE(@clause + CHAR(13) + 'AND ' + @fromAlias + '.', @fromAlias + '.') + dbo.rpad(dbo.ConvertReserved([Column]), @namePad, ' ') + ' = ' + @toAlias + '.' + dbo.ConvertReserved([Column]) FROM #TableDetails WHERE [Key] ='Y' ORDER BY Id
+	SELECT @clause = COALESCE(@clause + CHAR(13) + 'AND ' + @fromAlias + '.', @fromAlias + '.') + dbo.rpad(dbo.ConvertReserved([Column]), @namePad, ' ') + ' = ' + @toAlias + '.' + dbo.ConvertReserved([Column]) + dbo.AddCollate([Type]) FROM #TableDetails WHERE [Key] ='Y' ORDER BY Id
 
 	SET @sql += @clause
 	SET @sql += CHAR(13) + 'WHERE'
@@ -429,7 +443,7 @@ BEGIN
 			'<>',
 			'N'
 	SET @sql += CHAR(13) + 'IF @@ROWCOUNT = 0 '
-	SET @sql += CHAR(13) + '   PRINT ''Table ' + @table + ' matches in databases ' + dbo.FirstField(@SQLServer, '.', 'N') + ' and ' + dbo.FirstField(@MySQL, '.', 'N') + ''''
+	SET @sql += CHAR(13) + '   PRINT ''Table ' + dbo.rpad(@table, 20, ' ') + ' matches in databases ' + dbo.rpad(dbo.FirstField(@SQLServer, '.', 'N'), 15, ' ') + ' and ' + dbo.FirstField(@MySQL, '.', 'N') + ''''
 	SET @sql += CHAR(13) + 'ELSE' + CHAR(13) + 'BEGIN'
 	SET @clause = 'SELECT'
 	SET @clause += dbo.AddSelectField('Id',        NULL,     '',  5, 20)

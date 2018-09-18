@@ -10,7 +10,7 @@ SELECT
 	[End],
 	Modified,
 	Calories,
-	dbo.CalculateCalories(Fat, Carbohydrate, Protein, Null) AS CalculateCalories,
+	4 * (ISNULL(Carbohydrate, 0) + ISNULL(Protein, 0)) + 9 * ISNULL(Fat, 0) AS CalculateCalories,
 	Protein,
 	Fat,
 	Saturated,
@@ -33,7 +33,7 @@ SELECT
 	NC.Start,
 	MIN(NC.[End])                 AS [End],
 	MIN(NC.Modified)              AS Modified,
-	dbo.CalculateCalories(SUM(Quantity * Fat), SUM(Quantity * Carbohydrate), SUM(Quantity * Protein), SUM(Quantity * NR.ABV / 1000)) AS CalculateCalories,
+	4 * (ISNULL(SUM(Quantity * Carbohydrate), 0) + ISNULL(SUM(Quantity * Protein), 0)) + 9 * ISNULL(SUM(Quantity * Fat), 0) + 56 * ISNULL(SUM(Quantity * NR.ABV / 1000), 0) AS CalculateCalories,
 	SUM(Quantity * Calories)      AS Calories,
 	SUM(Quantity * Protein)       AS Protein,
 	SUM(Quantity * Fat)           AS Fat,
@@ -70,7 +70,7 @@ SELECT
 	Day,
 	Week,
 	Weekday,
-	dbo.WeekStart(EV.Timestamp) AS WeekStart,
+    CAST(DATEADD(D, -DATEPART(w, EV.Timestamp), EV.Timestamp) AS DATE) AS WeekStart,
 	'New'   AS Type,
 	Description,
 	Comment,
@@ -122,7 +122,7 @@ SELECT
 	Day,
 	Week,
 	Weekday,
-	dbo.WeekStart(Timestamp)             AS WeekStart,
+    CAST(DATEADD(D, -DATEPART(w, timestamp), Timestamp) AS DATE) AS WeekStart,
 	'Old'   AS Type,
 	Description,
 	NULL AS Comment,
@@ -130,7 +130,7 @@ SELECT
 	NULL AS Quantity,
 	WT.Kilos,
 	CAST(Calories     AS INT)            AS Calories,
-	CAST(Protein      AS DECIMAL(12, 1)) AS Protein,
+	CAST(Fat          AS DECIMAL(12, 1)) AS Protein,
 	CAST(Fat          AS DECIMAL(12, 1)) AS Fat,
 	CAST(Saturated    AS DECIMAL(12, 1)) AS Saturated,
 	CAST(Carbohydrate AS DECIMAL(12, 1)) AS Carbohydrate,
@@ -148,27 +148,29 @@ GO
 CREATE VIEW NutritionEventsDaily
 AS
 SELECT
-	Year,
-	Month,
-	Day,
-	MIN(WeekStart)               AS WeekStart,
-	CAST(MIN(Timestamp) AS DATE) AS Date,
-	MIN(WeekDay)                 AS Weekday,
-	MIN(Kilos)                   AS Kilos,
-	dbo.BMI(MIN(Kilos), NULL)    AS BMI,
-	SUM(Calories)                AS Calories,
-	SUM(Protein)                 AS Protein,
-	SUM(Fat)                     AS Fat,
-	SUM(Saturated)               AS Saturated,
-	SUM(Carbohydrate)            AS Carbohydrate,
-	SUM(Sugar)                   AS Sugar,
-	SUM(Fibre)                   AS Fibre,
-	SUM(Cholesterol)             AS Cholesterol,
-	SUM(Salt)                    AS Salt,
-	SUM(Units)                   AS Units,
-	dbo.CalculateCalories(SUM(Fat), SUM(Carbohydrate), SUM(Protein), SUM(Units)) AS CalculatedCalories
-FROM NutritionEventSummary
-GROUP BY Year, Month, Day
+	J1.*,
+	WT.Kilos
+FROM (
+	SELECT
+		Year,
+		Month,
+		Day,
+		CAST(MIN(Timestamp) AS DATE) AS Date,
+		MIN(WeekDay)                 AS Weekday,
+		SUM(Calories)                AS Calories,
+		SUM(Protein)                 AS Protein,
+		SUM(Fat)                     AS Fat,
+		SUM(Saturated)               AS Saturated,
+		SUM(Carbohydrate)            AS Carbohydrate,
+		SUM(Sugar)                   AS Sugar,
+		SUM(Fibre)                   AS Fibre,
+		SUM(Cholesterol)             AS Cholesterol,
+		SUM(Salt)                    AS Salt,
+		SUM(Units)                   AS Units
+	FROM NutritionEventSummary
+	GROUP BY Year, Month, Day) J1
+LEFT JOIN Weight               WT
+ON J1.Date = WT.Date
 GO
 DROP VIEW NutritionEventsWeekly
 GO
@@ -177,8 +179,6 @@ AS
 SELECT 
 	J1.*,
 	WT.Kilos,
-	dbo.BMI(WT.Kilos, NULL)                     AS BMI,
-	Days * 2500 - Calories                      AS Remaining,
 	CAST(Calories     / Days AS INT)            AS DailyCalories,
 	CAST(Protein      / Days AS NUMERIC(10, 1)) AS DailyProtein,
 	CAST(Fat          / Days AS NUMERIC(10, 1)) AS DailyFat,
@@ -188,13 +188,12 @@ SELECT
 	CAST(Fibre        / Days AS NUMERIC(10, 1)) AS DailyFibre,
 	CAST(Cholesterol  / Days AS NUMERIC(10, 1)) AS DailyCholesterol,
 	CAST(Salt         / Days AS NUMERIC(10, 1)) AS DailySalt,
-	CAST(Units        / Days AS NUMERIC(10, 1)) AS DailyUnits,
-	CAST(dbo.CalculateCalories(Fat, Carbohydrate, Protein, Units) / Days AS DECIMAL) AS EstimatedCalories
+	CAST(Units        / Days AS NUMERIC(10, 1)) AS DailyUnits
 FROM (
 	SELECT
-		DATEPART(year, WeekStart)                       AS Year,
-		DATEPART(week, WeekStart)                       AS Week,
-		WeekStart,
+		Year,
+		Week,
+		CAST(MIN(Timestamp) AS DATE) AS Date,
 		DATEDIFF(D, MIN(Timestamp), MAX(Timestamp)) + 1 AS Days,
 		SUM(Calories)                                   AS Calories,
 		SUM(Protein)                                    AS Protein,
@@ -205,14 +204,48 @@ FROM (
 		SUM(Fibre)                                      AS Fibre,	
 		SUM(Cholesterol)                                AS Cholesterol,
 		SUM(Salt)                                       AS Salt,
-		SUM(Units)                                      AS Units,
-		MIN(Kilos)                                      AS MinKilos,
-		CAST(AVG(Kilos) AS NUMERIC(10, 1))              AS AvgKilos,
-		MAX(Kilos)                                      AS MaxKilos
+		SUM(Units)                                      AS Units
+	FROM NutritionEventSummary
+	GROUP BY Year, Week) J1
+LEFT JOIN Weight WT
+ON J1.Date = WT.Date
+GO
+DROP VIEW NutritionEventsWeeklyNew
+GO
+CREATE VIEW NutritionEventsWeeklyNew
+AS
+SELECT 
+	J1.*,
+	WT.Kilos,
+	CAST(Calories     / Days AS INT)            AS DailyCalories,
+	CAST(Protein      / Days AS NUMERIC(10, 1)) AS DailyProtein,
+	CAST(Fat          / Days AS NUMERIC(10, 1)) AS DailyFat,
+	CAST(Saturated    / Days AS NUMERIC(10, 1)) AS DailySaturated,
+	CAST(Carbohydrate / Days AS NUMERIC(10, 1)) AS DailyCarbohydrate,
+	CAST(Sugar        / Days AS NUMERIC(10, 1)) AS DailySugar,
+	CAST(Fibre        / Days AS NUMERIC(10, 1)) AS DailyFibre,
+	CAST(Cholesterol  / Days AS NUMERIC(10, 1)) AS DailyCholesterol,
+	CAST(Salt         / Days AS NUMERIC(10, 1)) AS DailySalt,
+	CAST(Units        / Days AS NUMERIC(10, 1)) AS DailyUnits
+FROM (
+	SELECT
+		WeekStart,
+		CAST(MIN(Timestamp) AS DATE) AS Date,
+		DATEDIFF(D, MIN(Timestamp), MAX(Timestamp)) + 1 AS Days,
+		SUM(Calories)                                   AS Calories,
+		SUM(Protein)                                    AS Protein,
+		SUM(Fat)                                        AS Fat,
+		SUM(Saturated)                                  AS Saturated,
+		SUM(Carbohydrate)                               AS Carbohydrate,
+		SUM(Sugar)                                      AS Sugar,
+		SUM(Fibre)                                      AS Fibre,	
+		SUM(Cholesterol)                                AS Cholesterol,
+		SUM(Salt)                                       AS Salt,
+		SUM(Units)                                      AS Units
 	FROM NutritionEventSummary
 	GROUP BY WeekStart) J1
 LEFT JOIN Weight WT
-ON J1.WeekStart = WT.Date
+ON J1.Date = WT.Date
 GO
 DROP VIEW NutritionRecordFull
 GO
@@ -277,7 +310,7 @@ FROM (
 		Source,
 		Start,
 		Calories,
-		dbo.CalculateCalories(Fat, Carbohydrate, Protein, ABV / 1000) AS CalculatedCalories,
+		4 * (ISNULL(Protein, 0) + ISNULL(Carbohydrate, 0)) + 9 * ISNULL(Fat, 0) + 56 * ISNULL(ABV, 0) / 1000 AS CalculatedCalories,
 		Protein,
 		Fat,
 		Saturated,
@@ -289,5 +322,68 @@ FROM (
 		56 * ABV / 1000 AS AlcoholCalaries,
 		Simple
 	FROM BloodPressure.dbo.NutritionDetail) AS D
-	WHERE D.Calories <> 0
+GO
+DROP VIEW NutritionEventSummaryNew
+GO
+
+CREATE VIEW NutritionEventSummaryNew
+AS
+SELECT
+	EV.Timestamp,
+	CAST(EV.Timestamp AS DATE)                           AS Date,
+	MIN(Year)                                            AS Year,
+	MIN(Month)                                           AS Month,
+	MIN(Day)                                             AS Day,
+	MIN(Week)                                            AS Week,
+	MIN(Weekday)                                         AS Weekday,
+	'New'                                                AS Type,
+	MIN(Description)                                     AS Description,
+	MIN(Comment)                                         AS Comment,
+	COUNT(*)                                             AS Items,
+	SUM(Quantity)                                        AS Quantity,
+	CAST(SUM(Quantity * Calories)     AS INT)            AS Calories,
+	CAST(SUM(Quantity * Protein)      AS DECIMAL(12, 1)) AS Protein,
+	CAST(SUM(Quantity * Fat)          AS DECIMAL(12, 1)) AS Fat,
+	CAST(SUM(Quantity * Saturated)    AS DECIMAL(12, 1)) AS Saturated,
+	CAST(SUM(Quantity * Carbohydrate) AS DECIMAL(12, 1)) AS Carbohydrate,
+	CAST(SUM(Quantity * Sugar)        AS DECIMAL(12, 1)) AS Sugar,
+	CAST(SUM(Quantity * Fibre)        AS DECIMAL(12, 1)) AS Fibre,
+	CAST(SUM(Quantity * Cholesterol)  AS DECIMAL(12, 1)) AS Cholesterol,
+	CAST(SUM(Quantity * Salt)         AS DECIMAL(12, 1)) AS Salt,
+	CAST(SUM(Quantity * NR.ABV / 1000)        AS DECIMAL(12, 1)) AS Units
+FROM NutritionEvent     EV
+LEFT JOIN NutritionRecord NR
+ON EV.Timestamp = NR.Timestamp
+LEFT JOIN NutritionItem  NI
+ON  NR.Item   = NI.Item
+AND NR.Source = NI.Source
+AND NR.Timestamp BETWEEN NI.Start AND NI.[End]
+AND (NR.IsComposite = 'Y' AND NI.Simple = 'C' OR ISNULL(NR.IsComposite, 'N') = 'N' AND NI.Simple <> 'C')
+GROUP BY EV.Timestamp
+UNION
+SELECT
+	Timestamp,
+	CAST(Timestamp AS DATE) AS Date,
+	Year,
+	Month,
+	Day,
+	Week,
+	Weekday,
+	'Old'   AS Type,
+	Description,
+	NULL AS Comment,
+	NULL AS Items,
+	NULL AS Quantity,
+	CAST(Calories     AS INT)            AS Calories,
+	CAST(Fat          AS DECIMAL(12, 1)) AS Protein,
+	CAST(Fat          AS DECIMAL(12, 1)) AS Fat,
+	CAST(Saturated    AS DECIMAL(12, 1)) AS Saturated,
+	CAST(Carbohydrate AS DECIMAL(12, 1)) AS Carbohydrate,
+	CAST(Sugar        AS DECIMAL(12, 1)) AS Sugar,
+	CAST(Fibre        AS DECIMAL(12, 1)) AS Fibre,
+	CAST(Cholesterol  AS DECIMAL(12, 1)) AS Cholesterol,
+	CAST(Salt         AS DECIMAL(12, 1)) AS Salt,
+	CAST(Units        AS DECIMAL(12, 1)) AS Units
+FROM NutritionHistorical
+
 GO

@@ -82,7 +82,7 @@ BEGIN
 			SET @list  = 'Found ' + CAST(@count AS VARCHAR) + ' rows in table ' + @table + ' of ' +  dbo.FirstField(@source, '.', 'N') + ' not in ' + dbo.FirstField(@target, '.', 'N')
 		ELSE
 		BEGIN
-			SET @list  = 'Copied ' + CAST(@count AS VARCHAR) + ' row(s) of table ' + @table + ' from database ' + dbo.FirstField(@source, '.', 'N') + ' to ' + dbo.FirstField(@target, '.', 'N')
+			SET @list  = 'Copied ' + dbo.lpad(CAST(@count AS VARCHAR), 3, ' ') + ' row(s) of table ' + dbo.rpad(@table, 20, ' ') + ' from database ' + dbo.rpad(dbo.FirstField(@source, '.', 'N'), 15, ' ') + ' to ' + dbo.FirstField(@target, '.', 'N')
 			
 			IF @batches <> 0 AND @batches > 1 SET @list += ' in ' + CAST(@batches AS VARCHAR) + ' batches'
 		END
