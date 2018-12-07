@@ -9,9 +9,13 @@ BEGIN
 	SET NOCOUNT ON;
 	
 	BEGIN TRY
-		EXEC SynchronizeTable @SQLServer, @MySQL, 'Bank',          @mode = @mode, @batch = @batch
-		EXEC SynchronizeTable @SQLServer, @MySQL, 'PaymentSource', @mode = @mode, @batch = @batch
-		EXEC SynchronizeTable @SQLServer, @MySQL, 'SpendData',     @mode = @mode, @batch = @batch, @key = 'Timestamp'
+		EXEC SynchronizeTable @SQLServer, @MySQL, 'Bank',                @mode = @mode, @batch = @batch
+		EXEC SynchronizeTable @SQLServer, @MySQL, 'BankTransactionType', @mode = @mode, @batch = @batch
+		EXEC SynchronizeTable @SQLServer, @MySQL, 'AccountUsage',        @mode = @mode, @batch = @batch
+		EXEC SynchronizeTable @SQLServer, @MySQL, 'Account',             @mode = @mode, @batch = @batch
+		EXEC SynchronizeTable @SQLServer, @MySQL, 'PaymentSource',       @mode = @mode, @batch = @batch
+		EXEC SynchronizeTable @SQLServer, @MySQL, 'SpendData',           @mode = @mode, @batch = @batch, @key = 'Timestamp'
+		EXEC SynchronizeTable @SQLServer, @MySQL, 'AccountTransaction',  @mode = @mode, @batch = @batch, @key = 'TxnKey'
 	END TRY
 	BEGIN CATCH
 		EXEC ReportError

@@ -36,22 +36,22 @@ BEGIN
 	IF @toAndFrom = 'Y' SET @allowIdent = 'N' ELSE SET @allowIdent = 'Y'
 	
 	BEGIN TRY
-	EXEC LoadTableDetails  @SQLServer, @table, @key, @allowIdentity = @allowIdent
+		EXEC LoadTableDetails  @SQLServer, @table, @key, @allowIdentity = @allowIdent
 			
-	SET @SQLServer += '.dbo'
-	SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
-	EXEC SynchronizeTableByFields @SQLServer, @MySQL, @table, @mode, @batch
+		SET @SQLServer += '.dbo'
+		SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
+		EXEC SynchronizeTableByFields @SQLServer, @MySQL, @table, @mode, @batch
 	
-	IF @toAndFrom = 'Y' 
-	BEGIN
-		SET TRANSACTION ISOLATION LEVEL READ COMMITTED
-		EXEC SynchronizeTableByFields @MySQL, @SQLServer, @table, @mode, @batch
-	END
+		IF @toAndFrom = 'Y' 
+		BEGIN
+			SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+			EXEC SynchronizeTableByFields @MySQL, @SQLServer, @table, @mode, @batch
+		END
 	END TRY
 	BEGIN CATCH
 		DECLARE @msg AS VARCHAR(max)
 		
-		SET @msg = 'On table ' + @table
+		SET @msg = 'Synchronizing table ' + @table
 		EXEC ReportError @msg
 		RAISERROR ('Error reported', 16, 1);
 	END CATCH

@@ -329,7 +329,34 @@ BEGIN
 	RETURN
 END
 GO
+IF EXISTS (SELECT '1' FROM sysobjects WHERE name = 'ReRaiseError' AND type ='p')
+BEGIN
+	DROP Procedure dbo.ReRaiseError
+END
+GO
+CREATE PROCEDURE ReRaiseError
+AS 
+BEGIN
+	IF ERROR_NUMBER() IS NULL RETURN ;
 
+	DECLARE	@message   NVARCHAR(4000)
+	DECLARE @number    INT
+	DECLARE @severity  INT
+	DECLARE @state     INT
+	DECLARE @line      INT
+	DECLARE @procedure NVARCHAR(200)
+
+	SELECT  
+		@number    = ERROR_NUMBER(), 
+		@severity  = ERROR_SEVERITY(),
+		@state     = ERROR_STATE(),
+		@line      = ERROR_LINE(),
+		@procedure = ISNULL(ERROR_PROCEDURE(), '-'),
+		@message   = N'Error %d, Level %d, State %d, Procedure %s, Line %d, Message: ' + ERROR_MESSAGE() 
+
+	RAISERROR (@message, @severity, 1, @number,  @severity, @state, @procedure, @line);
+END
+GO
 IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'dbo.ReportError') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
 	DROP PROCEDURE dbo.ReportError
 GO

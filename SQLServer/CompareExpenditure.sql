@@ -11,9 +11,11 @@ BEGIN
 	SET NOCOUNT ON;
 	
 	BEGIN TRY
-		EXEC CompareTable @SQLServer, @MySQL, 'Bank',          @update = @update
-		EXEC CompareTable @SQLServer, @MySQL, 'PaymentSource', @update = @update
-		EXEC CompareTable @SQLServer, @MySQL, 'SpendData',     @update = @update, @key = 'Timestamp'
+		EXEC CompareTable @SQLServer, @MySQL, 'Bank',               @update = @update
+		EXEC CompareTable @SQLServer, @MySQL, 'Account',            @update = @update
+		EXEC CompareTable @SQLServer, @MySQL, 'PaymentSource',      @update = @update
+		EXEC CompareTable @SQLServer, @MySQL, 'SpendData',          @update = @update, @key = 'Timestamp'
+		EXEC CompareTable @SQLServer, @MySQL, 'AccountTransaction', @update = @update, @key = 'TxnKey'
 	END TRY
 	BEGIN CATCH
 		EXEC ReportError

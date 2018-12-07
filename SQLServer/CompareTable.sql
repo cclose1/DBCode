@@ -196,57 +196,7 @@ BEGIN
 	SET @sql += @clause
 END
 GO
-IF EXISTS (SELECT '1' FROM sysobjects WHERE name = 'ReRaiseError' AND type ='p')
-BEGIN
-	DROP Procedure dbo.ReRaiseError
-END
-GO
-CREATE PROCEDURE ReRaiseError
-AS 
-BEGIN
-	IF ERROR_NUMBER() IS NULL RETURN ;
 
-	DECLARE	@message   NVARCHAR(4000)
-	DECLARE @number    INT
-	DECLARE @severity  INT
-	DECLARE @state     INT
-	DECLARE @line      INT
-	DECLARE @procedure NVARCHAR(200)
-
-	SELECT  
-		@number    = ERROR_NUMBER(), 
-		@severity  = ERROR_SEVERITY(),
-		@state     = ERROR_STATE(),
-		@line      = ERROR_LINE(),
-		@procedure = ISNULL(ERROR_PROCEDURE(), '-'),
-		@message   = N'Error %d, Level %d, State %d, Procedure %s, Line %d, Message: ' + ERROR_MESSAGE() 
-
-	RAISERROR (@message, @severity, 1, @number,  @severity, @state, @procedure, @line);
-END
-GO
-IF EXISTS (SELECT '1' FROM sysobjects WHERE name = 'ReportError' AND type ='p')
-BEGIN
-	DROP Procedure dbo.ReportError
-END
-GO
-CREATE PROCEDURE ReportError
-AS 
-BEGIN
-	IF ERROR_NUMBER() IS NULL RETURN ;
-
-	IF ERROR_MESSAGE() = 'Error reported' RETURN
-	
-	DECLARE	@message   NVARCHAR(max)
-
-	SELECT @message =
-		'Error '      + CAST(ERROR_NUMBER()   AS VARCHAR)   + 
-		' Severity '  + CAST(ERROR_SEVERITY() AS VARCHAR) + 
-		' State '     + CAST(ERROR_STATE()    AS VARCHAR)    +
-		' Procedure ' + ISNULL(ERROR_PROCEDURE(), '-') + '(' + CAST(ERROR_LINE() AS VARCHAR) + ')' +
-		' Message '   + ERROR_MESSAGE()
-	PRINT @message
-END
-GO
 IF EXISTS (SELECT '1' FROM sysobjects WHERE name = 'LoadTableDetails' AND type ='p')
 BEGIN
 	DROP Procedure dbo.LoadTableDetails
@@ -477,6 +427,15 @@ BEGIN
 	SET @sql += CHAR(13) + 'END'
 	
 	IF @printSQL = 'Y' EXEC PrintSQL @sql
-	
-	EXEC (@sql)
+
+	BEGIN TRY
+		EXEC (@sql)
+	END TRY
+	BEGIN CATCH
+		DECLARE @msg AS VARCHAR(max)
+		
+		SET @msg = 'Comparing table ' + @table
+		EXEC ReportError @msg
+		RAISERROR ('Error reported', 16, 1);
+	END CATCH	
 END

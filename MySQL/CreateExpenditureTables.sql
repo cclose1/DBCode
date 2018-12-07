@@ -1,5 +1,55 @@
-DROP VIEW IF EXISTS Spend;
 
+DROP VIEW IF EXISTS Spend;
+DROP VIEW IF EXISTS SpendTransactions;
+DROP VIEW IF EXISTS BankTransactions;
+
+DROP TABLE IF EXISTS Currency;
+
+CREATE TABLE Currency (
+	Designation VARCHAR(10) NOT NULL,
+	Symbol      VARCHAR(3)  NULL,
+	Description VARCHAR(1000),
+	PRIMARY KEY (Designation ASC)
+);
+
+DROP TABLE IF EXISTS Bank;
+
+CREATE TABLE Bank(
+	Code          VARCHAR(20) NOT NULL,
+	Bank          VARCHAR(20) NOT NULL,
+	SortCode      VARCHAR(8)  NOT NULL,
+	PRIMARY KEY (Code  ASC)
+); 
+
+DROP TABLE IF EXISTS BankTransactionType;
+
+CREATE TABLE BankTransactionType(
+	Code    VARCHAR(20) NOT NULL,
+	Created DATETIME    DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (Code  ASC)
+);
+
+DROP TABLE IF EXISTS AccountUsage;
+
+CREATE TABLE AccountUsage(
+	Code    VARCHAR(20) NOT NULL,
+	Created DATETIME    DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (Code  ASC)
+);
+
+DROP TABLE IF EXISTS Account;
+
+CREATE TABLE Account(
+	Code          VARCHAR(4)  NOT NULL,
+	Bank          VARCHAR(4)  NOT NULL,
+	AccountNumber VARCHAR(30) NULL,
+	Type          VARCHAR(10) NOT NULL,
+	CardNumber    VARCHAR(20) NULL,
+	CardType      VARCHAR(20) NULL,
+	Owner         VARCHAR(20) NULL,
+	Description   VARCHAR(50) NULL,
+	PRIMARY KEY (Code  ASC)
+); 
 DROP TABLE IF EXISTS SpendData;
 
 CREATE TABLE SpendData (
@@ -19,6 +69,57 @@ CREATE TABLE SpendData (
   BankCorrection decimal(10,2) DEFAULT NULL,
   PRIMARY KEY (SeqNo)
 );
+
+DELIMITER //
+
+CREATE TRIGGER InsSpendData BEFORE INSERT ON SpendData
+FOR EACH ROW
+BEGIN
+	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
+END;//
+
+CREATE TRIGGER UpdSpendData BEFORE UPDATE ON SpendData
+FOR EACH ROW
+BEGIN
+	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
+END;//
+
+DELIMITER ;
+
+DROP TABLE IF EXISTS AccountTransaction;
+
+CREATE TABLE AccountTransaction(
+	SeqNo       int(11)        NOT NULL AUTO_INCREMENT,
+	Modified    DATETIME       NULL, 
+	Timestamp   DATETIME       NULL,
+	Completed   DATETIME       NULL,
+	Account     VARCHAR(4),
+	Amount      decimal(18, 6) NULL,
+	Fee         decimal(18, 6) NULL,
+	Currency    VARCHAR(4),
+    Type        VARCHAR(15),
+    `Usage`     VARCHAR(10),
+	Description VARCHAR(1000),
+	CONSTRAINT PKAccountTransaction PRIMARY KEY CLUSTERED(
+		SeqNo  ASC)
+);
+
+DELIMITER //
+
+CREATE TRIGGER InsAccountTransaction BEFORE INSERT ON AccountTransaction
+FOR EACH ROW
+BEGIN
+	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
+END;//
+
+CREATE TRIGGER UpdAccountTransaction BEFORE UPDATE ON AccountTransaction
+FOR EACH ROW
+BEGIN
+	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
+END;//
+
+DELIMITER ;
+
 
 CREATE VIEW Spend AS 
 SELECT 
@@ -54,19 +155,52 @@ SELECT
 	IFNULL(BankCorrection, '') AS BankCorrection
 from SpendData;
 
+CREATE VIEW BankTransactions
+AS
+SELECT
+	TX.SeqNo,
+	TX.Timestamp,
+    TX.Completed,
+	BK.Bank,
+	BK.SortCode,
+	TX.Account,
+    TX.Fee,
+	AC.AccountNumber,
+	AC.CardNumber,
+	TX.Amount,
+	TX.Currency,
+    TX.Type,
+    TX.`Usage`,
+	TX.Description
+FROM AccountTransaction TX
+LEFT JOIN Account       AC
+ON   TX.Account       = AC.Code
+LEFT JOIN Bank          BK
+ON   AC.Bank          = BK.Code;
 
-DELIMITER //
+CREATE VIEW SpendTransactions
+AS
+SELECT
+	SD.SeqNo, 
+	SD.Timestamp,
+	SD.Description,
+	SD.Location,
+	SD.Amount,
+	SD.Payment                               AS PaymentCode,
+	SD.Amount + IFNULL(SD.BankCorrection, 0) AS BankAmount,
+	IFNULL(SD.BankCorrection ,0)             AS Correction,
+	PS.Type,
+	BK.Bank,
+	BK.SortCode,
+	AC.AccountNumber,
+	AC.CardNumber,
+	AC.Owner
+FROM SpendData          SD
+LEFT JOIN PaymentSource PS
+ON   SD.Payment       = PS.Code
+LEFT JOIN Account       AC
+ON   PS.Account       = AC.Code
+LEFT JOIN Bank          BK
+ON   AC.Bank          = BK.Code
+WHERE Payment <> 'Cash';
 
-CREATE TRIGGER InsSpendData BEFORE INSERT ON SpendData
-FOR EACH ROW
-BEGIN
-	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
-END;//
-
-CREATE TRIGGER UpdSpendData BEFORE UPDATE ON SpendData
-FOR EACH ROW
-BEGIN
-	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
-END;//
-
-DELIMITER ;

@@ -33,4 +33,4 @@ SOURCE /tmp/sqlscripts/CreateListValues.sql;
 
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON BloodPressure.* TO 'appuser'@'%';
-GRANT EXECUTE, INSERT, SELECT, UPDATE, DELETE ON Expenditure.*   TO 'appuser'@'%';
+GRANT DROP, CREATE, EXECUTE, INSERT, SELECT, UPDATE, DELETE, TRIGGER, CREATE VIEW ON Expenditure.*   TO 'appuser'@'%';
