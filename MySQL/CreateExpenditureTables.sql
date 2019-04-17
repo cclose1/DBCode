@@ -29,6 +29,20 @@ CREATE TABLE BankTransactionType(
 	PRIMARY KEY (Code  ASC)
 );
 
+DROP TABLE IF EXISTS CurrencyRate;
+
+CREATE TABLE CurrencyRate(
+	Created  DATETIME NOT NULL   DEFAULT CURRENT_TIMESTAMP,
+	Source   VARCHAR(4)  NOT NULL,
+	Target   VARCHAR(4)  NOT NULL,
+	Provider VARCHAR(20),
+	Rate     FLOAT(6),
+	PRIMARY KEY (
+		Created ASC,
+		Source  ASC,
+		Target  ASC)
+);
+
 DROP TABLE IF EXISTS AccountUsage;
 
 CREATE TABLE AccountUsage(
@@ -89,17 +103,19 @@ DELIMITER ;
 DROP TABLE IF EXISTS AccountTransaction;
 
 CREATE TABLE AccountTransaction(
-	SeqNo       int(11)        NOT NULL AUTO_INCREMENT,
-	Modified    DATETIME       NULL, 
-	Timestamp   DATETIME       NULL,
-	Completed   DATETIME       NULL,
-	Account     VARCHAR(4),
-	Amount      decimal(18, 6) NULL,
-	Fee         decimal(18, 6) NULL,
-	Currency    VARCHAR(4),
-    Type        VARCHAR(15),
-    `Usage`     VARCHAR(10),
-	Description VARCHAR(1000),
+	SeqNo         int(11)        NOT NULL AUTO_INCREMENT,
+	Modified      DATETIME       NULL, 
+	Timestamp     DATETIME       NULL,
+	Completed     DATETIME       NULL,
+    TXNId         VARCHAR(15)    NULL,
+	Account       VARCHAR(4),
+	Amount        decimal(18, 6) NULL,
+	Fee           decimal(18, 6) NULL,
+	Currency      VARCHAR(4),
+    Type          VARCHAR(15),
+    `Usage`       VARCHAR(10),
+	CryptoAddress VARCHAR(50),
+	Description   VARCHAR(1000),
 	CONSTRAINT PKAccountTransaction PRIMARY KEY CLUSTERED(
 		SeqNo  ASC)
 );
@@ -161,6 +177,7 @@ SELECT
 	TX.SeqNo,
 	TX.Timestamp,
     TX.Completed,
+    TX.TXNId,
 	BK.Bank,
 	BK.SortCode,
 	TX.Account,
@@ -171,6 +188,7 @@ SELECT
 	TX.Currency,
     TX.Type,
     TX.`Usage`,
+    TX.CryptoAddress,
 	TX.Description
 FROM AccountTransaction TX
 LEFT JOIN Account       AC

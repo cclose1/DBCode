@@ -241,7 +241,7 @@ BEGIN
 		INNER JOIN ' + @database + '.sys.columns SC 
 		ON ST.object_id = SC.object_id
 		INNER JOIN ' + @database + '.sys.types TY 
-		ON TY.system_type_id = SC.system_type_id
+		ON TY.user_type_id = SC.user_type_id
 		WHERE ST.name = ''' + @table + '''
 		AND   SC.is_computed <> 1'
 	EXEC (@sql)

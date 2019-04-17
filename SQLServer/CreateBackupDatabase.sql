@@ -34,13 +34,16 @@ IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_NAME = N'Back
 GO
 
 CREATE PROCEDURE dbo.BackupDatabases(
-					@startDay VARCHAR(3)   = 'Sun',
-					@path     VARCHAR(max) = 'C:\MyFiles\My Documents\DBBackup',
-					@test     CHAR         = 'N')
+					@startDay  VARCHAR(3)   = 'Sun',
+					@path      VARCHAR(max) = 'C:\MyFiles\My Documents\DBBackup',
+					@syncMySQL CHAR         = 'Y',
+					@test      CHAR         = 'N')
 AS
 BEGIN
 	PRINT 'Backup at ' + dbo.FormatDate(CURRENT_TIMESTAMP, 'DD-MMM-YY HH:MI:SS') 
-	EXEC BloodPressure.dbo.SynchronizeWithMySQL
+	
+	IF @syncMySQL = 'Y' EXEC BloodPressure.dbo.SynchronizeWithMySQL
+
 	EXEC BloodPressure.dbo.BackupDatabase 'BloodPressure', @startDay, @path, @test
 	EXEC BloodPressure.dbo.BackupDatabase 'Expenditure',   @startDay, @path, @test
 END

@@ -46,6 +46,22 @@ INSERT BankTransactionType(Code) VALUES ('Transfer');
 INSERT BankTransactionType(Code) VALUES ('Exchange');
 
 GO
+
+DROP TABLE CurrencyRate
+GO
+CREATE TABLE CurrencyRate(
+	Created  DATETIME NOT NULL   DEFAULT CURRENT_TIMESTAMP,
+	Source   CHAR(4)  NOT NULL,
+	Target   CHAR(4)  NOT NULL,
+	Provider VARCHAR(20),
+	Rate     FLOAT(6),
+	PRIMARY KEY (
+		Created ASC,
+		Source  ASC,
+		Target  ASC)
+);
+GO
+
 DROP TABLE AccountUsage 
 GO
 CREATE TABLE AccountUsage(
@@ -151,17 +167,19 @@ GO
 DROP TABLE AccountTransaction;
 GO
 CREATE TABLE AccountTransaction(
-	SeqNo       INT              IDENTITY(1, 1)      NOT NULL,
-	Modified    DATETIME         NULL, 
-	Timestamp   DATETIME         NULL,
-	Completed   DATETIME         NULL,
-	Account     VARCHAR(4)       NULL,
-	Amount      DECIMAL(18, 6)   NULL,
-	Fee         DECIMAL(18, 6)   NULL,
-	Currency    VARCHAR(4)       NULL,
-	Type        VARCHAR(15)      NULL,
-	Usage       VARCHAR(10)      NULL,
-	Description VARCHAR(max)     NULL,
+	SeqNo         INT              IDENTITY(1, 1)      NOT NULL,
+	Modified      DATETIME         NULL, 
+	Timestamp     DATETIME         NULL,
+	Completed     DATETIME         NULL,
+	TXNId         VARCHAR(15)      NULL,
+	Account       VARCHAR(4)       NULL,
+	Amount        DECIMAL(18, 6)   NULL,
+	Fee           DECIMAL(18, 6)   NULL,
+	Currency      VARCHAR(4)       NULL,
+	Type          VARCHAR(15)      NULL,
+	Usage         VARCHAR(10)      NULL,
+	CryptoAddress VARCHAR(50)      NULL,
+	Description   VARCHAR(max)     NULL,
 	CONSTRAINT PKAccountTransaction PRIMARY KEY CLUSTERED(
 		SeqNo  ASC)
 )
@@ -231,6 +249,7 @@ SELECT
 	TX.SeqNo,
 	TX.Timestamp,
 	TX.Completed,
+	TX.TXNId,
 	BK.Bank,
 	BK.SortCode,
 	TX.Account,
@@ -241,6 +260,7 @@ SELECT
 	TX.Currency,
 	TX.Type,
 	TX.Usage,
+	TX.CryptoAddress,
 	TX.Description
 FROM AccountTransaction TX
 LEFT JOIN Account       AC

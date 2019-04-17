@@ -1,1 +1,1 @@
-EXEC BloodPressure.dbo.BackupDatabases
+EXEC BloodPressure.dbo.BackupDatabases @path='C:\Users\chris\OneDrive', @syncMySQL='N'
