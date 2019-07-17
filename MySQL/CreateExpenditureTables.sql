@@ -1,7 +1,13 @@
 
 DROP VIEW IF EXISTS Spend;
 DROP VIEW IF EXISTS SpendTransactions;
+DROP VIEW IF EXISTS CurrentAccount;
 DROP VIEW IF EXISTS BankTransactions;
+DROP VIEW IF EXISTS DailyCurrencyRates;
+
+DROP VIEW IF EXISTS BankTransactionsSummary;
+DROP VIEW IF EXISTS MergeTransactionLines;
+DROP VIEW IF EXISTS BankTransfers;
 
 DROP TABLE IF EXISTS Currency;
 
@@ -54,6 +60,8 @@ CREATE TABLE AccountUsage(
 DROP TABLE IF EXISTS Account;
 
 CREATE TABLE Account(
+	Start         DATETIME    NOT NULL,
+	End           DATETIME    NULL,
 	Code          VARCHAR(4)  NOT NULL,
 	Bank          VARCHAR(4)  NOT NULL,
 	AccountNumber VARCHAR(30) NULL,
@@ -62,7 +70,7 @@ CREATE TABLE Account(
 	CardType      VARCHAR(20) NULL,
 	Owner         VARCHAR(20) NULL,
 	Description   VARCHAR(50) NULL,
-	PRIMARY KEY (Code  ASC)
+	PRIMARY KEY (Start ASC, Code ASC)
 ); 
 DROP TABLE IF EXISTS SpendData;
 
@@ -100,35 +108,29 @@ END;//
 
 DELIMITER ;
 
-DROP TABLE IF EXISTS AccountTransaction;
+DROP TABLE IF EXISTS  TransactionHeader;
 
-CREATE TABLE AccountTransaction(
-	SeqNo         int(11)        NOT NULL AUTO_INCREMENT,
-	Modified      DATETIME       NULL, 
-	Timestamp     DATETIME       NULL,
-	Completed     DATETIME       NULL,
-    TXNId         VARCHAR(15)    NULL,
-	Account       VARCHAR(4),
-	Amount        decimal(18, 6) NULL,
-	Fee           decimal(18, 6) NULL,
-	Currency      VARCHAR(4),
-    Type          VARCHAR(15),
-    `Usage`       VARCHAR(10),
-	CryptoAddress VARCHAR(50),
-	Description   VARCHAR(1000),
-	CONSTRAINT PKAccountTransaction PRIMARY KEY CLUSTERED(
+CREATE TABLE TransactionHeader(
+	SeqNo         INT              NOT NULL AUTO_INCREMENT,
+	Created       DATETIME         NULL,
+	Modified      DATETIME         NULL, 
+	TXNId         VARCHAR(15)      NULL,	
+	Description   VARCHAR(1000)    NULL,
+	CONSTRAINT PKTransactionHeader PRIMARY KEY CLUSTERED(
 		SeqNo  ASC)
 );
 
+ALTER TABLE TransactionHeader AUTO_INCREMENT=1000;
+
 DELIMITER //
 
-CREATE TRIGGER InsAccountTransaction BEFORE INSERT ON AccountTransaction
+CREATE TRIGGER InsTransactionHeader BEFORE INSERT ON TransactionHeader
 FOR EACH ROW
 BEGIN
 	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
 END;//
 
-CREATE TRIGGER UpdAccountTransaction BEFORE UPDATE ON AccountTransaction
+CREATE TRIGGER UpdTransactionHeader BEFORE UPDATE ON TransactionHeader
 FOR EACH ROW
 BEGIN
 	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
@@ -136,89 +138,37 @@ END;//
 
 DELIMITER ;
 
+DROP TABLE IF EXISTS TransactionLine;
 
-CREATE VIEW Spend AS 
-SELECT 
-	SeqNo,
-	Modified,
-	IncurredBy,
-	Timestamp,
-	CAST(Timestamp AS Date)        AS Date,
-	CAST(Timestamp AS Time)        AS Time,
-	Year(Timestamp)                AS Year,
-	Month(Timestamp)               AS Month,
-	DayOfMonth(Timestamp)          AS Day,
-	Week(Timestamp,0)              AS Week,
-	SUBSTR(DAYNAME(Timestamp),1,3) AS Weekday,
-	CASE
-		WHEN DAYOFWEEK(Timestamp) = 2 THEN DAYOFYEAR(Timestamp)
-		WHEN DAYOFWEEK(Timestamp) = 3 THEN DAYOFYEAR(DATE_ADD(Timestamp, INTERVAL -1 DAY))
-		WHEN DAYOFWEEK(Timestamp) = 4 THEN DAYOFYEAR(DATE_ADD(Timestamp, INTERVAL -2 DAY))
-		WHEN DAYOFWEEK(Timestamp) = 5 THEN DAYOFYEAR(DATE_ADD(Timestamp, INTERVAL -3 DAY))
-		WHEN DAYOFWEEK(Timestamp) = 6 THEN DAYOFYEAR(DATE_ADD(Timestamp, INTERVAL -4 DAY))
-		WHEN DAYOFWEEK(Timestamp) = 7 THEN DAYOFYEAR(DATE_ADD(Timestamp, INTERVAL -5 DAY))
-		WHEN DAYOFWEEK(Timestamp) = 1 THEN DAYOFYEAR(DATE_ADD(Timestamp, INTERVAL -6 DAY))
-		ELSE -1
-	END FirstWeekday,
-	Category,
-	Type,
-	Amount,
-	Description,
-	Location,
-	Period,
-	`Ignore`,
-	Payment,
-	IFNULL(BankCorrection, '') AS BankCorrection
-from SpendData;
+CREATE TABLE TransactionLine(
+    TXNId         VARCHAR(15)     NOT NULL,
+    Line          INT(11)         NOT NULL,
+	Modified      DATETIME        NULL, 
+	Timestamp     DATETIME        NULL,
+	Completed     DATETIME        NULL,
+	Account       VARCHAR(4),
+	Amount        decimal(20, 13) NULL,
+	Fee           decimal(20, 13) NULL,
+	Currency      VARCHAR(4),
+    Type          VARCHAR(15),
+    `Usage`       VARCHAR(10),
+	CryptoAddress VARCHAR(50),
+	Description   VARCHAR(1000),
+	CONSTRAINT PKTransactionLine PRIMARY KEY CLUSTERED(
+		TXNId  ASC,
+        Line   ASC)
+);
 
-CREATE VIEW BankTransactions
-AS
-SELECT
-	TX.SeqNo,
-	TX.Timestamp,
-    TX.Completed,
-    TX.TXNId,
-	BK.Bank,
-	BK.SortCode,
-	TX.Account,
-    TX.Fee,
-	AC.AccountNumber,
-	AC.CardNumber,
-	TX.Amount,
-	TX.Currency,
-    TX.Type,
-    TX.`Usage`,
-    TX.CryptoAddress,
-	TX.Description
-FROM AccountTransaction TX
-LEFT JOIN Account       AC
-ON   TX.Account       = AC.Code
-LEFT JOIN Bank          BK
-ON   AC.Bank          = BK.Code;
+DELIMITER //
 
-CREATE VIEW SpendTransactions
-AS
-SELECT
-	SD.SeqNo, 
-	SD.Timestamp,
-	SD.Description,
-	SD.Location,
-	SD.Amount,
-	SD.Payment                               AS PaymentCode,
-	SD.Amount + IFNULL(SD.BankCorrection, 0) AS BankAmount,
-	IFNULL(SD.BankCorrection ,0)             AS Correction,
-	PS.Type,
-	BK.Bank,
-	BK.SortCode,
-	AC.AccountNumber,
-	AC.CardNumber,
-	AC.Owner
-FROM SpendData          SD
-LEFT JOIN PaymentSource PS
-ON   SD.Payment       = PS.Code
-LEFT JOIN Account       AC
-ON   PS.Account       = AC.Code
-LEFT JOIN Bank          BK
-ON   AC.Bank          = BK.Code
-WHERE Payment <> 'Cash';
+CREATE TRIGGER InsTransactionLine BEFORE INSERT ON TransactionLine
+FOR EACH ROW
+BEGIN
+	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
+END;//
 
+CREATE TRIGGER UpdTransactionLine BEFORE UPDATE ON TransactionLine
+FOR EACH ROW
+BEGIN
+	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
+END;//

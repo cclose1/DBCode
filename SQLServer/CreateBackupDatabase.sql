@@ -15,6 +15,9 @@ BEGIN
 	DECLARE @file    AS VARCHAR(max) = @path + '\' + @name + dbo.FormatDate(@start, 'DDMMMYY') + '.bak'
 	DECLARE @setName AS VARCHAR(max) = 'Backup of ' + @name
 	DECLARE @log     AS CHAR         = CASE WHEN @start = @now THEN 'N' ELSE 'Y' END
+	DECLARE @found   AS CHAR
+
+	EXEC BloodPressure.dbo.CheckFileExists @file, @found OUTPUT
 	
 	IF @test = 'Y'
 	BEGIN
@@ -22,7 +25,7 @@ BEGIN
 		RETURN
 	END
 
-	IF @start = @now
+	IF @start = @now OR @found = 'N'
 		BACKUP DATABASE @name TO DISK = @file WITH FORMAT, NAME = @setName
 	ELSE
 		BACKUP LOG @name TO DISK = @file WITH NOFORMAT, NOINIT, NAME = @setName

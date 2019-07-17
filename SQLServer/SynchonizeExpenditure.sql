@@ -15,7 +15,8 @@ BEGIN
 		EXEC SynchronizeTable @SQLServer, @MySQL, 'Account',             @mode = @mode, @batch = @batch
 		EXEC SynchronizeTable @SQLServer, @MySQL, 'PaymentSource',       @mode = @mode, @batch = @batch
 		EXEC SynchronizeTable @SQLServer, @MySQL, 'SpendData',           @mode = @mode, @batch = @batch, @key = 'Timestamp'
-		EXEC SynchronizeTable @SQLServer, @MySQL, 'AccountTransaction',  @mode = @mode, @batch = @batch, @key = 'TxnKey'
+		EXEC SynchronizeTable @SQLServer, @MySQL, 'TransactionHeader',   @mode = @mode, @batch = @batch, @key = 'TxnKey'
+		EXEC SynchronizeTable @SQLServer, @MySQL, 'TransactionLine',     @mode = @mode, @batch = @batch
 	END TRY
 	BEGIN CATCH
 		EXEC ReportError

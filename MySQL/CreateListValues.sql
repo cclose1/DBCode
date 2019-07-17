@@ -1,3 +1,5 @@
+DROP VIEW IF EXISTS Expenditure.ListValues;
+
 CREATE VIEW Expenditure.ListValues
 AS
 SELECT

@@ -1,3 +1,27 @@
+
+IF EXISTS (SELECT '1' FROM sysobjects WHERE name = 'CheckFileExists' AND type ='p')
+BEGIN
+	DROP Procedure dbo.CheckFileExists
+END
+GO
+CREATE PROCEDURE CheckFileExists(
+			@file  AS SYSNAME,
+			@found AS CHAR  OUTPUT)
+AS 
+	SET NOCOUNT ON
+BEGIN
+	/*
+	 * fsutil fails with Access Denied if @fail exists. So use 'cannot find the file' response for N and any other response for Y
+	 */
+	DECLARE @param  AS VARCHAR(900) = 'fsutil file layout ' + @file
+	DECLARE @cmdRsp TABLE(Line VARCHAR(900) UNIQUE);
+	
+	INSERT @cmdRsp EXEC master..xp_cmdshell @param;
+	DELETE @cmdRsp WHERE Line IS NULL
+	SET    @found = 'Y'
+	SELECT @found = 'N' FROM @cmdRsp WHERE Line LIKE '%cannot find the file%'
+END
+GO
 IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'dbo.RemoveFractionalSeconds') and OBJECTPROPERTY(id, N'IsScalarFunction') = 1)
 	DROP FUNCTION dbo.RemoveFractionalSeconds
 GO
