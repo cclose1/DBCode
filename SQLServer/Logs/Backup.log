@@ -10460,3 +10460,626 @@ Processed 33 pages for database 'BloodPressure', file 'BloodPressure_log' on fil
 BACKUP LOG successfully processed 33 pages in 0.011 seconds (23.082 MB/sec).
 Processed 180 pages for database 'Expenditure', file 'Expenditure_log' on file 4.
 BACKUP LOG successfully processed 180 pages in 0.019 seconds (73.807 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 22-Jul-19 14:20:21
+Processed 42768 pages for database 'BloodPressure', file 'BloodPressure' on file 1.
+Processed 3 pages for database 'BloodPressure', file 'BloodPressure_log' on file 1.
+BACKUP DATABASE successfully processed 42771 pages in 2.460 seconds (135.832 MB/sec).
+Processed 992 pages for database 'Expenditure', file 'Expenditure' on file 1.
+Processed 4 pages for database 'Expenditure', file 'Expenditure_log' on file 1.
+BACKUP DATABASE successfully processed 996 pages in 0.078 seconds (99.709 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 22-Jul-19 22:15:03
+Processed 40 pages for database 'BloodPressure', file 'BloodPressure_log' on file 2.
+BACKUP LOG successfully processed 40 pages in 0.017 seconds (18.152 MB/sec).
+Processed 222 pages for database 'Expenditure', file 'Expenditure_log' on file 2.
+BACKUP LOG successfully processed 222 pages in 0.032 seconds (54.199 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 23-Jul-19 22:15:04
+Processed 31 pages for database 'BloodPressure', file 'BloodPressure_log' on file 3.
+BACKUP LOG successfully processed 31 pages in 0.018 seconds (13.454 MB/sec).
+Processed 117 pages for database 'Expenditure', file 'Expenditure_log' on file 3.
+BACKUP LOG successfully processed 117 pages in 0.017 seconds (53.538 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 24-Jul-19 22:15:04
+Processed 30 pages for database 'BloodPressure', file 'BloodPressure_log' on file 4.
+BACKUP LOG successfully processed 30 pages in 0.016 seconds (14.648 MB/sec).
+Processed 121 pages for database 'Expenditure', file 'Expenditure_log' on file 4.
+BACKUP LOG successfully processed 121 pages in 0.014 seconds (67.522 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 25-Jul-19 22:15:04
+Processed 27 pages for database 'BloodPressure', file 'BloodPressure_log' on file 5.
+BACKUP LOG successfully processed 27 pages in 0.017 seconds (12.178 MB/sec).
+Processed 97 pages for database 'Expenditure', file 'Expenditure_log' on file 5.
+BACKUP LOG successfully processed 97 pages in 0.025 seconds (30.312 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 26-Jul-19 22:15:01
+Processed 25 pages for database 'BloodPressure', file 'BloodPressure_log' on file 6.
+BACKUP LOG successfully processed 25 pages in 0.015 seconds (13.020 MB/sec).
+Processed 107 pages for database 'Expenditure', file 'Expenditure_log' on file 6.
+BACKUP LOG successfully processed 107 pages in 0.013 seconds (64.002 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 27-Jul-19 22:15:01
+Processed 35 pages for database 'BloodPressure', file 'BloodPressure_log' on file 7.
+BACKUP LOG successfully processed 35 pages in 0.017 seconds (16.084 MB/sec).
+Processed 145 pages for database 'Expenditure', file 'Expenditure_log' on file 7.
+BACKUP LOG successfully processed 145 pages in 0.021 seconds (53.943 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 28-Jul-19 22:15:01
+Processed 42784 pages for database 'BloodPressure', file 'BloodPressure' on file 1.
+Processed 3 pages for database 'BloodPressure', file 'BloodPressure_log' on file 1.
+BACKUP DATABASE successfully processed 42787 pages in 2.935 seconds (113.892 MB/sec).
+Processed 1000 pages for database 'Expenditure', file 'Expenditure' on file 1.
+Processed 4 pages for database 'Expenditure', file 'Expenditure_log' on file 1.
+BACKUP DATABASE successfully processed 1004 pages in 0.101 seconds (77.622 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 29-Jul-19 22:15:01
+Processed 60 pages for database 'BloodPressure', file 'BloodPressure_log' on file 2.
+BACKUP LOG successfully processed 60 pages in 0.012 seconds (38.736 MB/sec).
+Processed 222 pages for database 'Expenditure', file 'Expenditure_log' on file 2.
+BACKUP LOG successfully processed 222 pages in 0.026 seconds (66.556 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 31-Jul-19 22:15:01
+Processed 43 pages for database 'BloodPressure', file 'BloodPressure_log' on file 3.
+BACKUP LOG successfully processed 43 pages in 0.008 seconds (41.992 MB/sec).
+Processed 237 pages for database 'Expenditure', file 'Expenditure_log' on file 3.
+BACKUP LOG successfully processed 237 pages in 0.026 seconds (71.213 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 01-Aug-19 22:15:01
+Processed 28 pages for database 'BloodPressure', file 'BloodPressure_log' on file 4.
+BACKUP LOG successfully processed 28 pages in 0.014 seconds (15.625 MB/sec).
+Processed 110 pages for database 'Expenditure', file 'Expenditure_log' on file 4.
+BACKUP LOG successfully processed 110 pages in 0.029 seconds (29.498 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 02-Aug-19 22:15:01
+Processed 24 pages for database 'BloodPressure', file 'BloodPressure_log' on file 5.
+BACKUP LOG successfully processed 24 pages in 0.010 seconds (18.359 MB/sec).
+Processed 124 pages for database 'Expenditure', file 'Expenditure_log' on file 5.
+BACKUP LOG successfully processed 124 pages in 0.016 seconds (60.546 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 04-Aug-19 10:38:43
+Processed 42784 pages for database 'BloodPressure', file 'BloodPressure' on file 1.
+Processed 3 pages for database 'BloodPressure', file 'BloodPressure_log' on file 1.
+BACKUP DATABASE successfully processed 42787 pages in 2.444 seconds (136.773 MB/sec).
+Processed 1000 pages for database 'Expenditure', file 'Expenditure' on file 1.
+Processed 4 pages for database 'Expenditure', file 'Expenditure_log' on file 1.
+BACKUP DATABASE successfully processed 1004 pages in 0.099 seconds (79.190 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 06-Aug-19 22:15:01
+Processed 73 pages for database 'BloodPressure', file 'BloodPressure_log' on file 2.
+BACKUP LOG successfully processed 73 pages in 0.021 seconds (27.157 MB/sec).
+Processed 295 pages for database 'Expenditure', file 'Expenditure_log' on file 2.
+BACKUP LOG successfully processed 295 pages in 0.030 seconds (76.692 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 09-Aug-19 12:06:08
+Processed 58 pages for database 'BloodPressure', file 'BloodPressure_log' on file 3.
+BACKUP LOG successfully processed 58 pages in 0.025 seconds (17.968 MB/sec).
+Processed 172 pages for database 'Expenditure', file 'Expenditure_log' on file 3.
+BACKUP LOG successfully processed 172 pages in 0.025 seconds (53.593 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 10-Aug-19 22:15:00
+Processed 51 pages for database 'BloodPressure', file 'BloodPressure_log' on file 4.
+BACKUP LOG successfully processed 51 pages in 0.037 seconds (10.663 MB/sec).
+Processed 436 pages for database 'Expenditure', file 'Expenditure_log' on file 4.
+BACKUP LOG successfully processed 436 pages in 0.065 seconds (52.403 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 11-Aug-19 22:15:01
+Processed 42808 pages for database 'BloodPressure', file 'BloodPressure' on file 1.
+Processed 3 pages for database 'BloodPressure', file 'BloodPressure_log' on file 1.
+BACKUP DATABASE successfully processed 42811 pages in 2.931 seconds (114.111 MB/sec).
+Processed 1000 pages for database 'Expenditure', file 'Expenditure' on file 1.
+Processed 3 pages for database 'Expenditure', file 'Expenditure_log' on file 1.
+BACKUP DATABASE successfully processed 1003 pages in 0.147 seconds (53.279 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 12-Aug-19 22:15:01
+Processed 54 pages for database 'BloodPressure', file 'BloodPressure_log' on file 2.
+BACKUP LOG successfully processed 54 pages in 0.016 seconds (26.123 MB/sec).
+Processed 243 pages for database 'Expenditure', file 'Expenditure_log' on file 2.
+BACKUP LOG successfully processed 243 pages in 0.024 seconds (79.101 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 13-Aug-19 22:15:01
+Processed 28 pages for database 'BloodPressure', file 'BloodPressure_log' on file 3.
+BACKUP LOG successfully processed 28 pages in 0.013 seconds (16.526 MB/sec).
+Processed 185 pages for database 'Expenditure', file 'Expenditure_log' on file 3.
+BACKUP LOG successfully processed 185 pages in 0.027 seconds (53.385 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 14-Aug-19 22:15:01
+Processed 32 pages for database 'BloodPressure', file 'BloodPressure_log' on file 4.
+BACKUP LOG successfully processed 32 pages in 0.013 seconds (19.230 MB/sec).
+Processed 242 pages for database 'Expenditure', file 'Expenditure_log' on file 4.
+BACKUP LOG successfully processed 242 pages in 0.021 seconds (89.843 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 15-Aug-19 22:15:01
+Processed 32 pages for database 'BloodPressure', file 'BloodPressure_log' on file 5.
+BACKUP LOG successfully processed 32 pages in 0.010 seconds (25.000 MB/sec).
+Processed 124 pages for database 'Expenditure', file 'Expenditure_log' on file 5.
+BACKUP LOG successfully processed 124 pages in 0.031 seconds (31.123 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 16-Aug-19 22:15:01
+Processed 36 pages for database 'BloodPressure', file 'BloodPressure_log' on file 6.
+BACKUP LOG successfully processed 36 pages in 0.016 seconds (17.333 MB/sec).
+Processed 285 pages for database 'Expenditure', file 'Expenditure_log' on file 6.
+BACKUP LOG successfully processed 285 pages in 0.033 seconds (67.471 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 17-Aug-19 22:15:01
+Processed 23 pages for database 'BloodPressure', file 'BloodPressure_log' on file 7.
+BACKUP LOG successfully processed 23 pages in 0.018 seconds (9.982 MB/sec).
+Processed 180 pages for database 'Expenditure', file 'Expenditure_log' on file 7.
+BACKUP LOG successfully processed 180 pages in 0.019 seconds (74.013 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 18-Aug-19 22:15:01
+Processed 42824 pages for database 'BloodPressure', file 'BloodPressure' on file 1.
+Processed 4 pages for database 'BloodPressure', file 'BloodPressure_log' on file 1.
+BACKUP DATABASE successfully processed 42828 pages in 2.418 seconds (138.376 MB/sec).
+Processed 1000 pages for database 'Expenditure', file 'Expenditure' on file 1.
+Processed 4 pages for database 'Expenditure', file 'Expenditure_log' on file 1.
+BACKUP DATABASE successfully processed 1004 pages in 0.093 seconds (84.299 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 19-Aug-19 22:15:01
+Processed 63 pages for database 'BloodPressure', file 'BloodPressure_log' on file 2.
+BACKUP LOG successfully processed 63 pages in 0.020 seconds (24.609 MB/sec).
+Processed 320 pages for database 'Expenditure', file 'Expenditure_log' on file 2.
+BACKUP LOG successfully processed 320 pages in 0.031 seconds (80.645 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 20-Aug-19 22:15:01
+Processed 31 pages for database 'BloodPressure', file 'BloodPressure_log' on file 3.
+BACKUP LOG successfully processed 31 pages in 0.027 seconds (8.969 MB/sec).
+Processed 196 pages for database 'Expenditure', file 'Expenditure_log' on file 3.
+BACKUP LOG successfully processed 196 pages in 0.030 seconds (50.911 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 21-Aug-19 22:15:00
+Processed 33 pages for database 'BloodPressure', file 'BloodPressure_log' on file 4.
+BACKUP LOG successfully processed 33 pages in 0.015 seconds (17.187 MB/sec).
+Processed 450 pages for database 'Expenditure', file 'Expenditure_log' on file 4.
+BACKUP LOG successfully processed 450 pages in 0.042 seconds (83.612 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 22-Aug-19 22:15:01
+Processed 28 pages for database 'BloodPressure', file 'BloodPressure_log' on file 5.
+BACKUP LOG successfully processed 28 pages in 0.017 seconds (12.637 MB/sec).
+Processed 232 pages for database 'Expenditure', file 'Expenditure_log' on file 5.
+BACKUP LOG successfully processed 232 pages in 0.122 seconds (14.856 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 23-Aug-19 22:15:00
+Processed 20 pages for database 'BloodPressure', file 'BloodPressure_log' on file 6.
+BACKUP LOG successfully processed 20 pages in 0.008 seconds (19.042 MB/sec).
+Processed 289 pages for database 'Expenditure', file 'Expenditure_log' on file 6.
+BACKUP LOG successfully processed 289 pages in 0.037 seconds (60.916 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 24-Aug-19 22:15:01
+Processed 39 pages for database 'BloodPressure', file 'BloodPressure_log' on file 7.
+BACKUP LOG successfully processed 39 pages in 0.019 seconds (16.036 MB/sec).
+Processed 298 pages for database 'Expenditure', file 'Expenditure_log' on file 7.
+BACKUP LOG successfully processed 298 pages in 0.081 seconds (28.694 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 25-Aug-19 22:15:01
+Processed 42864 pages for database 'BloodPressure', file 'BloodPressure' on file 1.
+Processed 3 pages for database 'BloodPressure', file 'BloodPressure_log' on file 1.
+BACKUP DATABASE successfully processed 42867 pages in 3.122 seconds (107.270 MB/sec).
+Processed 1008 pages for database 'Expenditure', file 'Expenditure' on file 1.
+Processed 4 pages for database 'Expenditure', file 'Expenditure_log' on file 1.
+BACKUP DATABASE successfully processed 1012 pages in 0.080 seconds (98.779 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 26-Aug-19 22:15:01
+Processed 66 pages for database 'BloodPressure', file 'BloodPressure_log' on file 2.
+BACKUP LOG successfully processed 66 pages in 0.022 seconds (23.259 MB/sec).
+Processed 523 pages for database 'Expenditure', file 'Expenditure_log' on file 2.
+BACKUP LOG successfully processed 523 pages in 0.056 seconds (72.963 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 27-Aug-19 22:15:01
+Processed 29 pages for database 'BloodPressure', file 'BloodPressure_log' on file 3.
+BACKUP LOG successfully processed 29 pages in 0.009 seconds (24.739 MB/sec).
+Processed 114 pages for database 'Expenditure', file 'Expenditure_log' on file 3.
+BACKUP LOG successfully processed 114 pages in 0.017 seconds (52.389 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 28-Aug-19 22:16:50
+Processed 19 pages for database 'BloodPressure', file 'BloodPressure_log' on file 4.
+BACKUP LOG successfully processed 19 pages in 0.013 seconds (11.418 MB/sec).
+Processed 144 pages for database 'Expenditure', file 'Expenditure_log' on file 4.
+BACKUP LOG successfully processed 144 pages in 0.016 seconds (70.068 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 29-Aug-19 22:15:01
+Processed 41 pages for database 'BloodPressure', file 'BloodPressure_log' on file 5.
+BACKUP LOG successfully processed 41 pages in 0.013 seconds (24.338 MB/sec).
+Processed 180 pages for database 'Expenditure', file 'Expenditure_log' on file 5.
+BACKUP LOG successfully processed 180 pages in 0.021 seconds (66.778 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 30-Aug-19 22:15:01
+Processed 27 pages for database 'BloodPressure', file 'BloodPressure_log' on file 6.
+BACKUP LOG successfully processed 27 pages in 0.011 seconds (18.821 MB/sec).
+Processed 121 pages for database 'Expenditure', file 'Expenditure_log' on file 6.
+BACKUP LOG successfully processed 121 pages in 0.020 seconds (47.070 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 31-Aug-19 22:15:01
+Processed 26 pages for database 'BloodPressure', file 'BloodPressure_log' on file 7.
+BACKUP LOG successfully processed 26 pages in 0.007 seconds (28.459 MB/sec).
+Processed 107 pages for database 'Expenditure', file 'Expenditure_log' on file 7.
+BACKUP LOG successfully processed 107 pages in 0.012 seconds (69.661 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 01-Sep-19 22:15:01
+Processed 42880 pages for database 'BloodPressure', file 'BloodPressure' on file 1.
+Processed 3 pages for database 'BloodPressure', file 'BloodPressure_log' on file 1.
+BACKUP DATABASE successfully processed 42883 pages in 3.037 seconds (110.313 MB/sec).
+Processed 1008 pages for database 'Expenditure', file 'Expenditure' on file 1.
+Processed 4 pages for database 'Expenditure', file 'Expenditure_log' on file 1.
+BACKUP DATABASE successfully processed 1012 pages in 0.108 seconds (73.169 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 02-Sep-19 22:15:01
+Processed 64 pages for database 'BloodPressure', file 'BloodPressure_log' on file 2.
+BACKUP LOG successfully processed 64 pages in 0.022 seconds (22.727 MB/sec).
+Processed 563 pages for database 'Expenditure', file 'Expenditure_log' on file 2.
+BACKUP LOG successfully processed 563 pages in 0.058 seconds (75.767 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 03-Sep-19 22:15:01
+Processed 37 pages for database 'BloodPressure', file 'BloodPressure_log' on file 3.
+BACKUP LOG successfully processed 37 pages in 0.009 seconds (32.118 MB/sec).
+Processed 229 pages for database 'Expenditure', file 'Expenditure_log' on file 3.
+BACKUP LOG successfully processed 229 pages in 0.030 seconds (59.505 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 04-Sep-19 22:15:01
+Processed 27 pages for database 'BloodPressure', file 'BloodPressure_log' on file 4.
+BACKUP LOG successfully processed 27 pages in 0.016 seconds (12.939 MB/sec).
+Processed 318 pages for database 'Expenditure', file 'Expenditure_log' on file 4.
+BACKUP LOG successfully processed 318 pages in 0.041 seconds (60.499 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 05-Sep-19 22:15:01
+Processed 35 pages for database 'BloodPressure', file 'BloodPressure_log' on file 5.
+BACKUP LOG successfully processed 35 pages in 0.018 seconds (14.973 MB/sec).
+Processed 133 pages for database 'Expenditure', file 'Expenditure_log' on file 5.
+BACKUP LOG successfully processed 133 pages in 0.014 seconds (74.218 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 07-Sep-19 08:27:56
+Processed 27 pages for database 'BloodPressure', file 'BloodPressure_log' on file 6.
+BACKUP LOG successfully processed 27 pages in 0.009 seconds (23.437 MB/sec).
+Processed 359 pages for database 'Expenditure', file 'Expenditure_log' on file 6.
+BACKUP LOG successfully processed 359 pages in 0.040 seconds (70.117 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 07-Sep-19 22:15:01
+Processed 26 pages for database 'BloodPressure', file 'BloodPressure_log' on file 7.
+BACKUP LOG successfully processed 26 pages in 0.017 seconds (11.718 MB/sec).
+Processed 240 pages for database 'Expenditure', file 'Expenditure_log' on file 7.
+BACKUP LOG successfully processed 240 pages in 0.030 seconds (62.369 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 08-Sep-19 22:15:03
+Processed 42888 pages for database 'BloodPressure', file 'BloodPressure' on file 1.
+Processed 3 pages for database 'BloodPressure', file 'BloodPressure_log' on file 1.
+BACKUP DATABASE successfully processed 42891 pages in 6.514 seconds (51.440 MB/sec).
+Processed 1032 pages for database 'Expenditure', file 'Expenditure' on file 1.
+Processed 4 pages for database 'Expenditure', file 'Expenditure_log' on file 1.
+BACKUP DATABASE successfully processed 1036 pages in 0.076 seconds (106.445 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 09-Sep-19 22:15:01
+Processed 62 pages for database 'BloodPressure', file 'BloodPressure_log' on file 2.
+BACKUP LOG successfully processed 62 pages in 0.020 seconds (24.218 MB/sec).
+Processed 452 pages for database 'Expenditure', file 'Expenditure_log' on file 2.
+BACKUP LOG successfully processed 452 pages in 0.049 seconds (71.986 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 10-Sep-19 22:15:01
+Processed 26 pages for database 'BloodPressure', file 'BloodPressure_log' on file 3.
+BACKUP LOG successfully processed 26 pages in 0.006 seconds (33.854 MB/sec).
+Processed 349 pages for database 'Expenditure', file 'Expenditure_log' on file 3.
+BACKUP LOG successfully processed 349 pages in 0.031 seconds (87.827 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 11-Sep-19 22:15:01
+Processed 35 pages for database 'BloodPressure', file 'BloodPressure_log' on file 4.
+BACKUP LOG successfully processed 35 pages in 0.012 seconds (22.786 MB/sec).
+Processed 463 pages for database 'Expenditure', file 'Expenditure_log' on file 4.
+BACKUP LOG successfully processed 463 pages in 0.038 seconds (95.086 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 12-Sep-19 22:15:01
+Processed 35 pages for database 'BloodPressure', file 'BloodPressure_log' on file 5.
+BACKUP LOG successfully processed 35 pages in 0.011 seconds (24.857 MB/sec).
+Processed 200 pages for database 'Expenditure', file 'Expenditure_log' on file 5.
+BACKUP LOG successfully processed 200 pages in 0.020 seconds (77.929 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 13-Sep-19 22:15:01
+Processed 22 pages for database 'BloodPressure', file 'BloodPressure_log' on file 6.
+BACKUP LOG successfully processed 22 pages in 0.009 seconds (19.097 MB/sec).
+Processed 234 pages for database 'Expenditure', file 'Expenditure_log' on file 6.
+BACKUP LOG successfully processed 234 pages in 0.030 seconds (60.937 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 14-Sep-19 22:15:01
+Processed 30 pages for database 'BloodPressure', file 'BloodPressure_log' on file 7.
+BACKUP LOG successfully processed 30 pages in 0.008 seconds (29.296 MB/sec).
+Processed 131 pages for database 'Expenditure', file 'Expenditure_log' on file 7.
+BACKUP LOG successfully processed 131 pages in 0.018 seconds (56.640 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 15-Sep-19 22:15:01
+Processed 42912 pages for database 'BloodPressure', file 'BloodPressure' on file 1.
+Processed 3 pages for database 'BloodPressure', file 'BloodPressure_log' on file 1.
+BACKUP DATABASE successfully processed 42915 pages in 3.061 seconds (109.530 MB/sec).
+Processed 1032 pages for database 'Expenditure', file 'Expenditure' on file 1.
+Processed 4 pages for database 'Expenditure', file 'Expenditure_log' on file 1.
+BACKUP DATABASE successfully processed 1036 pages in 0.081 seconds (99.874 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 16-Sep-19 22:15:02
+Processed 67 pages for database 'BloodPressure', file 'BloodPressure_log' on file 2.
+BACKUP LOG successfully processed 67 pages in 0.013 seconds (39.963 MB/sec).
+Processed 434 pages for database 'Expenditure', file 'Expenditure_log' on file 2.
+BACKUP LOG successfully processed 434 pages in 0.065 seconds (52.163 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 17-Sep-19 22:15:01
+Processed 24 pages for database 'BloodPressure', file 'BloodPressure_log' on file 3.
+BACKUP LOG successfully processed 24 pages in 0.016 seconds (11.718 MB/sec).
+Processed 164 pages for database 'Expenditure', file 'Expenditure_log' on file 3.
+BACKUP LOG successfully processed 164 pages in 0.034 seconds (37.568 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 18-Sep-19 22:15:01
+Processed 29 pages for database 'BloodPressure', file 'BloodPressure_log' on file 4.
+BACKUP LOG successfully processed 29 pages in 0.017 seconds (13.097 MB/sec).
+Processed 259 pages for database 'Expenditure', file 'Expenditure_log' on file 4.
+BACKUP LOG successfully processed 259 pages in 0.025 seconds (80.781 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 19-Sep-19 22:15:01
+Processed 44 pages for database 'BloodPressure', file 'BloodPressure_log' on file 5.
+BACKUP LOG successfully processed 44 pages in 0.011 seconds (31.250 MB/sec).
+Processed 211 pages for database 'Expenditure', file 'Expenditure_log' on file 5.
+BACKUP LOG successfully processed 211 pages in 0.021 seconds (78.497 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 20-Sep-19 22:15:01
+Processed 21 pages for database 'BloodPressure', file 'BloodPressure_log' on file 6.
+BACKUP LOG successfully processed 21 pages in 0.014 seconds (11.718 MB/sec).
+Processed 234 pages for database 'Expenditure', file 'Expenditure_log' on file 6.
+BACKUP LOG successfully processed 234 pages in 0.030 seconds (60.937 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 21-Sep-19 22:15:01
+Processed 36 pages for database 'BloodPressure', file 'BloodPressure_log' on file 7.
+BACKUP LOG successfully processed 36 pages in 0.009 seconds (30.815 MB/sec).
+Processed 139 pages for database 'Expenditure', file 'Expenditure_log' on file 7.
+BACKUP LOG successfully processed 139 pages in 0.015 seconds (72.135 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 22-Sep-19 22:15:01
+Processed 42912 pages for database 'BloodPressure', file 'BloodPressure' on file 1.
+Processed 4 pages for database 'BloodPressure', file 'BloodPressure_log' on file 1.
+BACKUP DATABASE successfully processed 42916 pages in 3.417 seconds (98.121 MB/sec).
+Processed 1032 pages for database 'Expenditure', file 'Expenditure' on file 1.
+Processed 4 pages for database 'Expenditure', file 'Expenditure_log' on file 1.
+BACKUP DATABASE successfully processed 1036 pages in 0.095 seconds (85.156 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 23-Sep-19 22:15:01
+Processed 64 pages for database 'BloodPressure', file 'BloodPressure_log' on file 2.
+BACKUP LOG successfully processed 64 pages in 0.017 seconds (29.411 MB/sec).
+Processed 232 pages for database 'Expenditure', file 'Expenditure_log' on file 2.
+BACKUP LOG successfully processed 232 pages in 0.028 seconds (64.732 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 24-Sep-19 22:15:01
+Processed 28 pages for database 'BloodPressure', file 'BloodPressure_log' on file 3.
+BACKUP LOG successfully processed 28 pages in 0.014 seconds (15.345 MB/sec).
+Processed 101 pages for database 'Expenditure', file 'Expenditure_log' on file 3.
+BACKUP LOG successfully processed 101 pages in 0.013 seconds (60.697 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 25-Sep-19 22:15:01
+Processed 31 pages for database 'BloodPressure', file 'BloodPressure_log' on file 4.
+BACKUP LOG successfully processed 31 pages in 0.019 seconds (12.746 MB/sec).
+Processed 240 pages for database 'Expenditure', file 'Expenditure_log' on file 4.
+BACKUP LOG successfully processed 240 pages in 0.026 seconds (72.115 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 28-Sep-19 22:15:01
+Processed 83 pages for database 'BloodPressure', file 'BloodPressure_log' on file 5.
+BACKUP LOG successfully processed 83 pages in 0.017 seconds (37.913 MB/sec).
+Processed 250 pages for database 'Expenditure', file 'Expenditure_log' on file 5.
+BACKUP LOG successfully processed 250 pages in 0.026 seconds (75.120 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 29-Sep-19 22:15:01
+Processed 42928 pages for database 'BloodPressure', file 'BloodPressure' on file 1.
+Processed 4 pages for database 'BloodPressure', file 'BloodPressure_log' on file 1.
+BACKUP DATABASE successfully processed 42932 pages in 3.611 seconds (92.884 MB/sec).
+Processed 1040 pages for database 'Expenditure', file 'Expenditure' on file 1.
+Processed 3 pages for database 'Expenditure', file 'Expenditure_log' on file 1.
+BACKUP DATABASE successfully processed 1043 pages in 0.091 seconds (89.543 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 30-Sep-19 22:15:01
+Processed 75 pages for database 'BloodPressure', file 'BloodPressure_log' on file 2.
+BACKUP LOG successfully processed 75 pages in 0.010 seconds (58.203 MB/sec).
+Processed 298 pages for database 'Expenditure', file 'Expenditure_log' on file 2.
+BACKUP LOG successfully processed 298 pages in 0.038 seconds (61.266 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 02-Oct-19 22:15:01
+Processed 57 pages for database 'BloodPressure', file 'BloodPressure_log' on file 3.
+BACKUP LOG successfully processed 57 pages in 0.020 seconds (22.070 MB/sec).
+Processed 277 pages for database 'Expenditure', file 'Expenditure_log' on file 3.
+BACKUP LOG successfully processed 277 pages in 0.032 seconds (67.504 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 03-Oct-19 22:15:02
+Processed 30 pages for database 'BloodPressure', file 'BloodPressure_log' on file 4.
+BACKUP LOG successfully processed 30 pages in 0.016 seconds (14.404 MB/sec).
+Processed 103 pages for database 'Expenditure', file 'Expenditure_log' on file 4.
+BACKUP LOG successfully processed 103 pages in 0.021 seconds (38.318 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 04-Oct-19 22:15:01
+Processed 27 pages for database 'BloodPressure', file 'BloodPressure_log' on file 5.
+BACKUP LOG successfully processed 27 pages in 0.011 seconds (18.821 MB/sec).
+Processed 139 pages for database 'Expenditure', file 'Expenditure_log' on file 5.
+BACKUP LOG successfully processed 139 pages in 0.015 seconds (72.135 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 05-Oct-19 22:15:02
+Processed 25 pages for database 'BloodPressure', file 'BloodPressure_log' on file 6.
+BACKUP LOG successfully processed 25 pages in 0.017 seconds (11.488 MB/sec).
+Processed 178 pages for database 'Expenditure', file 'Expenditure_log' on file 6.
+BACKUP LOG successfully processed 178 pages in 0.133 seconds (10.455 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 06-Oct-19 22:15:01
+Processed 42928 pages for database 'BloodPressure', file 'BloodPressure' on file 1.
+Processed 4 pages for database 'BloodPressure', file 'BloodPressure_log' on file 1.
+BACKUP DATABASE successfully processed 42932 pages in 2.525 seconds (132.832 MB/sec).
+Processed 1040 pages for database 'Expenditure', file 'Expenditure' on file 1.
+Processed 4 pages for database 'Expenditure', file 'Expenditure_log' on file 1.
+BACKUP DATABASE successfully processed 1044 pages in 0.087 seconds (93.705 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 07-Oct-19 22:15:01
+Processed 74 pages for database 'BloodPressure', file 'BloodPressure_log' on file 2.
+BACKUP LOG successfully processed 74 pages in 0.013 seconds (44.170 MB/sec).
+Processed 295 pages for database 'Expenditure', file 'Expenditure_log' on file 2.
+BACKUP LOG successfully processed 295 pages in 0.036 seconds (64.019 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 08-Oct-19 22:15:01
+Processed 34 pages for database 'BloodPressure', file 'BloodPressure_log' on file 3.
+BACKUP LOG successfully processed 34 pages in 0.015 seconds (17.447 MB/sec).
+Processed 124 pages for database 'Expenditure', file 'Expenditure_log' on file 3.
+BACKUP LOG successfully processed 124 pages in 0.013 seconds (74.218 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 10-Oct-19 22:15:02
+Processed 56 pages for database 'BloodPressure', file 'BloodPressure_log' on file 4.
+BACKUP LOG successfully processed 56 pages in 0.009 seconds (48.611 MB/sec).
+Processed 248 pages for database 'Expenditure', file 'Expenditure_log' on file 4.
+BACKUP LOG successfully processed 248 pages in 0.027 seconds (71.759 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 11-Oct-19 22:15:02
+Processed 40 pages for database 'BloodPressure', file 'BloodPressure_log' on file 5.
+BACKUP LOG successfully processed 40 pages in 0.023 seconds (13.417 MB/sec).
+Processed 311 pages for database 'Expenditure', file 'Expenditure_log' on file 5.
+BACKUP LOG successfully processed 311 pages in 0.035 seconds (69.419 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 12-Oct-19 22:15:02
+Processed 34 pages for database 'BloodPressure', file 'BloodPressure_log' on file 6.
+BACKUP LOG successfully processed 34 pages in 0.012 seconds (22.135 MB/sec).
+Processed 235 pages for database 'Expenditure', file 'Expenditure_log' on file 6.
+BACKUP LOG successfully processed 235 pages in 0.024 seconds (76.334 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 13-Oct-19 22:15:02
+Processed 42976 pages for database 'BloodPressure', file 'BloodPressure' on file 1.
+Processed 3 pages for database 'BloodPressure', file 'BloodPressure_log' on file 1.
+BACKUP DATABASE successfully processed 42979 pages in 2.546 seconds (131.882 MB/sec).
+Processed 1040 pages for database 'Expenditure', file 'Expenditure' on file 1.
+Processed 3 pages for database 'Expenditure', file 'Expenditure_log' on file 1.
+BACKUP DATABASE successfully processed 1043 pages in 0.074 seconds (110.114 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 14-Oct-19 22:15:02
+Processed 67 pages for database 'BloodPressure', file 'BloodPressure_log' on file 2.
+BACKUP LOG successfully processed 67 pages in 0.019 seconds (27.343 MB/sec).
+Processed 301 pages for database 'Expenditure', file 'Expenditure_log' on file 2.
+BACKUP LOG successfully processed 301 pages in 0.035 seconds (67.075 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 15-Oct-19 22:15:02
+Processed 28 pages for database 'BloodPressure', file 'BloodPressure_log' on file 3.
+BACKUP LOG successfully processed 28 pages in 0.015 seconds (14.322 MB/sec).
+Processed 73 pages for database 'Expenditure', file 'Expenditure_log' on file 3.
+BACKUP LOG successfully processed 73 pages in 0.009 seconds (63.368 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 16-Oct-19 22:15:02
+Processed 25 pages for database 'BloodPressure', file 'BloodPressure_log' on file 4.
+BACKUP LOG successfully processed 25 pages in 0.016 seconds (12.207 MB/sec).
+Processed 260 pages for database 'Expenditure', file 'Expenditure_log' on file 4.
+BACKUP LOG successfully processed 260 pages in 0.025 seconds (81.250 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 17-Oct-19 22:15:02
+Processed 31 pages for database 'BloodPressure', file 'BloodPressure_log' on file 5.
+BACKUP LOG successfully processed 31 pages in 0.018 seconds (13.454 MB/sec).
+Processed 134 pages for database 'Expenditure', file 'Expenditure_log' on file 5.
+BACKUP LOG successfully processed 134 pages in 0.014 seconds (74.776 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 20-Oct-19 22:15:02
+Processed 42976 pages for database 'BloodPressure', file 'BloodPressure' on file 1.
+Processed 4 pages for database 'BloodPressure', file 'BloodPressure_log' on file 1.
+BACKUP DATABASE successfully processed 42980 pages in 2.561 seconds (131.113 MB/sec).
+Processed 1040 pages for database 'Expenditure', file 'Expenditure' on file 1.
+Processed 3 pages for database 'Expenditure', file 'Expenditure_log' on file 1.
+BACKUP DATABASE successfully processed 1043 pages in 0.091 seconds (89.543 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 21-Oct-19 22:15:02
+Processed 134 pages for database 'BloodPressure', file 'BloodPressure_log' on file 2.
+BACKUP LOG successfully processed 134 pages in 0.024 seconds (43.457 MB/sec).
+Processed 545 pages for database 'Expenditure', file 'Expenditure_log' on file 2.
+BACKUP LOG successfully processed 545 pages in 0.044 seconds (96.679 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 22-Oct-19 22:15:02
+Processed 19612 pages for database 'BloodPressure', file 'BloodPressure_log' on file 3.
+BACKUP LOG successfully processed 19612 pages in 1.483 seconds (103.314 MB/sec).
+Processed 195 pages for database 'Expenditure', file 'Expenditure_log' on file 3.
+BACKUP LOG successfully processed 195 pages in 0.023 seconds (66.236 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 23-Oct-19 22:15:04
+Processed 380 pages for database 'BloodPressure', file 'BloodPressure_log' on file 4.
+BACKUP LOG successfully processed 380 pages in 0.055 seconds (53.906 MB/sec).
+Processed 2163 pages for database 'Expenditure', file 'Expenditure_log' on file 4.
+BACKUP LOG successfully processed 2163 pages in 0.372 seconds (45.415 MB/sec).
+
+C:\WINDOWS\system32>sqlcmd -S DESKTOP-IU99LKB -i C:\MyFiles\DBCode\SQLServer\Scripts\BackupDatabases.sql 
+Backup at 24-Oct-19 22:15:02
+Processed 687 pages for database 'BloodPressure', file 'BloodPressure_log' on file 5.
+BACKUP LOG successfully processed 687 pages in 0.050 seconds (107.265 MB/sec).
+Processed 238 pages for database 'Expenditure', file 'Expenditure_log' on file 5.
+BACKUP LOG successfully processed 238 pages in 0.037 seconds (50.147 MB/sec).

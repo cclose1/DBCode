@@ -17,6 +17,7 @@ BEGIN
 SELECT TOP 1
 	AdHocDailyRate AS DailyRate,
 	Essential,
+	Necessary,
 	Discretionary,
 	MonthSpend,
 	YearTotal      AS YearEstimate,

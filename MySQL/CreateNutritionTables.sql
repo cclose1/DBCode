@@ -35,25 +35,25 @@ DELIMITER ;
 DROP TABLE IF EXISTS NutritionDetail;
 
 CREATE TABLE NutritionDetail(
-	Item         varchar(50)    NOT NULL,
-	Source       varchar(50)    NOT NULL,
-	Start        datetime       NOT NULL,
-	Type         varchar(50)    NULL,
-	End          datetime       NULL DEFAULT '3000-01-01 00:00',
-	Modified     datetime       NULL,
-	Calories     decimal(12, 3) NULL,
-	Protein      decimal(12, 3) NULL,
-	Fat          decimal(12, 3) NULL,
-	Saturated    decimal(12, 3) NULL,
-	Carbohydrate decimal(12, 3) NULL,
-	Sugar        decimal(12, 3) NULL,
-	Fibre        decimal(12, 3) NULL,
-	Cholesterol  decimal(12, 3) NULL,
-	Salt         decimal(12, 3) NULL,
-	DefaultSize  decimal(12, 2) NULL,
-	ABV          decimal(12, 1) NULL,
-	Simple       char(1)        NULL,
-	PackSize     decimal(12, 3) NULL,
+	Item         varchar(50)   NOT NULL,
+	Source       varchar(50)   NOT NULL,
+	Start        datetime      NOT NULL,
+	Type         varchar(10)   NULL,
+	End          datetime      NULL DEFAULT '3000-01-01 00:00',
+	Modified     datetime      NULL,
+	Calories     decimal(6, 2) NULL,
+	Protein      decimal(5, 2) NULL,
+	Fat          decimal(5, 2) NULL,
+	Saturated    decimal(5, 2) NULL,
+	Carbohydrate decimal(5, 2) NULL,
+	Sugar        decimal(5, 2) NULL,
+	Fibre        decimal(5, 2) NULL,
+	Cholesterol  decimal(5, 2) NULL,
+	Salt         decimal(5, 2) NULL,
+	DefaultSize  decimal(6, 2) NULL,
+	ABV          decimal(4, 1) NULL,
+	Simple       char(1)       NULL,
+	PackSize     decimal(6, 1) NULL,
   PRIMARY KEY (Item, Source, Start)
 );
 
@@ -79,7 +79,7 @@ CREATE TABLE NutritionComposite(
 	Item          VARCHAR(50) NOT NULL,
 	Source        VARCHAR(50) NOT NULL,
 	Start         DATETIME,
-	Type          VARCHAR(50),
+	Type          VARCHAR(10),
 	End           DATETIME DEFAULT '3000-01-01 00:00',
 	Modified      DATETIME,
 	Record        DATETIME,
@@ -132,12 +132,12 @@ DELIMITER ;
 DROP TABLE IF EXISTS NutritionRecord;
 
 CREATE TABLE NutritionRecord(
-	Timestamp   datetime        NOT NULL,
-	Item        varchar(50)     NOT NULL,
-	Source      varchar(50)     NOT NULL,
-	Modified    datetime        NULL,
-	Quantity    decimal(12, 2)  NULL,
-	ABV         decimal(12, 2)  NULL,
+	Timestamp   datetime      NOT NULL,
+	Item        varchar(50)   NOT NULL,
+	Source      varchar(50)   NOT NULL,
+	Modified    datetime      NULL,
+	Quantity    decimal(6, 2) NULL,
+	ABV         decimal(4, 1) NULL,
 	IsComposite char(1),
 	PRIMARY KEY (Timestamp, Item, Source));
 

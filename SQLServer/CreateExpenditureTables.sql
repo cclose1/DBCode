@@ -113,15 +113,15 @@ CREATE TABLE SpendData (
   Modified       DATETIME     NULL, 
   IncurredBy     VARCHAR(20)  DEFAULT 'Chris',
   Timestamp      DATETIME     NULL,
-  Category       VARCHAR(20)  NULL,
-  Type           VARCHAR(20)  NULL,
+  Category       VARCHAR(15)  NULL,
+  Type           VARCHAR(15)  NULL,
   Description    VARCHAR(max) NULL,
   Location       VARCHAR(max) NULL,
   Amount         SMALLMONEY   NULL,
   Monthly        CHAR(1)      NULL,
   Ignore         CHAR(1)      NULL,
   Period         CHAR(1)      NULL,
-  Payment        VARCHAR(30)  NULL,
+  Payment        VARCHAR(10)  NULL,
   BankCorrection SMALLMONEY   DEFAULT NULL,
   CONSTRAINT PK_SpenData PRIMARY KEY CLUSTERED(
 	SeqNo  ASC)

@@ -79,15 +79,15 @@ CREATE TABLE SpendData (
   Modified       Datetime(3)   DEFAULT NULL, 
   IncurredBy     VARCHAR(20)   DEFAULT 'Chris',
   Timestamp      datetime(3)   DEFAULT NULL,
-  Category       varchar(20)   DEFAULT NULL,
-  Type           varchar(20)   DEFAULT NULL,
+  Category       varchar(15)   DEFAULT NULL,
+  Type           varchar(15)   DEFAULT NULL,
   Description    varchar(1000) DEFAULT NULL,
   Location       varchar(1000) DEFAULT NULL,
   Amount         decimal(10,2) DEFAULT NULL,
   Monthly        char(1)       DEFAULT NULL,
   `Ignore`       char(1)       DEFAULT NULL,
   Period         char(1)       DEFAULT NULL,
-  Payment        varchar(30)   DEFAULT NULL,
+  Payment        varchar(10)   DEFAULT NULL,
   BankCorrection decimal(10,2) DEFAULT NULL,
   PRIMARY KEY (SeqNo)
 );

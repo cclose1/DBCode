@@ -25,9 +25,11 @@ GO
 CREATE VIEW Spend AS
 SELECT
 	SeqNo,
-	CONVERT(VARCHAR(19), Modified,  120)          AS Modified,
+--	CONVERT(VARCHAR(19), Modified,  120)          AS Modified,
+	Modified,
 	IncurredBy,
-	CONVERT(VARCHAR(19), Timestamp, 120)          AS Timestamp,
+--	CONVERT(VARCHAR(19), Timestamp, 120)          AS Timestamp,
+	Timestamp,
 	CAST(Timestamp AS Date)                       AS Date,
 	CONVERT(VARCHAR(8),Timestamp,108)             AS Time,
 	DATEPART(YYYY, Timestamp)                     AS Year,
