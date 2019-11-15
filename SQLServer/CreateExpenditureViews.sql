@@ -255,3 +255,14 @@ FROM (
 JOIN TransactionHeader TH
 ON J1.TXNId = TH.TXNId
 WHERE Linex = 1
+GO
+DROP VIEW ReminderState
+GO
+CREATE VIEW ReminderState
+AS
+SELECT
+	*,
+	DATEDIFF(DAY, CURRENT_TIMESTAMP,Timestamp) AS  Remaining,
+	CASE WHEN CURRENT_TIMESTAMP BETWEEN DATEADD(DAY,-COALESCE(Warndays, 5), Timestamp) AND Timestamp AND Suspended <> 'Y' THEN 'Y' ELSE 'N' END AS Alert
+FROM Reminder
+GO

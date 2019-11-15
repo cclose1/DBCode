@@ -1,3 +1,5 @@
+USE BloodPressure
+GO
 IF EXISTS (SELECT '1' FROM sysobjects WHERE name = 'SynchronizeExpenditure' AND type ='p')
 BEGIN
 	DROP Procedure dbo.SynchronizeExpenditure
@@ -17,6 +19,7 @@ BEGIN
 		EXEC SynchronizeTable @SQLServer, @MySQL, 'SpendData',           @mode = @mode, @batch = @batch, @key = 'Timestamp'
 		EXEC SynchronizeTable @SQLServer, @MySQL, 'TransactionHeader',   @mode = @mode, @batch = @batch, @key = 'TxnKey'
 		EXEC SynchronizeTable @SQLServer, @MySQL, 'TransactionLine',     @mode = @mode, @batch = @batch
+		EXEC SynchronizeTable @SQLServer, @MySQL, 'Reminder',            @mode = @mode, @batch = @batch
 	END TRY
 	BEGIN CATCH
 		EXEC ReportError

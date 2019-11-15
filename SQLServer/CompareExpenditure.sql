@@ -17,6 +17,7 @@ BEGIN
 		EXEC CompareTable @SQLServer, @MySQL, 'SpendData',          @update = @update, @key = 'Timestamp'
 		EXEC CompareTable @SQLServer, @MySQL, 'TransactionHeader',  @update = @update, @key = 'TxnKey'
 		EXEC CompareTable @SQLServer, @MySQL, 'TransactionLine',    @update = @update
+		EXEC CompareTable @SQLServer, @MySQL, 'Reminder',           @update = @update
 	END TRY
 	BEGIN CATCH
 		EXEC ReportError

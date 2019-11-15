@@ -172,3 +172,18 @@ FOR EACH ROW
 BEGIN
 	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
 END;//
+
+
+DROP TABLE IF EXISTS Reminder;
+
+CREATE TABLE Reminder (
+	Refid       VARCHAR(10)   NOT NULL,
+	Timestamp   TIMESTAMP     NOT NULL,
+	Type        VARCHAR(15)   NULL,
+	Frequency   VARCHAR(1)    NULL,
+	WarnDays    DECIMAL(3, 0) NULL,
+	Suspended   VARCHAR(1)    NULL,
+	Description VARCHAR(1000) NULL,
+	Comment     VARCHAR(1000) NULL,
+	PRIMARY KEY (RefId ASC) 
+);

@@ -14,7 +14,8 @@ DROP VIEW MergeTransactionLines
 GO
 DROP VIEW BankTransfers
 GO
-
+DROP View ReminderState
+GO
 DROP TABLE Currency
 GO
 CREATE TABLE Currency (
@@ -231,4 +232,18 @@ BEGIN
 	ON  TL.TXNId = inserted.TXNId
 	AND TL.Line = inserted.Line
 END
+GO
+DROP TABLE Reminder
+GO
+CREATE TABLE Reminder (
+	RefId		VARCHAR(10)   NOT NULL,
+	Timestamp   DATETIME      NOT NULL,
+	Type        VARCHAR(15)   NULL,
+	Frequency   CHAR(1)       NULL,
+	WarnDays    DECIMAL(3, 0) NULL,
+	Suspended   VARCHAR(1)    NULL,
+	Description VARCHAR(max)  NULL,
+	Comment     VARCHAR(max)  NULL,
+	PRIMARY KEY (RefId ASC)
+)
 GO
