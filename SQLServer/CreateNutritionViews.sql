@@ -1,5 +1,6 @@
 DROP VIEW NutritionItem
 GO
+
 CREATE VIEW NutritionItem
 AS
 SELECT 
@@ -26,28 +27,37 @@ SELECT
 	PackSize
 FROM NutritionDetail
 UNION
+/*
+ * Cast to smallest DECIMAL, that won't cause overflow, as then the overall field type will default to larger field in the union. 
+ * This a workaround, as without the cast, the field size will be DECIMAL(38, 4).
+ *
+ * Note: The composite record is not much used; perhaps should remove it.
+ */
 SELECT
 	NC.Item,
-	MIN(NC.Type)                  AS Type,
+	MIN(NC.Type)                                             AS Type,
 	NC.Source,
 	NC.Start,
-	MIN(NC.[End])                 AS [End],
-	MIN(NC.Modified)              AS Modified,
-	dbo.CalculateCalories(SUM(Quantity * Fat), SUM(Quantity * Carbohydrate), SUM(Quantity * Protein), SUM(Quantity * NR.ABV / 1000)) AS CalculateCalories,
-	SUM(Quantity * Calories)      AS Calories,
-	SUM(Quantity * Protein)       AS Protein,
-	SUM(Quantity * Fat)           AS Fat,
-	SUM(Quantity * Saturated)     AS Saturated,
-	SUM(Quantity * Carbohydrate)  AS Carbohydrate,
-	SUM(Quantity * Sugar)         AS Sugar,
-	SUM(Quantity * Fibre)         AS Fibre,
-	SUM(Quantity * Cholesterol)   AS Cholesterol,
-	SUM(Quantity * Salt)          AS Salt,
-	SUM(Quantity * NR.ABV / 1000) AS Units,
-	1                             AS DefaultSize,
-	NULL                          AS ABV,
-	'C'                           AS Simple,
-	NULL                          AS PackSize
+	MIN(NC.[End])                                            AS [End],
+	MIN(NC.Modified)                                         AS Modified,
+	CAST(SUM(Quantity * Calories)      AS DECIMAL(5, 2))     AS Calories,
+	CAST(dbo.CalculateCalories(
+			SUM(Quantity * Fat), SUM(Quantity * Carbohydrate), 
+			SUM(Quantity * Protein), 
+			SUM(Quantity * NR.ABV / 1000)) AS DECIMAL(5, 2)) AS CalculateCalories,
+	CAST(SUM(Quantity * Protein)       AS DECIMAL(5, 2))     AS Protein,
+	CAST(SUM(Quantity * Fat)           AS DECIMAL(5, 2))     AS Fat,
+	CAST(SUM(Quantity * Saturated)     AS DECIMAL(5, 2))     AS Saturated,
+	CAST(SUM(Quantity * Carbohydrate)  AS DECIMAL(5, 2))     AS Carbohydrate,
+	CAST(SUM(Quantity * Sugar)         AS DECIMAL(4, 1))     AS Sugar,
+	CAST(SUM(Quantity * Fibre)         AS DECIMAL(4, 1))     AS Fibre,
+	CAST(SUM(Quantity * Cholesterol)   AS DECIMAL(4, 1))     AS Cholesterol,
+	CAST(SUM(Quantity * Salt)          AS DECIMAL(1, 0))     AS Salt,
+	CAST(SUM(Quantity * NR.ABV / 1000) AS DECIMAL(1, 0))     AS Units,
+	1                                                        AS DefaultSize,
+	NULL                                                     AS ABV,
+	'C'                                                      AS Simple,
+	NULL                                                     AS PackSize
 FROM NutritionComposite NC
 JOIN NutritionRecord    NR
 ON NC.Record = NR.Timestamp
@@ -208,7 +218,8 @@ FROM (
 		SUM(Units)                                      AS Units,
 		MIN(Kilos)                                      AS MinKilos,
 		CAST(AVG(Kilos) AS NUMERIC(10, 1))              AS AvgKilos,
-		MAX(Kilos)                                      AS MaxKilos
+		MAX(Kilos)                                      AS MaxKilos,
+		MAX(Kilos) - MIN(Kilos)                         AS RangeKilos
 	FROM NutritionEventSummary
 	GROUP BY WeekStart) J1
 LEFT JOIN Weight WT

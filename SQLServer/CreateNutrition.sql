@@ -21,13 +21,14 @@ CREATE TABLE NutritionDetail(
 	Type         VARCHAR(50),
 	[End]        DATETIME DEFAULT '01-Jan-3000',
 	Modified     DATETIME,
+	Comment      VARCHAR(max),
 	Calories     DECIMAL(6, 2),
-	Protein      DECIMAL(5, 2),
-	Fat          DECIMAL(5, 2),
-	Saturated    DECIMAL(5, 2),
-	Carbohydrate DECIMAL(5, 2),
-	Sugar        DECIMAL(5, 2),
-	Fibre        DECIMAL(5, 2),
+	Protein      DECIMAL(6, 3),
+	Fat          DECIMAL(6, 3),
+	Saturated    DECIMAL(6, 3),
+	Carbohydrate DECIMAL(6, 3),
+	Sugar        DECIMAL(6, 3),
+	Fibre        DECIMAL(6, 3),
 	Cholesterol  DECIMAL(4, 2),
 	Salt         DECIMAL(4, 2),
 	DefaultSize  DECIMAL(6, 2),
@@ -102,6 +103,27 @@ CREATE TABLE NutritionRecord (
 		Source    ASC)
 )
 GO
+/*
+ Suggested by Query Analyzer when query NutritionEventSummary was taking a long time.
+
+CREATE NONCLUSTERED INDEX NRItmSrcTS ON NutritionRecord (
+	Item      ASC,
+	Source    ASC,
+	Timestamp ASC
+)
+INCLUDE (
+	Quantity,
+	ABV,
+	IsComposite) WITH (
+		PAD_INDEX              = OFF, 
+		STATISTICS_NORECOMPUTE = OFF, 
+		SORT_IN_TEMPDB         = OFF, 
+		DROP_EXISTING          = OFF, 
+		ONLINE                 = OFF, 
+		ALLOW_ROW_LOCKS        = ON, 
+		ALLOW_PAGE_LOCKS       = ON) ON [PRIMARY]
+GO
+*/
 CREATE TRIGGER NutritionRecordModified
    ON  NutritionRecord
    AFTER INSERT,UPDATE

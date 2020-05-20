@@ -178,7 +178,8 @@ SELECT
 	SUM(Units)                         AS Units,
 	MIN(Kilos)                         AS MinKilos,
 	CAST(AVG(Kilos) AS DECIMAL(10, 1)) AS AvgKilos,
-	MAX(Kilos)                         AS MaxKilos
+	MAX(Kilos)                         AS MaxKilos,
+	MAX(Kilos) - MIN(Kilos)            AS RangeKilos
 FROM NutritionEventSummary
 GROUP BY WeekStart;
 

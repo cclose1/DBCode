@@ -190,23 +190,42 @@ GO
 
 DROP VIEW MergeTransactionLines
 GO
-
+/*
 CREATE VIEW MergeTransactionLines
 AS
 SELECT
 	TXNId,
-	ROW_NUMBER() OVER (PARTITION BY TXNId ORDER BY Currency) AS Line,
-	Min(Timestamp)                                           AS Timestamp,
-	Min(Description)                                         AS Description,
+	ROW_NUMBER() OVER (PARTITION BY TXNId ORDER BY Currency, Line) AS Line,
+	Min(Timestamp)                                                 AS Timestamp,
+	Min(Description)                                               AS Description,
 	Currency,
 	Account,
 	Type,
 	Usage,
+	Count(*)                                                       AS Lines,
+	Sum(Amount)                                                    AS Amount,
+	Sum(Fee)                                                       AS Fee
+FROM TransactionLine
+GROUP BY TXNId, Account, Currency, Line, Type, Usage
+GO
+*/
+CREATE VIEW MergeTransactionLines
+AS
+SELECT
+	ROW_NUMBER() OVER (PARTITION BY TXNId ORDER BY Currency) AS [Index],
+	TXNId,
+	Min(Line)                                                AS Line,
+	Min(Timestamp)                                           AS Timestamp,
+	Min(Description)                                         AS Description,
+	Currency,
+	Account,
+	Min(Type)                                                AS Type,
+	Min(Usage)                                               AS Usage,
 	Count(*)                                                 AS Lines,
 	Sum(Amount)                                              AS Amount,
 	Sum(Fee)                                                 AS Fee
 FROM TransactionLine
-GROUP BY TXNId, Account, Currency, Type, Usage
+GROUP BY TXNId, Account, Currency
 GO
 
 DROP VIEW BankTransfers
@@ -245,17 +264,58 @@ FROM (
 		LN2.Amount      AS TrgAmount,
 		LN2.Fee         AS TrgFee,
 		LN2.Currency    AS TrgCurrency,
-		LN2.Description AS TrgDescription,
-		ROW_NUMBER() OVER (PARTITION BY LN1.TXNId ORDER BY LN1.Currency) AS Linex
+		LN2.Description AS TrgDescription
 	FROM MergeTransactionLines LN1
 	LEFT JOIN MergeTransactionLines LN2
 	ON  LN1.TXNId = LN2.TXNId
-	AND LN1.Line  = 1
-	AND LN2.Line <> 1) J1
+	WHERE LN1.Line  = 1
+	AND   LN2.Line <> 1) J1
 JOIN TransactionHeader TH
 ON J1.TXNId = TH.TXNId
-WHERE Linex = 1
 GO
+DROP VIEW TransactionLineWithCurrency
+GO
+CREATE VIEW TransactionLineWithCurrency
+AS
+SELECT 
+	TL.TXNId,
+	TL.Timestamp, 
+	TL.Account,
+	TL.Currency,
+	TL.Amount,
+	TL.Fee,
+	TL.Amount * CR.AvgRate AS ExcAmount,
+	CR.Target              AS ExcCurrency,
+	CR.MinRate,
+	CR.AvgRate,
+	CR.MaxRate
+FROM TransactionLine TL
+LEFT JOIN DailyCurrencyRates CR
+ON  TL.Currency                = CR.Source
+AND CAST(TL.Timestamp AS Date) = CR.Date
+GO
+
+DROP VIEW CurrentExchangeValue
+GO
+CREATE VIEW CurrentExchangeValue
+AS
+SELECT
+	TL.TXNId,
+	TL.Timestamp,
+	TL.Account,
+	TL.Currency,
+	CAST(TL.Amount              AS DECIMAL(10, 2))                AS Amount,
+	CAST(TL.ExcAmount           AS DECIMAL(10, 2))                AS ExcAmount,
+	TL.ExcCurrency,
+	CAST(TL.Amount * DR.AvgRate AS DECIMAL(10, 2))                AS CurrentAmount,
+	CAST(TL.Amount * DR.AvgRate - TL.ExcAmount AS DECIMAL(10, 2)) AS Change
+FROM TransactionLineWithCurrency TL
+JOIN DailyCurrencyRates DR
+ON  TL.Currency    = DR.Source
+AND TL.ExcCurrency = DR.Target
+AND DR.Date        = CAST(GETDATE() AS DATE)
+GO
+
 DROP VIEW ReminderState
 GO
 CREATE VIEW ReminderState
