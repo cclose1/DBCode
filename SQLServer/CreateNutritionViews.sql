@@ -24,6 +24,7 @@ SELECT
 	DefaultSize,
 	ABV,
 	ISNULL(Simple, 'N') AS Simple,
+	IsVolume,
 	PackSize
 FROM NutritionDetail
 UNION
@@ -57,6 +58,7 @@ SELECT
 	1                                                        AS DefaultSize,
 	NULL                                                     AS ABV,
 	'C'                                                      AS Simple,
+	NULL                                                     AS IsVolume,
 	NULL                                                     AS PackSize
 FROM NutritionComposite NC
 JOIN NutritionRecord    NR
@@ -244,6 +246,7 @@ SELECT
 	CAST(NR.ABV AS DECIMAL(4, 1))                        AS ABV,	
 	NR.IsComposite,
 	NI.Simple,
+	NI.IsVolume,
 	NI.Calories                                          AS ICalories,
 	NI.Protein                                           AS IProtein,
 	NI.Fat                                               AS IFat,
