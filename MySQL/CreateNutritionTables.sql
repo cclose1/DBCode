@@ -50,10 +50,11 @@ CREATE TABLE NutritionDetail(
 	Sugar        decimal(6, 3) NULL,
 	Fibre        decimal(6, 3) NULL,
 	Cholesterol  decimal(5, 2) NULL,
-	Salt         decimal(5, 2) NULL,
+	Salt         decimal(6, 3) NULL,
 	DefaultSize  decimal(6, 2) NULL,
 	ABV          decimal(4, 1) NULL,
 	Simple       char(1)       NULL,
+	IsVolume     char(1)       NULL,
 	PackSize     decimal(6, 1) NULL,
   PRIMARY KEY (Item, Source, Start)
 );

@@ -30,10 +30,11 @@ CREATE TABLE NutritionDetail(
 	Sugar        DECIMAL(6, 3),
 	Fibre        DECIMAL(6, 3),
 	Cholesterol  DECIMAL(4, 2),
-	Salt         DECIMAL(4, 2),
+	Salt         DECIMAL(6, 3),
 	DefaultSize  DECIMAL(6, 2),
 	ABV          DECIMAL(4, 1),
 	Simple       CHAR(1),
+	IsVolume     CHAR(1),
 	PackSize     DECIMAL(6, 1)
 	CONSTRAINT PKNutritionRecord PRIMARY KEY CLUSTERED(
 		Item   ASC,

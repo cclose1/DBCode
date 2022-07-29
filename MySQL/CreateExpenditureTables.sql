@@ -108,6 +108,30 @@ END;//
 
 DELIMITER ;
 
+DROP TABLE IF EXISTS PaymentSource;
+
+CREATE TABLE PaymentSource(
+	Code    VARCHAR(20) NOT NULL,
+	Account VARCHAR(20) NULL,
+	Type    VARCHAR(20) NULL,
+	Comment VARCHAR(1000) NULL,
+	PRIMARY KEY CLUSTERED (
+		Code ASC
+	)
+);
+
+INSERT PaymentSource(Code, Account, Type) VALUES ('Cash',   NULL, NULL);
+INSERT PaymentSource(Code, Account, Type) VALUES ('HCCSO', 'HF1', 'Standing Order');
+INSERT PaymentSource(Code, Account, Type) VALUES ('HCCDD', 'HF1', 'Direct Debit');
+INSERT PaymentSource(Code, Account, Type) VALUES ('HCCDC', 'HF1', 'Debit Card');
+INSERT PaymentSource(Code, Account, Type) VALUES ('HCCCH', 'HF1', 'Cheque');
+INSERT PaymentSource(Code, Account, Type) VALUES ('SJNSO', 'SN1', 'Standing Order');
+INSERT PaymentSource(Code, Account, Type) VALUES ('SJNDD', 'SN1', 'Direct Debit');
+INSERT PaymentSource(Code, Account, Type) VALUES ('SJNCC', 'SN2', 'Credit Card');
+INSERT PaymentSource(Code, Account, Type) VALUES ('SRCSO', 'SN3', 'Standing Order');
+INSERT PaymentSource(Code, Account, Type) VALUES ('SRCDD', 'SN3', 'Direct Debit');
+INSERT PaymentSource(Code, Account, Type) VALUES ('SRCDC', 'SN3', 'Debit Card');
+
 DROP TABLE IF EXISTS  TransactionHeader;
 
 CREATE TABLE TransactionHeader(
