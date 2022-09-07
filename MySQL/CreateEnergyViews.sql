@@ -42,6 +42,7 @@ SELECT
 	Max(CS.End)                               AS End,
 	SUM(CS.EstDuration)                       AS EstDuration,
 	SUM(CS.Duration)                          AS Duration,
+	MAX(CS.EndPerCent)                        AS EndPercent,
 	MAX(CS.EndPerCent) - MIN(CS.StartPerCent) AS SessionPercent,
 	SUM(CS.SessionMiles)                      AS SessionMiles,
 	SUM(CS.Charge)                            AS Charge,
@@ -113,12 +114,12 @@ GROUP BY CS.CarReg, CS.Mileage;
 
 DROP VIEW IF EXISTS SessionUsage;
 
-
 CREATE VIEW SessionUsage AS
 SELECT 
 	CarReg,
 	MS.Start, 
 	MS.End,
+    Duration,
 	Mileage,
 	Charger,
 	Unit,
@@ -130,23 +131,46 @@ SELECT
 	CAST(CarPercent * Capacity / 100 AS DECIMAL(8, 2))                    AS CarCharge,
 	CAST(CarPercent * Capacity * MS.UnitRate / 10000 AS DECIMAL(8, 2))    AS CarElectric,
 	CAST(CarMiles /MilesPerLitre * WF.PumpPrice / 100 AS DECIMAL(8, 2))   AS CarPetrol,
+    EndPercent,
 	SessionPercent,
 	MS.UnitRate,
 	Charge,
+    Charge * 100 / SessionPercent                                         AS FullCharge,
 	InputCharge,
 	CalculatedCharge,
 	Cost,
 	InputCost,
 	CalculatedCost,
-	TR.UnitRate                                                            AS DefaultRate,
-	CAST(Charge * TR.UnitRate / 100 AS DECIMAL(8, 2))                      AS DefaultSessionCost,
-	Cost - CAST(Charge * TR.UnitRate / 100 AS DECIMAL(8, 2))               AS DefaultCostDiff
+	TR.UnitRate                                                           AS DefaultRate,
+	CAST(Charge * TR.UnitRate / 100 AS DECIMAL(8, 2))                     AS DefaultSessionCost,
+	Cost - CAST(Charge * TR.UnitRate / 100 AS DECIMAL(8, 2))              AS DefaultCostDiff
 FROM      Expenditure.MergedSession MS
 LEFT JOIN Expenditure.WeeklyFuel WF
-ON   MS.Start > WF.Start 
-AND (MS.End   < WF.End OR WF.End IS NULL)
+ON   MS.Start >  WF.Start 
+AND (MS.Start <= WF.End OR WF.End IS NULL)
 LEFT JOIN Expenditure.Tariff TR
-ON   MS.Start > TR.Start 
-AND (MS.End   < TR.End OR TR.End IS NULL)
+ON   MS.Start >  TR.Start 
+AND (MS.Start <= TR.End OR TR.End IS NULL)
 AND TR.Name = DefaultTariff
-AND TR.Type = 'Electric'
+AND TR.Type = 'Electric';
+
+DROP VIEW IF EXISTS SessionMonthSummary;
+
+CREATE VIEW SessionMonthSummary AS
+    SELECT 
+        YEAR(Start) AS Year,
+        MONTH(Start) AS Month,
+        COUNT(*) AS Sessions,
+        SUM(SessionPercent) AS SessionPercent,
+        CAST(AVG(PumpPrice) AS DECIMAL (8 , 1 )) AS Petrol,
+        SUM(Charge) AS Charge,
+        SUM(Cost) AS Cost,
+        SUM(CarPercent) AS CarPercent,
+        SUM(CarCharge) AS CarCharge,
+        SUM(CarMiles) AS CarMiles,
+        SUM(CarElectric) AS CarElectric,
+        SUM(CarPetrol) AS CarPetrol,
+        SUM(DefaultCostDiff) AS DefaultCostDiff
+    FROM
+        expenditure.sessionusage
+    GROUP BY YEAR(Start) , MONTH(Start);

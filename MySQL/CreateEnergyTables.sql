@@ -181,6 +181,37 @@ END;//
 
 DELIMITER ;
 
+DROP TABLE IF EXISTS EnergyRates;
+
+CREATE TABLE EnergyRates (
+	Name                   VARCHAR(15)   NOT NULL,
+	Start                  DATETIME      NOT NULL,
+	End                    DATETIME      NULL,
+	Modified               DATETIME      NULL,
+	ElectricRate           DECIMAL(8, 3) NULL,
+	ElectricStandingCharge DECIMAL(8, 3) NULL,
+	GasRate                DECIMAL(8, 3) NULL,
+	GasStandingCharge      DECIMAL(8, 3) NULL,
+	Cap                    DECIMAL(6, 2) GENERATED ALWAYS AS (29 * ElectricRate + 120 * GasRate + 3.65 * (ElectricStandingCharge + GasStandingCharge)) VIRTUAL,
+	Description            VARCHAR(1000),
+	PRIMARY KEY (Name, Start)
+);
+
+DELIMITER //
+
+CREATE TRIGGER InsEnergyRates BEFORE INSERT ON EnergyRates
+FOR EACH ROW
+BEGIN
+	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
+END;//
+
+INSERT INTO `expenditure`.`energyrates`
+(`Name`, `Start`, `End`, `ElectricRate`, `ElectricStandingCharge`, `GasRate`, `GasStandingCharge`)
+VALUES 
+('SSEStd', '2021-01-01 00:00:00', '2022-03-31 00:00:00', 16.695, 22.960,  3.970, 24.870),
+('SSEStd', '2021-04-01 00:00:00', '2022-09-30 00:00:00', 28.340, 45.340,  7.370, 27.220),
+('SSEStd', '2021-10-01 00:00:00', NULL,                  51.890, 46.360, 14.760, 28.490);
+
 DROP TABLE IF EXISTS Tariff;
 
 CREATE TABLE Tariff (

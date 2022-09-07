@@ -1,1 +1,1 @@
-"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysqldump" -u root -p --databases bloodpressure nutrition > C:\Users\chris\OneDrive\mysqlbackup.sql
+"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysqldump" -u root -password cbcadmin --databases bloodpressure nutrition > C:\Users\cclose\OneDrive\mysqlbackup.sql
