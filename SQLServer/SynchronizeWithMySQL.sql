@@ -7,7 +7,8 @@ END
 GO
 CREATE PROCEDURE SynchronizeWithMySQL(
 			@linkBase AS VARCHAR(50) = 'MYSQL', 
-			@batch    AS INT         = NULL)
+			@batch    AS INT         = NULL,
+			@update   AS VARCHAR(10) = 'SQL')
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -19,8 +20,8 @@ BEGIN
 	EXEC BloodPressure.dbo.SynchronizeNutrition     'BloodPressure', @BPName,  @batch = @batch
 	EXEC BloodPressure.dbo.SynchronizeBloodPressure 'BloodPressure', @BPName,  @batch = @batch
 
-	EXEC BloodPressure.dbo.CompareNutrition     'BloodPressure', @BPName,  @update = 'MySQL'
-	EXEC BloodPressure.dbo.CompareBloodPressure 'BloodPressure', @BPName,  @update = 'MySQL'
-	EXEC BloodPressure.dbo.CompareExpenditure   'Expenditure',   @ExpName, @update = 'MySQL'
+	EXEC BloodPressure.dbo.CompareNutrition     'BloodPressure', @BPName,  @update = @update
+	EXEC BloodPressure.dbo.CompareBloodPressure 'BloodPressure', @BPName,  @update = @update
+	EXEC BloodPressure.dbo.CompareExpenditure   'Expenditure',   @ExpName, @update = @update
 END
 

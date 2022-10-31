@@ -1,5 +1,145 @@
 USE BloodPressure
 GO
+
+IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'dbo.Test') and OBJECTPROPERTY(id, N'IsScalarFunction') = 1)
+	DROP FUNCTION dbo.Test
+GO
+CREATE FUNCTION dbo.Test(@dateString AS VARCHAR(max))
+	RETURNS VARCHAR(max)
+AS
+BEGIN
+	RETURN @dateString
+END
+GO
+
+IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'dbo.SetFromAs') and OBJECTPROPERTY(id, N'IsScalarFunction') = 1)
+	DROP FUNCTION dbo.SetFromAs
+GO
+CREATE FUNCTION dbo.SetFromAs(
+			@prefix AS SYSNAME,
+			@table  AS SYSNAME,
+			@alias  AS SYSNAME)
+	RETURNS VARCHAR(max)
+AS
+BEGIN
+	IF CHARINDEX('#', @prefix) = 1
+		SET @table = @prefix
+	ELSE IF @prefix IS NOT NULL
+		SET @table = @prefix + '.' + @table
+	
+	IF @alias IS NOT NULL SET @table += ' AS ' + @alias
+
+	RETURN @table
+END
+GO
+IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'dbo.TestDate') and OBJECTPROPERTY(id, N'IsScalarFunction') = 1)
+	DROP FUNCTION dbo.SetAlias
+GO
+CREATE FUNCTION dbo.SetAlias(@alias AS SYSNAME, @identifier AS SYSNAME)
+	RETURNS VARCHAR(max)
+AS
+BEGIN
+	IF @alias IS NOT NULL SET @identifier = @alias + '.' + @identifier
+
+	RETURN @identifier
+END
+GO
+IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'dbo.TestDate') and OBJECTPROPERTY(id, N'IsScalarFunction') = 1)
+	DROP FUNCTION dbo.TestDate
+GO
+CREATE FUNCTION dbo.TestDate(@dateString AS DATETIME)
+	RETURNS VARCHAR(max)
+AS
+BEGIN
+	RETURN @dateString
+END
+GO
+IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'dbo.TruncateFractionalSeconds') and OBJECTPROPERTY(id, N'IsScalarFunction') = 1)
+	DROP FUNCTION dbo.TruncateFractionalSeconds
+GO
+CREATE FUNCTION dbo.TruncateFractionalSeconds(@value AS VARCHAR(max), @length AS INT = 3)
+	RETURNS VARCHAR(max)
+AS
+BEGIN
+	DECLARE @offset AS INT = CHARINDEX('.', @value)
+	
+	DECLARE @left  AS VARCHAR(max)
+	DECLARE @right AS VARCHAR(max)
+
+	IF @offset = 0
+	BEGIN
+		SET @left = @value
+		SET @right = ''
+	END
+	ELSE
+	BEGIN
+		SET @left  = SUBSTRING(@value, 1, @offset - 1)
+		SET @right = SUBSTRING(@value, @offset + 1, LEN(@value) - @offset + 1)
+	END
+	
+	IF LEN(@right) > @length
+		SET @right = SUBSTRING(@right, 1, @length)
+	ELSE
+		SET @right = dbo.rpad(@right, @length, '0')
+
+	SET @value = @left + '.' + @right
+
+	RETURN @value
+END
+GO
+IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'dbo.StringToDate') and OBJECTPROPERTY(id, N'IsScalarFunction') = 1)
+	DROP FUNCTION dbo.StringToDate
+GO
+--
+-- This function is primarily introduced to handle that datetime strings derived for datetime values from linked servers
+-- are not necessarily valid. For MySQL the fractional seconds are given to 7 places, whereas SQL Server accepts at most 3.
+-- This is not an ideal solution as other servers may not work in the same way.
+--
+CREATE FUNCTION dbo.StringToDate(@dateString AS VARCHAR(max))
+	RETURNS DATETIME
+AS
+BEGIN
+	RETURN CONVERT(DATETIME, dbo.TruncateFractionalSeconds(@dateString, DEFAULT), 102)
+END
+GO
+
+IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'dbo.CompareValue') and OBJECTPROPERTY(id, N'IsScalarFunction') = 1)
+	DROP FUNCTION dbo.CompareValue
+GO
+CREATE FUNCTION dbo.CompareValue(@type AS SYSNAME, @lValue AS VARCHAR(max), @rValue AS VARCHAR(max))
+RETURNS CHAR
+AS
+BEGIN
+	DECLARE @match AS CHAR = 'N'
+
+	IF @lValue IS NULL AND @lValue IS NULL
+		SET @match = 'Y'
+	ELSE IF @type IN ('char', 'varchar', 'text', 'nchar', 'nvarchar', 'ntext')
+	BEGIN
+		IF @lValue COLLATE DATABASE_DEFAULT = @rValue SET @match = 'Y'
+	END
+	ELSE IF @type = 'datetime' AND @lvalue IS NOT NULL AND @rValue IS NOT NULL
+	BEGIN
+		IF dbo.StringToDate(@lValue) = dbo.StringToDate(@rValue) SET @match = 'Y'
+	END
+	ELSE IF @type = 'time' AND @lvalue IS NOT NULL AND @rValue IS NOT NULL
+	BEGIN
+		IF dbo.TruncateFractionalSeconds(@lValue, DEFAULT) = dbo.TruncateFractionalSeconds(@rValue, DEFAULT) SET @match = 'Y'
+	END
+	ELSE
+		IF @lValue = @rValue SET @match = 'Y'
+	--
+	-- The following has been added to account for that when using jdbc a MYSQL char field set to NULL is converted
+	-- to an empty string rather than NULL.
+	--
+	IF @type = 'char' AND @match = 'N'
+	BEGIN
+		IF @lValue IS NULL AND LEN(@rValue) = 0 OR @rValue IS NULL AND LEN(@lValue) = 0 SET @match = 'Y'
+	END
+
+	RETURN @match
+END
+GO
 IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'dbo.AddCreateTableRow') and OBJECTPROPERTY(id, N'IsScalarFunction') = 1)
 	DROP FUNCTION dbo.AddCreateTableRow
 GO
@@ -116,6 +256,8 @@ BEGIN
 	DECLARE @prefix AS VARCHAR(max) = ' '
 	DECLARE @lName  AS SYSNAME
 	DECLARE @rName  AS SYSNAME
+
+	DECLARE @new    AS CHAR = 'Y'
 	
 	SET @prefix = dbo.lpad(@prefix, @indent, ' ')
 	SET @sql    = @prefix
@@ -123,32 +265,28 @@ BEGIN
 	
 	SET @prefix = ''
 	
-	IF @lAlias IS NULL 
-		SET @lName = @column
-	ELSE
-		SET @lName = @lAlias + '.' + @column
-	
-	IF @rAlias IS NULL 
-		SET @rName = @column
-	ELSE
-		SET @rName = @rAlias + '.' + @column
-	
-	SET @lName = dbo.rpad(@lName, @namePad, ' ')
-	SET @rName = dbo.rpad(@rName, @namePad, ' ')
-	
-	IF @nullable = 'Y' AND @test <> 'IS NULL'
-		SET @sql   += '('
-	ELSE
-		SET @sql += ' '
-		
-	SET @sql +=  @prefix + @lName + ' ' + @test + ' '
-	
-	IF @test <> 'IS NULL'
+	SET @lName = dbo.rpad(dbo.SetAlias(@lAlias, @column), @namePad, ' ')
+	SET @rName = dbo.rpad(dbo.SetAlias(@rAlias, @column), @namePad, ' ')
+			
+	IF @test = 'IS NULL'
+		SET @sql +=  @prefix + @lName + ' ' + @test + ' '
+	ELSE IF @new = 'Y'
 	BEGIN
-		SET @sql += dbo.rpad(@rName, @namePad, ' ') + dbo.AddCollate(@type)
+		IF @type = 'datetime' SET @rName = 'CONVERT(VARCHAR, ' + @rName + ', 21)'
+
+		SET @sql = ' dbo.CompareValue(''' + @type + ''',' +  @lName + ',' + @rName + ') = ''' + IIF(@test = '<>', 'N''', 'Y''')
+	END
+	ELSE
+	BEGIN
+		IF @nullable = 'Y'
+			SET @sql   += '('
+		ELSE
+			SET @sql += ' '
+
+		SET @sql += @prefix + @lName + ' ' + @test + ' ' + dbo.rpad(@rName, @namePad, ' ') + dbo.AddCollate(@type)
 		
 		IF @nullable = 'Y'
-		BEGIN			
+		BEGIN
 			IF @test = '<>' 
 				SET @sql += ' OR ' + @lName + ' IS NOT NULL AND ' + @rName + ' IS NULL OR ' + @lName + ' IS NULL AND ' + @rName + ' IS NOT NULL'
 			ELSE
@@ -183,17 +321,20 @@ BEGIN
 	DECLARE @clause  AS NVARCHAR(max)
 	DECLARE @namePad AS INT = 15
 	
-	SET @whereCond = dbo.rpad(@whereCond, 5, ' ')
-	SET @sql += CHAR(13) + 'FROM ' + @from + '.' + @table + ' AS ' + @fromAlias + CHAR(13) + @join + ' ' + @to + '.' + @table + ' AS ' + @toAlias + CHAR(13) + 'ON  '
+	SET @sql += CHAR(13) + 'FROM ' + dbo.SetFromAs(@from, @table, @fromAlias) + CHAR(13) + @join + ' ' + dbo.SetFromAs(@to, @table, @toAlias) + CHAR(13) + 'ON  '
 	
 	SELECT @clause = COALESCE(@clause + CHAR(13) + 'AND ' + @fromAlias + '.', @fromAlias + '.') + dbo.rpad(dbo.ConvertReserved([Column]), @namePad, ' ') + ' = ' + @toAlias + '.' + dbo.ConvertReserved([Column]) + dbo.AddCollate([Type]) FROM #TableDetails WHERE [Key] ='Y' ORDER BY Id
-
-	SET @sql += @clause
-	SET @sql += CHAR(13) + 'WHERE'
 	
-	SET @clause = NULL
-	SELECT @clause = COALESCE(@clause + CHAR(13) + @whereCond, '') + dbo.AddCondition(@whereTest, @fromAlias, @toAlias, [Column], [Type], 1, @namePad, Nullable) FROM #TableDetails WHERE [Key] = @keyWhere ORDER BY Id
 	SET @sql += @clause
+	
+	IF @whereCond IS NOT NULL
+	BEGIN
+		SET @whereCond = dbo.rpad(@whereCond, 5, ' ')
+		SET @sql += CHAR(13) + 'WHERE'
+		SET @clause = NULL
+		SELECT @clause = COALESCE(@clause + CHAR(13) + @whereCond, '') + dbo.AddCondition(@whereTest, @fromAlias, @toAlias, [Column], [Type], 1, @namePad, Nullable) FROM #TableDetails WHERE [Key] = @keyWhere ORDER BY Id
+		SET @sql += @clause
+	END
 END
 GO
 
@@ -320,20 +461,35 @@ BEGIN
 	DROP Procedure dbo.UpdateTable
 END
 GO
-CREATE PROCEDURE UpdateTable(@target AS SYSNAME, @targetPrefix AS SYSNAME, @sourcePrefix AS SYSNAME, @table AS SYSNAME)
+CREATE PROCEDURE UpdateTable(
+					@target       AS SYSNAME, 
+					@targetPrefix AS SYSNAME, 
+					@sourcePrefix AS SYSNAME, 
+					@table        AS SYSNAME,
+					@printSQL     AS CHAR  = 'Y')
 AS
 BEGIN
 	SET NOCOUNT ON;
 	DECLARE @sql    AS NVARCHAR(max)
-	DECLARE @clause AS NVARCHAR(max)
-	
+
 	SELECT @sql = COALESCE(@sql + ',' + CHAR(13) + '       ', '   SET ') + dbo.AddSetField([Column], @sourcePrefix + [Column], 14) FROM #TableDetails WHERE [Key] = 'N' ORDER BY Id
+
 	SET @sql  = CHAR(13) + 'UPDATE TR ' + CHAR(13) + @sql
-	SET @sql += CHAR(13) + 'FROM #Changes CH' + CHAR(13) + 'JOIN ' + @target + '.' + @table + ' TR' + CHAR(13) + 'ON '
-	SET @clause = NULL
-	SELECT @clause = COALESCE(@clause + CHAR(13) + 'AND', '') + dbo.AddCondition('=', 'TR', 'CH', [Column], [Type], 1, 15, Nullable) FROM #TableDetails WHERE [Key] = 'Y' ORDER BY Id
-	SET @sql += @clause	
-	
+
+	EXEC dbo.AddFromJoin
+			@sql       OUTPUT,
+			'#Changes',
+			'CH',
+			@target,
+			'TR',
+			@table,
+			'JOIN',
+			NULL,
+			NULL,
+			NULL
+
+	IF @printSQL = 'Y' EXEC PrintSQL @sql
+
 	EXEC (@sql)
 END
 GO
@@ -349,7 +505,7 @@ CREATE PROCEDURE CompareTable(
 					@key           AS SYSNAME     = NULL, 
 					@update        AS VARCHAR(10) = NULL,
 					@allowIdentity AS CHAR        = 'N',
-					@printSQL  AS CHAR            = 'N')
+					@printSQL      AS CHAR        = 'N')
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -411,21 +567,21 @@ BEGIN
 	SELECT @clause = @clause + dbo.AddSelectField('SQL' + [Column], [Column], ',', 5, 20) FROM #TableDetails WHERE [Key] = 'N' ORDER BY Id
 	SET @clause += CHAR(13) + 'FROM #Changes' + CHAR(13) + 'ORDER BY Id, [Server]'
 	SET @sql    += CHAR(13) + @clause
-		
+	
 	IF @update = 'MySQL'
 	BEGIN
 		SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
-		SET @sql += CHAR(13) + 'EXEC UpdateTable ''' + @MySQL + ''', ''MySQL'', ''SQL'', ''' + @table + ''''
+		SET @sql += CHAR(13) + 'EXEC UpdateTable ''' + @MySQL + ''', ''MySQL'', ''SQL'', ''' + @table + ''', ''' + @printSQL + ''''
 		SET @sql += CHAR(13) + 'SELECT ''Updated '' + CAST(@@ROWCOUNT AS VARCHAR) + '' row(s) in ' + @MySQL + '.' + @table + ''''
 	END
 	ELSE IF @update = 'SQL'
 	BEGIN
-		SET @sql += CHAR(13) + 'EXEC UpdateTable ''' + @SQLServer + ''', ''SQL'', ''MySQL'', ''' + @table + ''''
+		SET @sql += CHAR(13) + 'EXEC UpdateTable ''' + @SQLServer + ''', ''SQL'', ''MySQL'', ''' + @table + ''', ''' + @printSQL + ''''
 		SET @sql += CHAR(13) + 'SELECT ''Updated '' + CAST(@@ROWCOUNT AS VARCHAR) + '' row(s) in ' + @SQLServer + '.' + @table + ''''
 	END 
 	
 	SET @sql += CHAR(13) + 'END'
-	
+
 	IF @printSQL = 'Y' EXEC PrintSQL @sql
 
 	BEGIN TRY

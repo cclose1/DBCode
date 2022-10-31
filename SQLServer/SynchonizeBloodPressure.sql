@@ -11,10 +11,11 @@ BEGIN
 	SET NOCOUNT ON;
 	
 	BEGIN TRY
-		EXEC SynchronizeTable @SQLServer, @MySQL, 'Battery',     @mode = @mode, @batch = @batch
-		EXEC SynchronizeTable @SQLServer, @MySQL, 'Measure',     @mode = @mode, @batch = @batch
-		EXEC SynchronizeTable @SQLServer, @MySQL, 'MeasureABPM', @mode = @mode, @batch = @batch
-		EXEC SynchronizeTable @SQLServer, @MySQL, 'DrugHistory', @mode = @mode, @batch = @batch
+		EXEC SynchronizeTable @SQLServer, @MySQL, 'Battery',            @mode = @mode, @batch = @batch
+		EXEC SynchronizeTable @SQLServer, @MySQL, 'Measure',            @mode = @mode, @batch = @batch
+		EXEC SynchronizeTable @SQLServer, @MySQL, 'MeasureOrientation', @mode = @mode, @batch = @batch
+		EXEC SynchronizeTable @SQLServer, @MySQL, 'MeasureABPM',        @mode = @mode, @batch = @batch
+		EXEC SynchronizeTable @SQLServer, @MySQL, 'DrugHistory',        @mode = @mode, @batch = @batch
 	END TRY
 	BEGIN CATCH
 		EXEC ReportError

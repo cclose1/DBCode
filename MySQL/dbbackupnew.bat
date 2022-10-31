@@ -1,1 +1,0 @@
-"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysqldump" -u root -password cbcadmin --databases bloodpressure nutrition > C:\Users\cclose\OneDrive\mysqlbackupnew.sql

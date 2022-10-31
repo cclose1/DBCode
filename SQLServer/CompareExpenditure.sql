@@ -11,13 +11,28 @@ BEGIN
 	SET NOCOUNT ON;
 	
 	BEGIN TRY
-		EXEC CompareTable @SQLServer, @MySQL, 'Bank',               @update = @update
-		EXEC CompareTable @SQLServer, @MySQL, 'Account',            @update = @update
-		EXEC CompareTable @SQLServer, @MySQL, 'PaymentSource',      @update = @update
-		EXEC CompareTable @SQLServer, @MySQL, 'SpendData',          @update = @update, @key = 'Timestamp'
-		EXEC CompareTable @SQLServer, @MySQL, 'TransactionHeader',  @update = @update, @key = 'TxnKey'
-		EXEC CompareTable @SQLServer, @MySQL, 'TransactionLine',    @update = @update
-		EXEC CompareTable @SQLServer, @MySQL, 'Reminder',           @update = @update
+		EXEC CompareTable @SQLServer, @MySQL, 'Currency',            @update = @update
+		--
+		-- CurrencyRate has a field Target that conflicts with a field of the same name in the temporary
+		-- #Changes. Finding a solution to this is probably not worth the effort.
+		--
+--		EXEC CompareTable @SQLServer, @MySQL, 'CurrencyRate',        @update = @update
+		EXEC CompareTable @SQLServer, @MySQL, 'Bank',                @update = @update
+		EXEC CompareTable @SQLServer, @MySQL, 'BankTransactionType', @update = @update
+		EXEC CompareTable @SQLServer, @MySQL, 'AccountUsAGE',        @update = @update
+		EXEC CompareTable @SQLServer, @MySQL, 'Account',             @update = @update
+		EXEC CompareTable @SQLServer, @MySQL, 'PaymentSource',       @update = @update
+		EXEC CompareTable @SQLServer, @MySQL, 'SpendData',           @update = @update, @key = 'Timestamp'
+		EXEC CompareTable @SQLServer, @MySQL, 'TransactionHeader',   @update = @update, @key = 'TxnKey'
+		EXEC CompareTable @SQLServer, @MySQL, 'TransactionLine',     @update = @update
+		EXEC CompareTable @SQLServer, @MySQL, 'Reminder',            @update = @update
+		EXEC CompareTable @SQLServer, @MySQL, 'ChargerNetwork',      @update = @update
+		EXEC CompareTable @SQLServer, @MySQL, 'ChargerLocation',     @update = @update
+		EXEC CompareTable @SQLServer, @MySQL, 'ChargerUnit',         @update = @update
+		EXEC CompareTable @SQLServer, @MySQL, 'ChargeSession',       @update = @update
+		EXEC CompareTable @SQLServer, @MySQL, 'Car',                 @update = @update
+		EXEC CompareTable @SQLServer, @MySQL, 'WeeklyFuelPrices',    @update = @update
+		EXEC CompareTable @SQLServer, @MySQL, 'Tariff',              @update = @update
 	END TRY
 	BEGIN CATCH
 		EXEC ReportError

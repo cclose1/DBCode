@@ -9,6 +9,20 @@ DROP VIEW IF EXISTS BankTransactionsSummary;
 DROP VIEW IF EXISTS MergeTransactionLines;
 DROP VIEW IF EXISTS BankTransfers;
 
+DROP TABLE IF EXISTS LoadLog;
+
+CREATE TABLE LoadLog (
+	Loaded    DATETIME      DEFAULT CURRENT_TIMESTAMP,
+	DataStart DATETIME      NULL,
+	DataEnd   DATETIME      NULL,
+    `Table`   VARCHAR(20)   NULL,
+    Reference VARCHAR(20)   NULL,
+    Type      VARCHAR(20)   NULL,
+    `Rows`    INT           NULL,
+    Duration  DECIMAL(8, 2) NULL,
+    Error     VARCHAR(1000) NULL,
+	PRIMARY KEY (Loaded ASC)
+);
 DROP TABLE IF EXISTS Currency;
 
 CREATE TABLE Currency (
