@@ -98,9 +98,9 @@ SELECT
 	ON Car.Registration = CarReg
 	LEFT JOIN Expenditure.Tariff TD
 	ON        Car.DefaultTariff = TD.Name 
-	AND       TD.Type   = 'Electric' 
-	AND       CH.Start  > TD.Start 
-	AND      (CH.End    < TD.End OR TD.End IS NULL)) CS
+	AND       TD.Type    = 'Electric' 
+	AND       CH.Start  >= TD.Start 
+	AND      (CH.Start  < TD.End OR TD.End IS NULL)) CS
 LEFT OUTER JOIN (
 	SELECT 
 		ROW_NUMBER ( ) OVER (ORDER BY CarReg, Start) Num,

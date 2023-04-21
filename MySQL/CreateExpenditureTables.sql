@@ -12,17 +12,19 @@ DROP VIEW IF EXISTS BankTransfers;
 DROP TABLE IF EXISTS LoadLog;
 
 CREATE TABLE LoadLog (
-	Loaded    DATETIME      DEFAULT CURRENT_TIMESTAMP,
-	DataStart DATETIME      NULL,
-	DataEnd   DATETIME      NULL,
-    `Table`   VARCHAR(20)   NULL,
-    Reference VARCHAR(20)   NULL,
-    Type      VARCHAR(20)   NULL,
-    `Rows`    INT           NULL,
-    Duration  DECIMAL(8, 2) NULL,
-    Error     VARCHAR(1000) NULL,
-	PRIMARY KEY (Loaded ASC)
+    Reference  VARCHAR(20)   NOT NULL,
+    Type       VARCHAR(20)   NOT NULL,
+    `Table`    VARCHAR(20)   NULL,
+	Loaded     DATETIME      NULL,
+	DataStart  DATETIME      NULL,
+	DataEnd    DATETIME      NULL,
+    `Rows`     INT           NULL,
+    Duplicates INT           NULL,
+    Duration   DECIMAL(8, 2) NULL,
+    Error      VARCHAR(1000) NULL,
+	PRIMARY KEY (Type ASC, Reference ASC)
 );
+
 DROP TABLE IF EXISTS Currency;
 
 CREATE TABLE Currency (
@@ -92,7 +94,7 @@ CREATE TABLE SpendData (
   SeqNo          int(11)       NOT NULL AUTO_INCREMENT,
   Modified       Datetime(3)   DEFAULT NULL, 
   IncurredBy     VARCHAR(20)   DEFAULT 'Chris',
-  Timestamp      datetime(3)   DEFAULT NULL,
+  Timestamp      datetime(3)   NOT NULL,
   Category       varchar(15)   DEFAULT NULL,
   Type           varchar(15)   DEFAULT NULL,
   Description    varchar(1000) DEFAULT NULL,

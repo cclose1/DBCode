@@ -36,7 +36,7 @@ CREATE TABLE ChargerLocation (
 	Modified  DATETIME      NULL,
 	Rate      DECIMAL(6,2)  NULL,
 	Tariff    VARCHAR(15),
-	Location  VARCHAR(15),
+	Location  VARCHAR(30),
 	Comment   VARCHAR(1000),
 	PRIMARY KEY (Name)
 );
@@ -208,9 +208,9 @@ END;//
 INSERT INTO `expenditure`.`energyrates`
 (`Name`, `Start`, `End`, `ElectricRate`, `ElectricStandingCharge`, `GasRate`, `GasStandingCharge`)
 VALUES 
-('SSEStd', '2021-01-01 00:00:00', '2022-03-31 00:00:00', 16.695, 22.960,  3.970, 24.870),
-('SSEStd', '2021-04-01 00:00:00', '2022-09-30 00:00:00', 28.340, 45.340,  7.370, 27.220),
-('SSEStd', '2021-10-01 00:00:00', NULL,                  51.890, 46.360, 14.760, 28.490);
+('SSEStd', '2021-01-01 00:00:00', '2022-03-31 00:00:00', 16.103, 21.970,  3.976, 24.830),
+('SSEStd', '2022-04-01 00:00:00', '2022-09-30 00:00:00', 17.935, 22.970,  3.276, 25.330),
+('SSEStd', '2022-10-01 00:00:00', NULL,                  32.596, 42.290,  9.959, 27.120);
 
 DROP TABLE IF EXISTS Tariff;
 

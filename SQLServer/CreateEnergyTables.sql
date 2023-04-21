@@ -39,7 +39,7 @@ CREATE TABLE ChargerLocation (
 	Modified  DATETIME      NULL,
 	Rate      DECIMAL(6,2)  NULL,
 	Tariff    VARCHAR(15),
-	Location  VARCHAR(15),
+	Location  VARCHAR(30),
 	Comment   VARCHAR(max),
 	PRIMARY KEY (Name)
 )
@@ -232,6 +232,7 @@ BEGIN
 	FROM Tariff TR
 	JOIN inserted 
 	ON  TR.Start = inserted.Start
+	AND TR.Type  = inserted.Type
 	AND TR.Name  = inserted.Name
 END
 GO

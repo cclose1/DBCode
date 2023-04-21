@@ -527,8 +527,8 @@ BEGIN
 	EXEC LoadTableDetails @SQLServer, @table, @key, @allowIdentity = @allowIdentity, @escapeReserved = 'N'
 	SET @SQLServer += '.dbo'
 	SET @sql  = 'CREATE TABLE #Changes' + dbo.AddCreateTableRow('Id', 'INT IDENTITY(1,1)', -1, 0, 0, '(', 4, 15, 15, 'N')
-	SET @sql += dbo.AddCreateTableRow('Target',  'VARCHAR', 20, 0, 0, ',', 4, 15, 15, 'N')
-	SET @sql += dbo.AddCreateTableRow('[Table]', 'VARCHAR', 20, 0, 0, ',', 4, 15, 15, 'N')
+	SET @sql += dbo.AddCreateTableRow('[!Target]',  'VARCHAR', 20, 0, 0, ',', 4, 15, 15, 'N')
+	SET @sql += dbo.AddCreateTableRow('[Table]',    'VARCHAR', 20, 0, 0, ',', 4, 15, 15, 'N')
 	SELECT @sql = @sql + dbo.AddCreateTableRow([Column], [Type], Size, Precision, Scale, ',', 4, 15, 15, 'N')           FROM #TableDetails WHERE [Key] ='Y' ORDER BY Id
 	SELECT @sql = @sql + dbo.AddCreateTableRow('SQL'   + [Column], [Type], Size, Precision, Scale, ',', 4, 15, 15, 'Y') FROM #TableDetails WHERE [Key] ='N' ORDER BY Id
 	SELECT @sql = @sql + dbo.AddCreateTableRow('MySQL' + [Column], [Type], Size, Precision, Scale, ',', 4, 15, 15, 'Y') FROM #TableDetails WHERE [Key] ='N' ORDER BY Id
@@ -553,16 +553,16 @@ BEGIN
 	SET @sql += CHAR(13) + 'ELSE' + CHAR(13) + 'BEGIN'
 	SET @clause = 'SELECT'
 	SET @clause += dbo.AddSelectField('Id',        NULL,     '',  5, 20)
-	SET @clause += dbo.AddSelectField('Target',    NULL,     ',', 5, 20)
+	SET @clause += dbo.AddSelectField('[!Target]', NULL,     ',', 5, 20)
 	SET @clause += dbo.AddSelectField('[Table]',   NULL,     ',', 5, 20)
 	SET @clause += dbo.AddSelectField('''MySQL''', 'Server', ',', 5, 20)
 	SELECT @clause = @clause + dbo.AddSelectField([Column],           NULL,     ',', 5, 20) FROM #TableDetails WHERE [Key] = 'Y'
 	SELECT @clause = @clause + dbo.AddSelectField('MySQL' + [Column], [Column], ',', 5, 20) FROM #TableDetails WHERE [Key] = 'N' ORDER BY Id
 	SET @clause += CHAR(13) + 'FROM #Changes' + CHAR(13) + 'UNION' + CHAR(13) + 'SELECT'
-	SET @clause += dbo.AddSelectField('Id',      NULL,     '',  5, 20)
-	SET @clause += dbo.AddSelectField('Target',  NULL,     ',', 5, 20)
-	SET @clause += dbo.AddSelectField('[Table]', NULL,     ',', 5, 20)
-	SET @clause += dbo.AddSelectField('''SQL''', 'Server', ',', 5, 20)
+	SET @clause += dbo.AddSelectField('Id',         NULL,     '',  5, 20)
+	SET @clause += dbo.AddSelectField('[!Target]',  NULL,     ',', 5, 20)
+	SET @clause += dbo.AddSelectField('[Table]',    NULL,     ',', 5, 20)
+	SET @clause += dbo.AddSelectField('''SQL''',    'Server', ',', 5, 20)
 	SELECT @clause = @clause + dbo.AddSelectField([Column],         NULL,     ',', 5, 20) FROM #TableDetails WHERE [Key] = 'Y'
 	SELECT @clause = @clause + dbo.AddSelectField('SQL' + [Column], [Column], ',', 5, 20) FROM #TableDetails WHERE [Key] = 'N' ORDER BY Id
 	SET @clause += CHAR(13) + 'FROM #Changes' + CHAR(13) + 'ORDER BY Id, [Server]'
