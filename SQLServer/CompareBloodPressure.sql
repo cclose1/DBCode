@@ -13,7 +13,10 @@ BEGIN
 	BEGIN TRY
 		EXEC CompareTable @SQLServer, @MySQL, 'Battery',            @update = @update
 		EXEC CompareTable @SQLServer, @MySQL, 'Measure',            @update = @update
-		EXEC CompareTable @SQLServer, @MySQL, 'MeasureOrientation', @update = @update
+		/*
+		 * MeasureOrientation has an Id field which causes CompareTable to fail. For now comment it out.
+		 */
+--		EXEC CompareTable @SQLServer, @MySQL, 'MeasureOrientation', @update = @update
 		EXEC CompareTable @SQLServer, @MySQL, 'MeasureABPM',        @update = @update
 		EXEC CompareTable @SQLServer, @MySQL, 'DrugHistory',        @update = @update
 	END TRY
