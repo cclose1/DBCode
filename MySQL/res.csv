@@ -1,0 +1,13 @@
+@Query
+"SELECT 
+Trim(Individual),
+Year,
+Side,
+Count(*) AS Measures,
+Min(Systolic) AS MinSystolic,
+Avg(Systolic) AS AvgSystolic,
+Max(Systolic) AS MaxSystolic
+FROM BloodPressure.MeasureTry
+Where Orientation IS NULL
+Group By Trim(Individual),Year,Side
+Order By Trim(Individual) Individual,Year DESC"

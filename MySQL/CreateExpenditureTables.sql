@@ -25,6 +25,60 @@ CREATE TABLE LoadLog (
 	PRIMARY KEY (Type ASC, Reference ASC)
 );
 
+DROP TABLE IF EXISTS ListValues;
+
+CREATE TABLE ListValues (
+	Type  VARCHAR(8)  NOT NULL,
+	Value VARCHAR(20) NOT NULL,
+	PRIMARY KEY (Type ASC, Value ASC)
+);
+INSERT INTO ListValues (Type, Value)
+VALUES
+('Payment',  'Cash'),
+('Payment',  'HCCCH'),
+('Payment',  'HCCDC'),
+('Payment',  'HCCDD'),
+('Payment',  'HCCSO'),
+('Payment',  'HRCDC'),
+('Payment',  'Points'),
+('Payment',  'REVDC'),
+('Payment',  'SJNCC'),
+('Payment',  'SJNDD'),
+('Payment',  'SJNSO'),
+('Payment',  'SRCDC'),
+('Payment',  'SRCDD'),
+('Payment',  'SRCSO'),
+('Category', ''),
+('Category', 'Children'),
+('Category', 'Discretionary'),
+('Category', 'Essential'),
+('Category', 'Fixed'),
+('Category', 'Fund'),
+('Category', 'Holiday'),
+('Category', 'Necessary'),
+('Category', 'Reunion'),
+('Category', 'Transfer'),
+('Type',     'Accommodation'),
+('Type',     'Breakfast'),
+('Type',     'Cafe'),
+('Type',     'Car'),
+('Type',     'Charity'),
+('Type',     'Clothes'),
+('Type',     'Drinks'),
+('Type',     'Entertainment'),
+('Type',     'Food'),
+('Type',     'Health'),
+('Type',     'Home'),
+('Type',     'Lunch'),
+('Type',     'Magazines'),
+('Type',     'Meal'),
+('Type',     'Parking'),
+('Type',     'Petrol'),
+('Type',     'Phone'),
+('Type',     'Power'),
+('Type',     'Present'),
+('Type',     'Travel');
+
 DROP TABLE IF EXISTS Currency;
 
 CREATE TABLE Currency (
@@ -33,6 +87,14 @@ CREATE TABLE Currency (
 	Description VARCHAR(1000),
 	PRIMARY KEY (Designation ASC)
 );
+
+INSERT INTO Currency (Designation, Symbol, Description)
+VALUES
+('GBP', '£',   'Pound Sterling'),
+('EUR', '€',   'Euro'),
+('USD', '$',   'United States Dollar'),
+('mBTC', NULL, 'milli Bitcoin'),
+('BTC',  N'₿', 'Bitcoin');
 
 DROP TABLE IF EXISTS Bank;
 
@@ -43,6 +105,14 @@ CREATE TABLE Bank(
 	PRIMARY KEY (Code  ASC)
 ); 
 
+INSERT Bank VALUES
+('CSH', 'Cash',            '000000'),
+('LVH', 'AS LHV Pank',     'LHVBEE22'),
+('BOI', 'Bank of Ireland', 'BOFIIE2D'),
+('HFX', 'Halifax',         '110854'),
+('SAN', 'Santander',       '090128'),
+('REV', 'Revolut',         '040075');
+
 DROP TABLE IF EXISTS BankTransactionType;
 
 CREATE TABLE BankTransactionType(
@@ -51,6 +121,18 @@ CREATE TABLE BankTransactionType(
 	PRIMARY KEY (Code  ASC)
 );
 
+INSERT BankTransactionType(Code) VALUES
+('Credit'),
+('Debit'),
+('Drinks'),
+('Exchange'),
+('Food'),
+('Leisure'),
+('Meal'),
+('Present'),
+('Transfer'),
+('Travel');
+		
 DROP TABLE IF EXISTS CurrencyRate;
 
 CREATE TABLE CurrencyRate(
@@ -72,6 +154,15 @@ CREATE TABLE AccountUsage(
 	Created DATETIME    DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (Code  ASC)
 );
+INSERT AccountUsage(Code) VALUES
+('Crypto'),
+('Drinks'),
+('Food'),
+('Leisure'),
+('Meal'),
+('Present'),
+('Transport'),
+('Travel');
 
 DROP TABLE IF EXISTS Account;
 
@@ -125,28 +216,34 @@ END;//
 DELIMITER ;
 
 DROP TABLE IF EXISTS PaymentSource;
-
+/*
+ * Don't think PaymentSource is actually used. Leave just in case it is.
+ */
 CREATE TABLE PaymentSource(
-	Code    VARCHAR(20) NOT NULL,
-	Account VARCHAR(20) NULL,
-	Type    VARCHAR(20) NULL,
+	Code    VARCHAR(20)   NOT NULL,
+	Account VARCHAR(20)   NULL,
+	Type    VARCHAR(20)   NULL,
 	Comment VARCHAR(1000) NULL,
 	PRIMARY KEY CLUSTERED (
 		Code ASC
 	)
 );
 
-INSERT PaymentSource(Code, Account, Type) VALUES ('Cash',   NULL, NULL);
-INSERT PaymentSource(Code, Account, Type) VALUES ('HCCSO', 'HF1', 'Standing Order');
-INSERT PaymentSource(Code, Account, Type) VALUES ('HCCDD', 'HF1', 'Direct Debit');
-INSERT PaymentSource(Code, Account, Type) VALUES ('HCCDC', 'HF1', 'Debit Card');
-INSERT PaymentSource(Code, Account, Type) VALUES ('HCCCH', 'HF1', 'Cheque');
-INSERT PaymentSource(Code, Account, Type) VALUES ('SJNSO', 'SN1', 'Standing Order');
-INSERT PaymentSource(Code, Account, Type) VALUES ('SJNDD', 'SN1', 'Direct Debit');
-INSERT PaymentSource(Code, Account, Type) VALUES ('SJNCC', 'SN2', 'Credit Card');
-INSERT PaymentSource(Code, Account, Type) VALUES ('SRCSO', 'SN3', 'Standing Order');
-INSERT PaymentSource(Code, Account, Type) VALUES ('SRCDD', 'SN3', 'Direct Debit');
-INSERT PaymentSource(Code, Account, Type) VALUES ('SRCDC', 'SN3', 'Debit Card');
+INSERT PaymentSource(Code, Account, Type) VALUES
+('Cash',   '',    ''),
+('HCCCH',  'HF1', 'Cheque'),
+('HCCDC',  'HF1', 'Debit Card'),
+('HCCDD',  'HF1', 'Direct Debit'),
+('HCCSO',  'HF1', 'Standing Order'),
+('HRCDC',  'HF2', 'Debit Card'),
+('Points', '',    ''),
+('REVDC',  'RV1', 'Debit Card'),
+('SJNCC',  'SN2', 'Credit Card'),
+('SJNDD',  'SN1', 'Direct Debit'),
+('SJNSO',  'SN1', 'Standing Order'),
+('SRCDC',  'SN3', 'Debit Card'),
+('SRCDD',  'SN3', 'Direct Debit'),
+('SRCSO',  'SN3', 'Standing Order');
 
 DROP TABLE IF EXISTS  TransactionHeader;
 

@@ -1,23 +1,3 @@
-DROP VIEW ListValues
-GO
-
-CREATE VIEW ListValues
-AS
-SELECT
-	'Payment' AS Type,
-	Code      AS Value
-FROM PaymentSource
-UNION
-SELECT DISTINCT
-	'Category' AS Type,
-	Category   AS Value
-FROM SpendData
-UNION
-SELECT DISTINCT
-	'Type'     AS Type,
-	Type       AS Value
-FROM SpendData
-GO
 
 DROP VIEW Spend
 GO

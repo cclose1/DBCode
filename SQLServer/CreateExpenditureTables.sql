@@ -18,6 +18,14 @@ DROP View ReminderState
 GO
 DROP TABLE Currency
 GO
+DROP TABLE ListValues
+GO
+CREATE TABLE ListValues (
+	Type  VARCHAR(8)  NOT NULL,
+	Value VARCHAR(20) NOT NULL,
+	PRIMARY KEY (Type ASC, Value ASC)
+);
+GO
 CREATE TABLE Currency (
 	Designation VARCHAR(10) NOT NULL,
 	Symbol      NVARCHAR(3)  NULL,

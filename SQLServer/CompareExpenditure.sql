@@ -11,6 +11,7 @@ BEGIN
 	SET NOCOUNT ON;
 	
 	BEGIN TRY
+		EXEC CompareTable @SQLServer, @MySQL, 'ListValues',          @update = @update
 		EXEC CompareTable @SQLServer, @MySQL, 'Currency',            @update = @update
 		--
 		-- CurrencyRate has a field Target that conflicts with a field of the same name in the temporary

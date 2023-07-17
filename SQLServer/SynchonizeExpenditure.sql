@@ -11,6 +11,7 @@ BEGIN
 	SET NOCOUNT ON;
 	
 	BEGIN TRY
+		EXEC SynchronizeTable @SQLServer, @MySQL, 'ListValues',          @mode = @mode, @batch = @batch
 		EXEC SynchronizeTable @SQLServer, @MySQL, 'Currency',            @mode = @mode, @batch = @batch
 		EXEC SynchronizeTable @SQLServer, @MySQL, 'CurrencyRate',        @mode = @mode, @batch = @batch
 		EXEC SynchronizeTable @SQLServer, @MySQL, 'Bank',                @mode = @mode, @batch = @batch
