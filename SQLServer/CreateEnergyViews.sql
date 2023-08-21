@@ -174,3 +174,74 @@ AND TR.Name = DefaultTariff
 AND TR.Type = 'Electric'
 GO
 
+
+DROP VIEW IF EXISTS BoundedReading
+GO
+
+CREATE VIEW BoundedReading AS
+SELECT
+	J1.Timestamp                         AS Start,
+    J1.Type,
+    J1.Estimated                         AS StartEstimated,
+    J1.Weekday,
+    J2.Timestamp                         AS 'End',
+    J2.Estimated                         AS EndEstimated,
+    DATEDIFF(Day, J1.Timestamp, J2.Timestamp) AS Days,
+    J1.Reading                           AS StartReading,
+    J2.Reading                           AS EndReading,
+    J1.SeqNo,
+    J2.Reading - J1.Reading              AS ReadingChange,
+    CASE J1.Type
+      WHEN 'Gas' THEN 
+        dbo.UnitsToKwh(J2.TruncReading - J1.TruncReading, TR.CalorificValue)
+      ELSE 
+		J2.TruncReading - J1.TruncReading
+      END AS Kwh,
+    J1.Tariff,
+    TR.UnitRate,
+    TR.StandingCharge,
+    TR.CalorificValue,
+    J1.Comment
+FROM (
+	SELECT 
+		Timestamp,
+        Weekday,
+        Type,
+        Tariff,
+        Reading,
+        Estimated,
+        ROUND(Reading, 0)                                        AS TruncReading,
+		ROW_NUMBER() OVER (PARTITION BY Type ORDER BY Timestamp) AS SeqNo,
+        Comment
+	FROM MeterReading) AS J1
+JOIN (
+	SELECT 
+		Timestamp,
+        Type,
+        Tariff,
+        Reading,
+        Estimated,
+        ROUND(Reading, 0)                                        AS TruncReading,
+		ROW_NUMBER() OVER (PARTITION BY Type ORDER BY Timestamp) AS SeqNo
+	FROM MeterReading) AS J2
+	ON J1.SeqNo = J2.SeqNo - 1
+	AND J1.Type = J2.Type
+LEFT JOIN Tariff  TR 
+ON   J1.Timestamp >=  TR.Start 
+AND (J1.Timestamp < TR.[End] OR TR.[End] IS NULL)
+AND TR.Code = J1.Tariff
+AND TR.Type = J1.Type
+
+GO
+
+DROP VIEW IF EXISTS CostedReading;
+GO
+
+CREATE VIEW CostedReading AS
+SELECT
+	*,    
+    ROUND(UnitRate * Kwh / 100, 3)                           AS KwhCost,
+    ROUND(Days * StandingCharge / 100, 3)                    AS StdCost,
+    ROUND((UnitRate * Kwh + Days * StandingCharge) / 100, 3) AS TotalCost
+FROM BoundedReading
+GO

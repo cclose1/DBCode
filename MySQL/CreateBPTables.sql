@@ -11,14 +11,17 @@ CREATE TABLE Battery(
 DROP TABLE IF EXISTS Measure;
 
 CREATE TABLE Measure(
-	Individual  varchar(100)  NOT NULL,
-	Session     datetime      NOT NULL,
-	Timestamp   datetime      NOT NULL,
-	Side        varchar(5)    NOT NULL,
-	Systolic    int(3)        NULL,
-	Diastolic   int(3)        NULL,
-	Pulse       int(3)        NULL,
-	Comment     varchar(1000) NULL,
+	Individual varchar(100)  NOT NULL,
+	Session    datetime      NOT NULL,
+	Timestamp  datetime      NOT NULL,
+    Date       date          GENERATED ALWAYS AS (CAST(Timestamp AS Date)),
+	Week       INT           GENERATED ALWAYS AS (Week(Timestamp) + 1),    
+    WeekDay    VARCHAR(3)    GENERATED ALWAYS AS (SUBSTR(DAYNAME(Timestamp), 1, 3)),
+	Side       varchar(5)    NOT NULL,
+	Systolic   int(3)        NULL,
+	Diastolic  int(3)        NULL,
+	Pulse      int(3)        NULL,
+	Comment    varchar(1000) NULL,
 	Orientation int           NULL,
 	PRIMARY KEY (
 		Individual ASC,
@@ -31,6 +34,9 @@ DROP TABLE IF EXISTS MeasureABPM;
 CREATE TABLE MeasureABPM(
 	Individual varchar(100) NOT NULL,
 	Timestamp  datetime     NOT NULL,
+    Date       date         GENERATED ALWAYS AS (CAST(Timestamp AS Date)),
+	Week       INT          GENERATED ALWAYS AS (Week(Timestamp) + 1),    
+    WeekDay    VARCHAR(3)   GENERATED ALWAYS AS (SUBSTR(DAYNAME(Timestamp), 1, 3)),
 	Session    int          NOT NULL,
 	Side       varchar(5)   NOT NULL,
 	Systolic   int(3)       NULL,
@@ -43,8 +49,6 @@ CREATE TABLE MeasureABPM(
 		Side ASC
 	)
 );
-
-
 
 DROP TABLE IF EXISTS DrugHistory;
 
@@ -66,9 +70,17 @@ CREATE TABLE MeasureOrientation(
 	PRIMARY KEY (
 		Id ASC)
 );
+DROP TABLE IF EXISTS Test;
 
+CREATE TABLE Test(
+	Timestamp  datetime     NOT NULL,
+    Date       date         GENERATED ALWAYS AS (CAST(Timestamp AS Date)),
+	Week       INT          GENERATED ALWAYS AS (Week(Timestamp) + 1),    
+    WeekDay    VARCHAR(3)   GENERATED ALWAYS AS (SUBSTR(DAYNAME(Timestamp), 1, 3))
+);
 INSERT INTO `BloodPressure`.`MeasureOrientation`(`Id`, `Orientation`) VALUES(1, 'Seated Horizontal');
 INSERT INTO `BloodPressure`.`MeasureOrientation`(`Id`, `Orientation`) VALUES(2, 'Seated Vertical');
 INSERT INTO `BloodPressure`.`MeasureOrientation`(`Id`, `Orientation`) VALUES(3, 'Standing Horizontal');
 INSERT INTO `BloodPressure`.`MeasureOrientation`(`Id`, `Orientation`) VALUES(4, 'Standing Vertical');
 INSERT INTO `BloodPressure`.`MeasureOrientation`(`Id`, `Orientation`) VALUES(5, 'Lying');
+

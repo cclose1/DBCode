@@ -3,7 +3,6 @@ USE Expenditure;
 DROP TABLE IF EXISTS Company;
 
 CREATE TABLE Company (
-    Id        VARCHAR(15)   NOT NULL,
 	Name      VARCHAR(15)   NOT NULL,
 	Modified  DATETIME      NULL,
 	Phone     VARCHAR(15)   NULL,
@@ -28,23 +27,50 @@ END;//
 
 DELIMITER ;
 
-CREATE UNIQUE INDEX cid ON Company (Id);
-
 TRUNCATE Company;
 
 INSERT INTO Company
-(Id, Name, Phone, Web, Comment)
+(Name, Phone, Web)
 VALUES 
-('Cid001', 'Scottish Power', '0345 270 0700', 'https://www.scottishpower.co.uk/login', ''),
-('Cid002', 'Podpoint',       '0333 0063503',  'https://pod-point.com',                 ''),
-('Cid003', 'Blink Charging', '0330 111 0076', 'https://blinkcharging.co.uk/',          'Was EB Charging');
+('Scottish Power', '0345 270 0700', 'https://www.scottishpower.co.uk/login'),
+('Podpoint',       '0333 0063503',  'https://pod-point.com'),
+('EB Charging',    '0330 111 0076', 'https://pod-point.com');
+
+DROP TABLE IF EXISTS ChargerNetwork;
+--
+-- To be replaced by company and will be removed when code changed.
+--
+CREATE TABLE ChargerNetwork (
+	Name      VARCHAR(15)   NOT NULL,
+	Modified  DATETIME      NULL,
+	Phone     VARCHAR(15)   NULL,
+	Web       VARCHAR(50)   NULL,
+	Comment   VARCHAR(1000),
+	PRIMARY KEY (Name)
+);
+
+DELIMITER //
+
+CREATE TRIGGER InsChargerNetwork BEFORE INSERT ON ChargerNetwork
+FOR EACH ROW
+BEGIN
+	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
+END;//
+
+CREATE TRIGGER UpdChargerNetwork BEFORE UPDATE ON ChargerNetwork
+FOR EACH ROW
+BEGIN
+	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
+END;//
+
+DELIMITER ;
 
 DROP TABLE IF EXISTS ChargerLocation;
 
 CREATE TABLE ChargerLocation (
 	Name      VARCHAR(20)   NOT NULL,
 	Created   DATETIME      NOT NULL,
-	Provider  VARCHAR(15)   NULL,   -- If not null points to an entry in Company with Id = Provider.
+	Network   VARCHAR(15)   NULL,   -- If not null points to an entry in ChargerNetwork with Name = Network.
 	Modified  DATETIME      NULL,
 	Rate      DECIMAL(6,2)  NULL,
 	Tariff    VARCHAR(15),
@@ -192,6 +218,40 @@ BEGIN
 END;//
 
 DELIMITER ;
+
+DROP TABLE IF EXISTS EnergyRates;
+
+CREATE TABLE EnergyRates (
+	Name                   VARCHAR(15)   NOT NULL,
+	Start                  DATETIME      NOT NULL,
+	End                    DATETIME      NULL,
+	Modified               DATETIME      NULL,
+	ElectricRate           DECIMAL(8, 3) NULL,
+	ElectricStandingCharge DECIMAL(8, 3) NULL,
+	GasRate                DECIMAL(8, 3) NULL,
+	GasStandingCharge      DECIMAL(8, 3) NULL,
+	Cap                    DECIMAL(6, 2) GENERATED ALWAYS AS (29 * ElectricRate + 120 * GasRate + 3.65 * (ElectricStandingCharge + GasStandingCharge)) VIRTUAL,
+	Description            VARCHAR(1000),
+	PRIMARY KEY (Name, Start)
+);
+
+DELIMITER //
+
+CREATE TRIGGER InsEnergyRates BEFORE INSERT ON EnergyRates
+FOR EACH ROW
+BEGIN
+	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
+END;//
+
+TRUNCATE EnergyRates;
+
+INSERT INTO EnergyRates
+(Name, Start, End, ElectricRate, ElectricStandingCharge, GasRate, GasStandingCharge)
+VALUES 
+('SSEStd', '2021-01-01 00:00:00', '2022-03-31 00:00:00', 16.103, 21.970,  2.976, 24.830),
+('SSEStd', '2022-04-01 00:00:00', '2022-09-30 00:00:00', 17.935, 22.970,  3.276, 25.330),
+('SSEStd', '2022-10-01 00:00:00', '2023-06-30 00:00:00', 32.596, 42.290,  9.959, 27.120),
+('SSEStd', '2023-07-01 00:00:00', NULL,                  30.295, 49.590,  7.607, 29.110);
 
 DROP TABLE IF EXISTS Tariff;
 

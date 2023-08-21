@@ -27,13 +27,14 @@ BEGIN
 		EXEC CompareTable @SQLServer, @MySQL, 'TransactionHeader',   @update = @update, @key = 'TxnKey'
 		EXEC CompareTable @SQLServer, @MySQL, 'TransactionLine',     @update = @update
 		EXEC CompareTable @SQLServer, @MySQL, 'Reminder',            @update = @update
-		EXEC CompareTable @SQLServer, @MySQL, 'ChargerNetwork',      @update = @update
+		EXEC CompareTable @SQLServer, @MySQL, 'Company',             @update = @update
 		EXEC CompareTable @SQLServer, @MySQL, 'ChargerLocation',     @update = @update
 		EXEC CompareTable @SQLServer, @MySQL, 'ChargerUnit',         @update = @update
 		EXEC CompareTable @SQLServer, @MySQL, 'ChargeSession',       @update = @update
 		EXEC CompareTable @SQLServer, @MySQL, 'Car',                 @update = @update
 		EXEC CompareTable @SQLServer, @MySQL, 'WeeklyFuelPrices',    @update = @update
 		EXEC CompareTable @SQLServer, @MySQL, 'Tariff',              @update = @update
+		EXEC CompareTable @SQLServer, @MySQL, 'MeterReading',        @update = @update
 	END TRY
 	BEGIN CATCH
 		EXEC ReportError

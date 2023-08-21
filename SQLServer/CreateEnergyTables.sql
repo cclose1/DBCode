@@ -1,19 +1,20 @@
 USE Expenditure
 
-DROP TABLE ChargerNetwork
+DROP TABLE Company
 GO
 
-CREATE TABLE ChargerNetwork (
+CREATE TABLE Company (
+    Id        VARCHAR(15)   NOT NULL,
 	Name      VARCHAR(15)   NOT NULL,
 	Modified  DATETIME      NULL,
 	Phone     VARCHAR(15)   NULL,
 	Web       VARCHAR(50)   NULL,
-	Comment   VARCHAR(max),
+	Comment   VARCHAR(1000),
 	PRIMARY KEY (Name)
 )
 GO
 
-CREATE TRIGGER ChargerNetworkModified ON ChargerNetwork AFTER INSERT, UPDATE
+CREATE TRIGGER CompanyModified ON Company AFTER INSERT, UPDATE
 AS 
 BEGIN
 	SET NOCOUNT ON;
@@ -21,13 +22,13 @@ BEGIN
     -- Insert statements for trigger here
 	UPDATE CH
 		SET Modified = CASE WHEN UPDATE(Modified) AND CH.Modified IS NOT NULL THEN inserted.Modified ELSE BloodPressure.dbo.RemoveFractionalSeconds(GETDATE()) END
-	FROM ChargerNetwork CH
+	FROM Company CH
 	JOIN inserted 
 	ON  CH.Name  = inserted.Name
 END
-GO
 
-INSERT INTO ChargerNetwork(Name, Phone, Web) VALUES ('PodPoint', '020 7247 4114', 'https://pod-point.com/')
+CREATE UNIQUE INDEX cid ON Company (Id)
+GO
 
 DROP TABLE ChargerLocation
 GO
@@ -35,7 +36,7 @@ GO
 CREATE TABLE ChargerLocation (
 	Name      VARCHAR(20)   NOT NULL,
 	Created   DATETIME      NOT NULL,
-	Network   VARCHAR(15)   NULL,   -- If not null points to an entry in ChargerNetwork with Name = Network.
+	Provider  VARCHAR(15)   NULL,   -- If not null points to an entry in Company with Id = Provider.
 	Modified  DATETIME      NULL,
 	Rate      DECIMAL(6,2)  NULL,
 	Tariff    VARCHAR(15),
@@ -58,11 +59,6 @@ BEGIN
 	ON  CH.Name  = inserted.Name
 END
 GO
-
-INSERT INTO ChargerLocation(Name, Created, Network, Rate, Tariff, Location) VALUES ('Anon',         '01-11-2021',  NULL,      22,  'NULL',    'NULL') 
-INSERT INTO ChargerLocation(Name, Created, Network, Rate, Tariff, Location) VALUES ('Home2p3Kw',    '01-11-2021',  NULL,      2.3, 'SSEStd',  'SO22 5PJ') 
-INSERT INTO ChargerLocation(Name, Created, Network, Rate, Tariff, Location) VALUES ('HomePodPoint', '01-11-2021',  'PodPoint', 7,   'SSEStd', 'SO22 5PJ')
-INSERT INTO ChargerLocation(Name, Created, Network, Rate, Tariff, Location) VALUES ('PPBadgerFarm', '01-11-2021',  'PodPoint', 22,   NULL,    'SO22 4QB')
 
 DROP TABLE ChargerUnit
 GO
@@ -91,11 +87,6 @@ BEGIN
 	AND CH.Name     = inserted.Name
 END
 GO
-
-INSERT INTO ChargerUnit(Location, Name, Active) VALUES ('PPBadgerFarm', 'Josh-Alex A', 'N')
-INSERT INTO ChargerUnit(Location, Name, Active) VALUES ('PPBadgerFarm', 'Josh-Alex B', 'N')
-INSERT INTO ChargerUnit(Location, Name, Active) VALUES ('PPBadgerFarm', 'Pete-Alex A', 'Y')
-INSERT INTO ChargerUnit(Location, Name, Active) VALUES ('PPBadgerFarm', 'Pete-Alex B', 'Y')
 
 DROP TABLE ChargeSession
 GO
@@ -200,24 +191,22 @@ BEGIN
 END
 GO
 
-INSERT INTO Car(Registration, Make, Model, Capacity, WLTP, MilesPerLitre, DefaultTariff) VALUES('EO70 ECC', 'Renault', 'Zoe',  52, 234, 8.5, 'SSEStd')
-INSERT INTO Car(Registration, Make, Model, Capacity, WLTP, MilesPerLitre) VALUES('Test',     'Generic', 'Make', 50, -1,  8.5)
-INSERT INTO Car(Registration, Make, Model, MilesPerLitre) VALUES('HV61 PBF',  'Suzuki', 'Splash', 8.5)
-GO
-
 DROP TABLE Tariff
 GO
 
 CREATE TABLE Tariff (
+	Company        VARCHAR(15)   NOT NULL,
 	Name           VARCHAR(15)   NOT NULL,
 	Type           VARCHAR(15)   NOT NULL,
 	Start          DATETIME      NOT NULL,
 	[End]          DATETIME      NULL,
+	Code           VARCHAR(15)   NOT NULL,
 	Modified       DATETIME      NULL,
 	UnitRate       DECIMAL(8, 3) NULL,
 	StandingCharge DECIMAL(8, 3) NULL,
+	CalorificValue DECIMAL(8, 3) NULL,
 	Description    VARCHAR(max),
-	PRIMARY KEY (Name, Type, Start)
+	PRIMARY KEY (Company, Name, Type, Start)
 )
 GO
 
@@ -231,13 +220,44 @@ BEGIN
 		SET Modified = CASE WHEN UPDATE(Modified) AND TR.Modified IS NOT NULL THEN inserted.Modified ELSE BloodPressure.dbo.RemoveFractionalSeconds(GETDATE()) END
 	FROM Tariff TR
 	JOIN inserted 
-	ON  TR.Start = inserted.Start
-	AND TR.Type  = inserted.Type
-	AND TR.Name  = inserted.Name
+	ON  TR.Company = inserted.Company
+	AND TR.Start   = inserted.Start
+	AND TR.Type    = inserted.Type
+	AND TR.Name    = inserted.Name
 END
 GO
 
-INSERT INTO Tariff(Name, Type, Start, [End], UnitRate, StandingCharge) VALUES ('SSEStd', 'Electric', '01-Jan-2021', '31-Mar-2022', 19.695, 22.960)  
-INSERT INTO Tariff(Name, Type, Start, [End], UnitRate, StandingCharge) VALUES ('SSEStd', 'Gas',      '01-Jan-2021', '31-Mar-2022', 3.970,  24.870)  
-INSERT INTO Tariff(Name, Type, Start, [End], UnitRate, StandingCharge) VALUES ('SSEStd', 'Electric', '01-Apr-2022', NULL,          27.100, 41.320)
-INSERT INTO Tariff(Name, Type, Start, [End], UnitRate, StandingCharge) VALUES ('SSEStd', 'Gas',      '01-Apr-2022', NULL,          7.123,  25.290)
+CREATE UNIQUE INDEX trcode ON Tariff(Start, Type, Code)
+GO
+
+DROP TABLE IF EXISTS MeterReading
+GO
+
+CREATE TABLE MeterReading (
+	Timestamp DATETIME       NOT NULL,
+    WeekDay                  AS (SUBSTRING(DATENAME(weekday, Timestamp),1, 3)),
+	Type      VARCHAR(15)    NOT NULL,
+	Tariff    VARCHAR(15)    NOT NULL DEFAULT 'SSEStd',
+	Modified  DATETIME       NULL,
+	Reading   DECIMAL(10, 2) NULL,
+    Estimated CHAR(1)        NULL,
+	Comment   VARCHAR(1000),
+	PRIMARY KEY (Timestamp, Type)
+)
+GO
+
+CREATE TRIGGER MeterReadingModified ON MeterReading AFTER INSERT, UPDATE
+AS 
+BEGIN
+	SET NOCOUNT ON;
+
+    -- Insert statements for trigger here
+	UPDATE TR
+		SET Modified = CASE WHEN UPDATE(Modified) AND TR.Modified IS NOT NULL THEN inserted.Modified ELSE BloodPressure.dbo.RemoveFractionalSeconds(GETDATE()) END
+	FROM MeterReading TR
+	JOIN inserted 
+	ON  TR.Timestamp = inserted.Timestamp
+	AND TR.Type      = inserted.Type
+	AND TR.Type      = inserted.Type
+END
+GO

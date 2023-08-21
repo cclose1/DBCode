@@ -25,14 +25,11 @@ DROP VIEW IF EXISTS Chargers;
 CREATE VIEW Chargers AS
 SELECT
 	CL.*,
-    CP.Name  AS Network,
 	CU.Name  AS Unit,
 	CU.Active
 FROM Expenditure.ChargerLocation CL
 LEFT JOIN Expenditure.ChargerUnit CU
-ON CU.Location = CL.Name
-LEFT JOIN Expenditure.Company CP
-ON CL.Provider = CP.Id;
+ON CU.Location = CL.Name;
 
 DROP VIEW IF EXISTS MergedSession;
 
@@ -178,52 +175,57 @@ CREATE VIEW SessionMonthSummary AS
         expenditure.sessionusage
     GROUP BY YEAR(Start) , MONTH(Start);
     
+DROP VIEW IF EXISTS SequencedMeterReading;
+
+CREATE VIEW SequencedMeterReading AS
+SELECT 
+	Timestamp,
+    MR.Type,
+    ROW_NUMBER() OVER (PARTITION BY Type ORDER BY Timestamp) AS SeqNo,
+    Tariff,
+    Reading,
+    UnitRate,
+    StandingCharge,
+    COALESCE(CalorificValue, '') AS CalorificValue
+FROM MeterReading MR
+LEFT JOIN Tariff  TR 
+ON   MR.Timestamp >=  TR.Start 
+AND (MR.Timestamp < TR.End OR TR.End IS NULL)
+AND TR.Code = MR.Tariff
+AND TR.Type = MR.Type;
+
 DROP VIEW IF EXISTS BoundedReading;
 
 CREATE VIEW BoundedReading AS
 SELECT
 	J1.Timestamp                         AS Start,
-    J1.Type,
-    J1.Estimated                         AS StartEstimated,
     J1.Weekday,
     J2.Timestamp                         AS 'End',
-    J2.Estimated                         AS EndEstimated,
     DATEDIFF(J2.Timestamp, J1.Timestamp) AS Days,
-    J1.Reading                           AS StartReading,
-    J2.Reading                           AS EndReading,
     J1.SeqNo,
+    J1.Type,
+    J1.Tariff,
+    J1.Reading,
+    J2.Reading                           AS NextReading,
     J2.Reading - J1.Reading              AS ReadingChange,
     CASE J1.Type
       WHEN 'Gas' THEN 
-        UnitsToKwh(J2.TruncReading - J1.TruncReading, TR.CalorificValue)
+        UnitsToKwh(J2.Reading - J1.Reading, TR.CalorificValue)
       ELSE 
-		J2.TruncReading - J1.TruncReading
+		J2.Reading - J1.Reading
       END AS Kwh,
-    J1.Tariff,
     TR.UnitRate,
     TR.StandingCharge,
     TR.CalorificValue,
     J1.Comment
 FROM (
 	SELECT 
-		Timestamp,
-        Weekday,
-        Type,
-        Tariff,
-        Reading,
-        Estimated,
-        TRUNCATE(Reading, 0)                                     AS TruncReading,
-		ROW_NUMBER() OVER (PARTITION BY Type ORDER BY Timestamp) AS SeqNo,
-        Comment
+		*,
+		ROW_NUMBER() OVER (PARTITION BY Type ORDER BY Timestamp) AS SeqNo
 	FROM MeterReading) AS J1
 JOIN (
 	SELECT 
-		Timestamp,
-        Type,
-        Tariff,
-        Reading,
-        Estimated,
-        TRUNCATE(Reading, 0)                                     AS TruncReading,
+		*,
 		ROW_NUMBER() OVER (PARTITION BY Type ORDER BY Timestamp) AS SeqNo
 	FROM MeterReading) AS J2
 	ON J1.SeqNo = J2.SeqNo - 1

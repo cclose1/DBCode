@@ -1,0 +1,79 @@
+USE Expenditure;
+
+DROP FUNCTION IF EXISTS UnitsToKwh;
+
+DELIMITER $$
+
+CREATE FUNCTION UnitsToKwh (Units  DECIMAL(10,2), CalorificValue DECIMAL(10,2))
+	RETURNS DECIMAL(10, 2)
+	DETERMINISTIC
+BEGIN
+	RETURN 1.02264 * Units * CalorificValue / 3.6;
+END$$
+
+DELIMITER ;
+
+DROP FUNCTION IF EXISTS UnitsToKwhByDate;
+
+DELIMITER $$
+
+CREATE FUNCTION UnitsToKwhByDate (Units  DECIMAL(10,2), Date Date)
+	RETURNS DECIMAL(10, 2) DETERMINISTIC
+BEGIN
+	DECLARE CalVal DECIMAL(10, 3);
+    
+    SELECT 
+		CalorificValue INTO Calval
+	FROM Tariff
+	WHERE  
+		Date >= Start
+        AND (Date < End OR End IS NULL)
+        AND Name = 'SSEStd'
+        AND Type = 'Gas';
+        
+	RETURN UnitsToKwh(Units, CalVal);
+END$$
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS GetEnergyCosts;
+
+DELIMITER $$
+
+CREATE PROCEDURE GetEnergyCosts(
+	IN Start DATE,
+    IN End   DATE)
+BEGIN
+	DECLARE Fields    VARCHAR(10000); 
+    DECLARE WhereCl   VARCHAR(1000) DEFAULT CONCAT("Type <> 'Solar' AND Start > '", Start, "'");
+    
+    IF End IS NOT NULL THEN
+		SET WhereCl = CONCAT(WhereCl, " AND Start <= '", End, "'");
+	END IF;
+    
+    CALL BloodPressure.AddSelectField(Fields, 'Type',                              NULL,             NULL,         NULL);
+    CALL BloodPressure.AddSelectField(Fields, 'Start',                             NULL,             'Start',      'Min');
+    CALL BloodPressure.AddSelectField(Fields, 'SUBSTR(DAYNAME(Min(Start)), 1, 3)', NULL,             'Weekday',    NULL);
+    CALL BloodPressure.AddSelectField(Fields, 'Start',                             NULL,             'End',        'Max');
+    CALL BloodPressure.AddSelectField(Fields, 'Days',                              NULL,             'PeriodDays', 'Sum');
+    CALL BloodPressure.AddSelectField(Fields, 'Datediff(Max(Start), Min(Start))',  NULL,             'ActualDays', NULL);
+    CALL BloodPressure.AddSelectField(Fields, 'Count(*)',                          NULL,             'Readings',   NULL);
+    CALL BloodPressure.AddSelectField(Fields, 'StartReading',                      NULL,              NULL,        'Min');
+    CALL BloodPressure.AddSelectField(Fields, 'EndReading',                        NULL,              NULL,        'Max');
+    CALL BloodPressure.AddSelectField(Fields, 'Kwh',                               NULL,             'UsedKwh',    'Sum');
+    CALL BloodPressure.AddSelectField(Fields, 'KwhCost',                           'DECIMAL(10, 2)', 'KwhCost',    'Sum');
+    CALL BloodPressure.AddSelectField(Fields, 'StdCost',                           'DECIMAL(10, 2)', 'StdCost',    'Sum');
+    CALL BloodPressure.AddSelectField(Fields, 'Sum(TotalCost)',                    'DECIMAL(10, 2)', 'Total',      NULL);
+    
+    SET @Query = CONCAT(
+		'SELECT \n\r', Fields, 
+        '\n\rFROM CostedReading', 
+        '\n\rWhere ', WhereCl, 
+        '\n\rGroup By Type', 
+        '\n\rOrder By Type');
+    PREPARE STMT FROM @Query; 
+    EXECUTE STMT; 
+    DEALLOCATE PREPARE STMT;
+END$$
+
+DELIMITER ;
