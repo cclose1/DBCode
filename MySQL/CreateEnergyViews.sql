@@ -243,3 +243,78 @@ SELECT
     ROUND(Days * StandingCharge / 100, 3)                    AS StdCost,
     ROUND((UnitRate * Kwh + Days * StandingCharge) / 100, 3) AS TotalCost
 FROM BoundedReading;
+    
+DROP VIEW IF EXISTS SessionLog;
+
+CREATE VIEW SessionLog AS
+SELECT
+    CASE WHEN CS.Unit = '' THEN CS.Charger ELSE CS.Unit END AS Device,
+    J2.CarReg,
+    J2.Session,
+	J2.Timestamp,
+    J2.Percent,
+    J2.Miles,
+    CASE
+      WHEN J1.Miles IS NULL THEN 
+        0
+      ELSE 
+		CAST(J2.Miles - J1.Miles AS DECIMAL)
+      END AS MilesAdded,
+    CASE
+      WHEN J1.Percent IS NULL THEN 
+        0
+      ELSE 
+		CAST(J2.Percent - J1.Percent AS DECIMAL)
+      END AS PercentGain,
+	CASE
+      WHEN J1.Timestamp IS NULL THEN 
+        0
+      ELSE
+		ROUND(TIMESTAMPDIFF(Second, J1.Timestamp, J2.Timestamp) / 60, 2)
+      END AS TimeTaken
+FROM (
+	SELECT 
+		CarReg,
+		Timestamp,
+        Session,
+        Miles,
+        Percent,
+		ROW_NUMBER() OVER (PARTITION BY CarReg, Session ORDER BY Timestamp) AS SeqNo
+	FROM ChargeSessionLog) AS J1
+RIGHT OUTER JOIN (
+	SELECT 
+		CarReg,
+		Timestamp,
+        Session,
+        Miles,
+        Percent,
+		ROW_NUMBER() OVER (PARTITION BY CarReg, Session ORDER BY Timestamp) AS SeqNo
+	FROM ChargeSessionLog) AS J2
+	ON  J1.SeqNo  = J2.SeqNo - 1
+	AND J1.CarReg = J2.CarReg
+    AND J1.Session = J2.Session
+JOIN ChargeSession CS
+    ON J2.CarReg   = CS.CarReg
+    AND J2.Session = CS.Start;
+
+DROP VIEW IF EXISTS SessionLogSummary;
+
+CREATE VIEW SessionLogSummary AS
+SELECT
+    Min(CS.Start)        AS Session,
+    Min(CS.Charger)      AS Charger,
+    Min(CS.Unit)         AS Unit,
+    Min(CS.StartMiles)   AS StartMiles,
+    Min(CS.StartPerCent) AS StartPercent,
+    Min(CS.Charge)       AS Charge,
+    Min(CL.Timestamp)    AS StartTime,
+    Min(CL.Miles)        AS LogStartMile,
+    Sum(CL.MilesAdded)   AS MilesAdded,
+    Sum(CL.TimeTaken)    AS TimeTaken
+FROM expenditure.chargesession CS
+JOIN expenditure.sessionlog    CL
+ON  CS.CarReg      =  CL.CarReg
+AND CS.Start       =  CL.Session
+AND CS.Start      <> CL.Timestamp
+AND CL.MilesAdded <= 1
+GROUP BY CS.Start;

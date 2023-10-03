@@ -1,6 +1,6 @@
 USE Expenditure
 
-DROP TABLE Company
+DROP TABLE IF EXISTS Company
 GO
 
 CREATE TABLE Company (
@@ -30,7 +30,7 @@ END
 CREATE UNIQUE INDEX cid ON Company (Id)
 GO
 
-DROP TABLE ChargerLocation
+DROP TABLE IF EXISTS ChargerLocation
 GO
 
 CREATE TABLE ChargerLocation (
@@ -60,7 +60,7 @@ BEGIN
 END
 GO
 
-DROP TABLE ChargerUnit
+DROP TABLE IF EXISTS ChargerUnit
 GO
 
 CREATE TABLE ChargerUnit (
@@ -88,7 +88,7 @@ BEGIN
 END
 GO
 
-DROP TABLE ChargeSession
+DROP TABLE IF EXISTS ChargeSession
 GO
 
 CREATE TABLE ChargeSession (
@@ -97,7 +97,7 @@ CREATE TABLE ChargeSession (
 	Modified      DATETIME      NULL,
 	Charger       VARCHAR(20)   NULL,  -- Pointer to an entry in ChargerLocation
 	Unit          VARCHAR(15)   NULL,  -- Pointer to ChargerUnit where Location = Charger and Name = Unit
-	EstDuration   DECIMAL(9, 5),
+	EstDuration   DECIMAL(5, 3),
 	Mileage	      INT           NULL,
 	StartMiles    DECIMAL(4, 1) NULL,
 	StartPerCent  DECIMAL(4, 1) NULL,
@@ -115,6 +115,7 @@ CREATE TABLE ChargeSession (
 	PRIMARY KEY (CarReg ASC, Start ASC)
 )
 GO
+
 CREATE TRIGGER ChargeSessionModified ON ChargeSession AFTER INSERT, UPDATE
 AS 
 BEGIN
@@ -130,7 +131,36 @@ BEGIN
 END
 GO
 
-DROP TABLE Car
+DROP TABLE IF EXISTS ChargeSessionLog
+GO
+
+CREATE TABLE ChargeSessionLog (
+    CarReg    VARCHAR(10)   NOT NULL,
+	Timestamp DATETIME      NOT NULL,
+	Session   DATETIME      NOT NULL,
+	Modified  DATETIME      NULL,
+	Miles     INT           NULL,
+	[Percent] INT           NULL,
+	PRIMARY KEY (CarReg ASC, Timestamp ASC)
+)
+GO
+
+CREATE TRIGGER ChargeSessionLogModified ON ChargeSessionLog AFTER INSERT, UPDATE
+AS 
+BEGIN
+	SET NOCOUNT ON;
+
+    -- Insert statements for trigger here
+	UPDATE CS
+		SET Modified = CASE WHEN UPDATE(Modified) AND CS.Modified IS NOT NULL THEN inserted.Modified ELSE BloodPressure.dbo.RemoveFractionalSeconds(GETDATE()) END
+	FROM ChargeSessionLog CS
+	JOIN inserted 
+	ON  CS.CarReg   = inserted.CarReg
+	AND CS.Timestamp = inserted.Timestamp
+END
+GO
+
+DROP TABLE IF EXISTS Car
 GO
 
 CREATE TABLE Car (
@@ -161,7 +191,7 @@ BEGIN
 END
 GO
 
-DROP TABLE WeeklyFuelPrices
+DROP TABLE IF EXISTS WeeklyFuelPrices
 GO
 
 CREATE TABLE WeeklyFuelPrices (
@@ -191,7 +221,7 @@ BEGIN
 END
 GO
 
-DROP TABLE Tariff
+DROP TABLE IF EXISTS Tariff
 GO
 
 CREATE TABLE Tariff (

@@ -56,7 +56,7 @@ BEGIN
     CALL BloodPressure.AddSelectField(Fields, 'SUBSTR(DAYNAME(Min(Start)), 1, 3)', NULL,             'Weekday',    NULL);
     CALL BloodPressure.AddSelectField(Fields, 'Start',                             NULL,             'End',        'Max');
     CALL BloodPressure.AddSelectField(Fields, 'Days',                              NULL,             'PeriodDays', 'Sum');
-    CALL BloodPressure.AddSelectField(Fields, 'Datediff(Max(Start), Min(Start))',  NULL,             'ActualDays', NULL);
+    CALL BloodPressure.AddSelectField(Fields, 'Datediff(Max(End), Min(Start))',    NULL,             'ActualDays', NULL);
     CALL BloodPressure.AddSelectField(Fields, 'Count(*)',                          NULL,             'Readings',   NULL);
     CALL BloodPressure.AddSelectField(Fields, 'StartReading',                      NULL,              NULL,        'Min');
     CALL BloodPressure.AddSelectField(Fields, 'EndReading',                        NULL,              NULL,        'Max');

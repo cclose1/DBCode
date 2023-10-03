@@ -27,6 +27,7 @@ BEGIN
 		EXEC SynchronizeTable @SQLServer, @MySQL, 'ChargerLocation',     @mode = @mode, @batch = @batch
 		EXEC SynchronizeTable @SQLServer, @MySQL, 'ChargerUnit  ',       @mode = @mode, @batch = @batch
 		EXEC SynchronizeTable @SQLServer, @MySQL, 'ChargeSession',       @mode = @mode, @batch = @batch
+		EXEC SynchronizeTable @SQLServer, @MySQL, 'ChargeSessionLog',    @mode = @mode, @batch = @batch
 		EXEC SynchronizeTable @SQLServer, @MySQL, 'Car',                 @mode = @mode, @batch = @batch
 		EXEC SynchronizeTable @SQLServer, @MySQL, 'WeeklyFuelPrices',    @mode = @mode, @batch = @batch
 		EXEC SynchronizeTable @SQLServer, @MySQL, 'Tariff',              @mode = @mode, @batch = @batch

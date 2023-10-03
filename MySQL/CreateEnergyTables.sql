@@ -104,7 +104,7 @@ CREATE TABLE ChargeSession (
 	Modified      DATETIME      NULL,
 	Charger       VARCHAR(20)   NULL,
 	Unit          VARCHAR(15)   NULL,
-	EstDuration   DECIMAL(9, 5),
+	EstDuration   DECIMAL(5, 3),
 	Mileage	      INT           NULL,
 	StartMiles    DECIMAL(4, 1) NULL,
 	StartPerCent  DECIMAL(4, 1) NULL,
@@ -128,6 +128,34 @@ BEGIN
 END;//
 
 CREATE TRIGGER UpdChargeSession BEFORE UPDATE ON ChargeSession
+FOR EACH ROW
+BEGIN
+	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
+END;//
+
+DELIMITER ;
+
+DROP TABLE IF EXISTS  ChargeSessionLog;
+
+CREATE TABLE ChargeSessionLog (
+    CarReg    VARCHAR(10)   NOT NULL,
+	Timestamp DATETIME      NOT NULL,
+	Session   DATETIME      NOT NULL,
+	Modified  DATETIME      NULL,
+	Miles     INT           NULL,
+	Percent   INT           NULL,
+	PRIMARY KEY (CarReg ASC, Timestamp ASC)
+);
+
+DELIMITER //
+
+CREATE TRIGGER InsChargeSessionLog BEFORE INSERT ON ChargeSessionLog
+FOR EACH ROW
+BEGIN
+	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
+END;//
+
+CREATE TRIGGER UpdChargeSessionLog BEFORE UPDATE ON ChargeSessionLog
 FOR EACH ROW
 BEGIN
 	SET NEW.Modified = COALESCE(NEW.Modified, NOW());

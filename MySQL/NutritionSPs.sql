@@ -48,7 +48,31 @@ CREATE FUNCTION WeekDayName(day DATE)
 RETURNS VARCHAR(3)
 DETERMINISTIC
 BEGIN
-    RETURN (SUBSTR(DAYNAME(Timestamp), 1, 3));
+    RETURN (SUBSTR(DAYNAME(day), 1, 3));
+END$$
+
+DELIMITER ;
+
+DROP FUNCTION IF EXISTS GetTimeDiffPerUnit;
+
+DELIMITER $$
+
+CREATE FUNCTION GetTimeDiffPerUnit(start DATETIME, end DATETIME, perUnit INT)
+RETURNS FLOAT
+DETERMINISTIC
+BEGIN
+	DECLARE Seconds FLOAT;
+
+	IF perUnit = 0 THEN 
+		RETURN NULL;
+	END IF;
+    
+	-- First try the difference as seconds and then as milliseconds if the number of millisecond will not exceed an
+	-- integer which only hold a value that is less than 32 bits.
+	
+	SET Seconds = CAST(TIMESTAMPDIFF(SECOND, Start, End) AS FLOAT);
+	    
+	RETURN Seconds / perUnit;
 END$$
 
 DELIMITER ;

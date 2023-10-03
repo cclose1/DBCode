@@ -85,21 +85,24 @@ CREATE FUNCTION dbo.ConvertReserved(@name AS sysname)
    RETURNS sysname
 AS
 BEGIN
-	IF @name IS NOT NULL AND @name IN ('End', 'Key', 'Function', 'Server', 'Column')
+	IF @name IS NOT NULL AND @name IN ('End', 'Key', 'Function', 'Server', 'Column', 'Percent')
 		RETURN '[' + @name + ']'
 	
 	RETURN @name
 END
 GO
-IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'dbo.GetTimeDiff') and OBJECTPROPERTY(id, N'IsScalarFunction') = 1)
-	DROP FUNCTION dbo.GetTimeDiff
+
+IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'dbo.GetTimeDiffPerUnit') and OBJECTPROPERTY(id, N'IsScalarFunction') = 1)
+	DROP FUNCTION dbo.GetTimeDiffPerUnit
 GO
 
-CREATE FUNCTION dbo.GetTimeDiff(@start AS DATETIME, @end AS DATETIME)
+CREATE FUNCTION dbo.GetTimeDiffPerUnit(@start AS DATETIME, @end AS DATETIME, @perUnit AS INT)
    RETURNS FLOAT
 AS
 BEGIN
 	DECLARE @seconds AS FLOAT
+
+	IF @perUnit = 0 RETURN NULL
 	
 	-- First try the difference as seconds and then as milliseconds if the number of millisecond will not exceed an
 	-- integer which only hold a value that is less than 32 bits.
@@ -108,9 +111,23 @@ BEGIN
 	
 	IF @seconds < 2147483 SET @seconds = CAST(DATEDIFF(MS, @start, @end) / 1000.0 AS FLOAT)
 	
-	RETURN @seconds
+	RETURN @seconds / @perUnit
 END
 GO
+
+
+IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'dbo.GetTimeDiff') and OBJECTPROPERTY(id, N'IsScalarFunction') = 1)
+	DROP FUNCTION dbo.GetTimeDiff
+GO
+
+CREATE FUNCTION dbo.GetTimeDiff(@start AS DATETIME, @end AS DATETIME)
+   RETURNS FLOAT
+AS
+BEGIN
+	RETURN dbo.GetTimeDiffPerUnit(@start, @end, 1)
+END
+GO
+
 IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'dbo.GetDelayFormat') and OBJECTPROPERTY(id, N'IsScalarFunction') = 1)
 	DROP FUNCTION dbo.GetDelayFormat
 GO

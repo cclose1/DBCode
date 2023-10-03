@@ -44,12 +44,16 @@ GO
 CREATE VIEW Chargers AS
 SELECT
 	CL.*,
+    CP.Name  AS Network,
 	CU.Name  AS Unit,
 	CU.Active
 FROM Expenditure.dbo.ChargerLocation CL
 LEFT JOIN Expenditure.dbo.ChargerUnit CU
 ON CU.Location = CL.Name
+LEFT JOIN Expenditure.dbo.Company CP
+ON CL.Provider = CP.Id
 GO
+
 
 DROP VIEW MergedSession
 GO
@@ -173,7 +177,61 @@ AND (MS.[End] < TR.[End] OR TR.[End] IS NULL)
 AND TR.Name = DefaultTariff
 AND TR.Type = 'Electric'
 GO
+    
+DROP VIEW IF EXISTS SessionLog;
+GO
 
+CREATE VIEW SessionLog AS
+SELECT
+    CASE WHEN CS.Unit = '' THEN CS.Charger ELSE CS.Unit END AS Device,
+    J2.CarReg,
+	J2.Timestamp,
+    J2.Session,
+    J2.[Percent],
+    J2.Miles,
+    CASE
+      WHEN J1.Miles IS NULL THEN 
+        0
+      ELSE 
+		J2.Miles - J1.Miles
+      END AS MilesAdded,
+    CASE
+      WHEN J1.[Percent] IS NULL THEN 
+        0
+      ELSE 
+		J2.[Percent] - J1.[Percent]
+      END AS PercentGain,
+	CASE
+      WHEN J1.Timestamp IS NULL THEN 
+        0
+      ELSE
+		CAST(DATEDIFF(ss, J1.Timestamp, J2.Timestamp) / 60 AS DECIMAL(9, 2))
+      END AS TimeTaken
+FROM (
+	SELECT 
+		CarReg,
+		Timestamp,
+        Session,
+        Miles,
+        [Percent],
+		ROW_NUMBER() OVER (PARTITION BY CarReg, Session ORDER BY Timestamp) AS SeqNo
+	FROM ChargeSessionLog) AS J1
+RIGHT OUTER JOIN (
+	SELECT 
+		CarReg,
+		Timestamp,
+        Session,
+        Miles,
+        [Percent],
+		ROW_NUMBER() OVER (PARTITION BY CarReg, Session ORDER BY Timestamp) AS SeqNo
+	FROM ChargeSessionLog) AS J2
+	ON  J1.SeqNo   = J2.SeqNo - 1
+	AND J1.CarReg  = J2.CarReg
+    AND J1.Session = J2.Session
+JOIN ChargeSession CS
+    ON J2.CarReg   = CS.CarReg
+    AND J2.Session = CS.Start;
+GO
 
 DROP VIEW IF EXISTS BoundedReading
 GO

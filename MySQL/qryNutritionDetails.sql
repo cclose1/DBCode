@@ -1,3 +1,4 @@
+
 SELECT * 
   FROM BloodPressure.NutritionEventsDaily
   WHERE Substring(dayname(curdate()), 1, 3) = Weekday

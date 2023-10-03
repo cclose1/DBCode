@@ -7,6 +7,20 @@ GO
 CREATE SYNONYM dbo.WeekDayName FOR BloodPressure.dbo.WeekDayName
 GO
 
+IF EXISTS (SELECT 0 FROM sys.synonyms WHERE name=N'GetTimeDiff')
+	DROP SYNONYM dbo.GetTimeDiff
+GO
+
+CREATE SYNONYM dbo.GetTimeDiff FOR BloodPressure.dbo.GetTimeDiff
+GO
+
+IF EXISTS (SELECT 0 FROM sys.synonyms WHERE name=N'GetTimeDiffPerUnit')
+	DROP SYNONYM dbo.GetTimeDiffPerUnit
+GO
+
+CREATE SYNONYM dbo.GetTimeDiffPerUnit FOR BloodPressure.dbo.GetTimeDiffPerUnit
+GO
+
 IF EXISTS (SELECT 0 FROM sys.synonyms WHERE name=N'AppendSelectField')
 	DROP SYNONYM dbo.AppendSelectField
 GO
@@ -88,7 +102,7 @@ BEGIN
     EXEC AppendSelectField @fields OUTPUT, 'dbo.WeekDayName(Min(Start))',               NULL,             'Weekday',    NULL
     EXEC AppendSelectField @fields OUTPUT, 'Start',                                     NULL,             '[End]',      'Max'
     EXEC AppendSelectField @fields OUTPUT, 'Days',                                      NULL,             'PeriodDays', 'Sum'
-    EXEC AppendSelectField @fields OUTPUT, 'Datediff(Day, Min(Start), Max(Start))',     NULL,             'ActualDays', NULL
+    EXEC AppendSelectField @fields OUTPUT, 'Datediff(Day, Min(Start), Max([End]))',     NULL,             'ActualDays', NULL
     EXEC AppendSelectField @fields OUTPUT, 'Count(*)',                                  NULL,             'Readings',   NULL
     EXEC AppendSelectField @fields OUTPUT, 'StartReading',                              NULL,              NULL,        'Min'
     EXEC AppendSelectField @fields OUTPUT, 'EndReading',                                NULL,              NULL,        'Max'
@@ -97,6 +111,6 @@ BEGIN
     EXEC AppendSelectField @fields OUTPUT, 'StdCost',                                   'DECIMAL(10, 2)', 'StdCost',    'Sum'
     EXEC AppendSelectField @fields OUTPUT, 'Sum(TotalCost)',                            'DECIMAL(10, 2)', 'Total',      NULL
 	
-	EXEC SelectQuery 'CostedReading', @fields, @whereCl, 'Type', 'Type'
+	EXEC SelectQuery 'Expenditure.dbo.CostedReading', @fields, @whereCl, 'Type', 'Type', @printSQL
 END
 GO
