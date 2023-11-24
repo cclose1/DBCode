@@ -220,22 +220,54 @@ BEGIN
 END;//
 
 DELIMITER ;
+DROP TABLE IF EXISTS TariffName;
+
+CREATE TABLE TariffName (
+	Company     VARCHAR(15)   NOT NULL,
+	Name        VARCHAR(15)   NOT NULL,
+    Code        VARCHAR(15)   NOT NULL,
+	Modified    DATETIME      NULL,
+	Description VARCHAR(1000),
+	PRIMARY KEY (Company, Name)
+);
+DELIMITER //
+
+CREATE TRIGGER InsTariffName BEFORE INSERT ON TariffName
+FOR EACH ROW
+BEGIN
+	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
+END;//
+
+CREATE TRIGGER UpdTariffName BEFORE UPDATE ON TariffName
+FOR EACH ROW
+BEGIN
+	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
+END;//
+
+DELIMITER ;
+
+CREATE UNIQUE INDEX trnamecode ON TariffName( Code);
+
+TRUNCATE TariffName;
+
+INSERT INTO TariffName(Company, Name, Code)
+VALUES
+('Scottish Power', 'Standard', 'SSEStd'),
+('Scottish Power', 'Test',     'SSTest');
 
 DROP TABLE IF EXISTS Tariff;
 
 CREATE TABLE Tariff (
-	Company        VARCHAR(15)   NOT NULL,
-	Name           VARCHAR(15)   NOT NULL,
-	Type           VARCHAR(15)   NOT NULL,
 	Start          DATETIME      NOT NULL,
 	End            DATETIME      NULL,
     Code           VARCHAR(15)   NOT NULL,
+	Type           VARCHAR(15)   NOT NULL,
 	Modified       DATETIME      NULL,
 	UnitRate       DECIMAL(8, 3) NULL,
 	StandingCharge DECIMAL(8, 3) NULL,
     CalorificValue DECIMAL(8, 3) NULL,
-	Description    VARCHAR(1000),
-	PRIMARY KEY (Company, Name, Type, Start)
+	Comment        VARCHAR(1000),
+	PRIMARY KEY (Start, Code, Type)
 );
 
 DELIMITER //
@@ -254,27 +286,25 @@ END;//
 
 DELIMITER ;
 
-CREATE UNIQUE INDEX trcode ON Tariff(Start, Type, Code);
-
 TRUNCATE Tariff;
 
-INSERT INTO Tariff(Company, Name, Type, Code, Start, End, UnitRate, StandingCharge, CalorificValue)
+INSERT INTO Tariff(Type, Code, Start, End, UnitRate, StandingCharge, CalorificValue)
 VALUES
-('Scottish Power', 'Standard', 'Electric', 'SSEStd', '2021-01-01 00:00:00', '2022-03-31 23:59:59', 19.685, 22.960, NULL),
-('Scottish Power', 'Standard', 'Electric', 'SSEStd', '2022-04-01 00:00:00', '2022-09-30 23:59:59', 27.100, 41.320, NULL),
-('Scottish Power', 'Standard', 'Electric', 'SSEStd', '2022-10-01 00:00:00', '2022-12-31 23:59:59', 32.596, 42.290, NULL),
-('Scottish Power', 'Standard', 'Electric', 'SSEStd', '2023-01-01 00:00:00', '2023-03-31 23:59:59', 32.647, 42.290, NULL),
-('Scottish Power', 'Standard', 'Electric', 'SSEStd', '2023-04-01 00:00:00', '2023-06-30 23:59:59', 31.921, 47.230, NULL),
-('Scottish Power', 'Standard', 'Electric', 'SSEStd', '2023-07-01 00:00:00', NULL,                  30.295, 49.590, NULL),
-('Scottish Power', 'Standard', 'Gas',      'SSEStd',  '2021-01-01 00:00:00', '2022-03-31 23:59:59',  3.970, 24.870, 39.2),
-('Scottish Power', 'Standard', 'Gas',      'SSEStd', '2022-04-01 00:00:00', '2022-04-30 23:59:59',  7.123, 25.920, 39.2),
-('Scottish Power', 'Standard', 'Gas',      'SSEStd', '2022-05-01 00:00:00', '2022-09-30 23:59:59',  7.123, 25.920, 39.2),
-('Scottish Power', 'Standard', 'Gas',      'SSEStd',  '2022-10-01 00:00:00', '2022-10-18 23:59:59',  9.959, 27.120, 39.7),
-('Scottish Power', 'Standard', 'Gas',      'SSEStd',  '2022-10-19 00:00:00', '2023-03-31 23:59:59',  9.959, 27.120, 39.3),
-('Scottish Power', 'Standard', 'Gas',      'SSEStd',  '2023-04-01 00:00:00', '2023-04-17 23:59:59',  9.916, 27.720, 39.1),
-('Scottish Power', 'Standard', 'Gas',      'SSEStd',  '2023-04-18 00:00:00', '2023-04-21 23:59:59',  9.916, 27.720, 39.2),
-('Scottish Power', 'Standard', 'Gas',      'SSEStd',  '2023-04-22 00:00:00', '2023-06-30 23:59:59',  9.916, 27.720, 39.3),
-('Scottish Power', 'Standard', 'Gas',      'SSEStd',  '2023-07-01 00:00:00', NULL,                   7.607, 29.110, 39.3);
+('Electric', 'SSEStd', '2021-01-01 00:00:00', '2022-03-31 23:59:59', 19.685, 22.960, NULL),
+('Electric', 'SSEStd', '2022-04-01 00:00:00', '2022-09-30 23:59:59', 27.100, 41.320, NULL),
+('Electric', 'SSEStd', '2022-10-01 00:00:00', '2022-12-31 23:59:59', 32.596, 42.290, NULL),
+('Electric', 'SSEStd', '2023-01-01 00:00:00', '2023-03-31 23:59:59', 32.647, 42.290, NULL),
+('Electric', 'SSEStd', '2023-04-01 00:00:00', '2023-06-30 23:59:59', 31.921, 47.230, NULL),
+('Electric', 'SSEStd', '2023-07-01 00:00:00', NULL,                  30.295, 49.590, NULL),
+('Gas',      'SSEStd', '2021-01-01 00:00:00', '2022-03-31 23:59:59',  3.970, 24.870, 39.2),
+('Gas',      'SSEStd', '2022-04-01 00:00:00', '2022-04-30 23:59:59',  7.123, 25.920, 39.2),
+('Gas',      'SSEStd', '2022-05-01 00:00:00', '2022-09-30 23:59:59',  7.123, 25.920, 39.2),
+('Gas',      'SSEStd', '2022-10-01 00:00:00', '2022-10-18 23:59:59',  9.959, 27.120, 39.7),
+('Gas',      'SSEStd', '2022-10-19 00:00:00', '2023-03-31 23:59:59',  9.959, 27.120, 39.3),
+('Gas',      'SSEStd', '2023-04-01 00:00:00', '2023-04-17 23:59:59',  9.916, 27.720, 39.1),
+('Gas',      'SSEStd', '2023-04-18 00:00:00', '2023-04-21 23:59:59',  9.916, 27.720, 39.2),
+('Gas',      'SSEStd', '2023-04-22 00:00:00', '2023-06-30 23:59:59',  9.916, 27.720, 39.3),
+('Gas',      'SSEStd', '2023-07-01 00:00:00', NULL,                   7.607, 29.110, 39.3);
 
 DROP TABLE IF EXISTS MeterReading;
 

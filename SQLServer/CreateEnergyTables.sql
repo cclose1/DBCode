@@ -228,14 +228,14 @@ CREATE TABLE Tariff (
 	Company        VARCHAR(15)   NOT NULL,
 	Name           VARCHAR(15)   NOT NULL,
 	Type           VARCHAR(15)   NOT NULL,
-	Start          DATETIME      NOT NULL,
-	[End]          DATETIME      NULL,
+	Start          DATE          NOT NULL,
+	[End]          DATE          NULL,
 	Code           VARCHAR(15)   NOT NULL,
 	Modified       DATETIME      NULL,
 	UnitRate       DECIMAL(8, 3) NULL,
 	StandingCharge DECIMAL(8, 3) NULL,
 	CalorificValue DECIMAL(8, 3) NULL,
-	Description    VARCHAR(max),
+	Comment        VARCHAR(max),
 	PRIMARY KEY (Company, Name, Type, Start)
 )
 GO
