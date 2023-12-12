@@ -30,8 +30,10 @@ BEGIN
 		EXEC SynchronizeTable @SQLServer, @MySQL, 'ChargeSessionLog',    @mode = @mode, @batch = @batch
 		EXEC SynchronizeTable @SQLServer, @MySQL, 'Car',                 @mode = @mode, @batch = @batch
 		EXEC SynchronizeTable @SQLServer, @MySQL, 'WeeklyFuelPrices',    @mode = @mode, @batch = @batch
+		EXEC SynchronizeTable @SQLServer, @MySQL, 'TariffName',          @mode = @mode, @batch = @batch
 		EXEC SynchronizeTable @SQLServer, @MySQL, 'Tariff',              @mode = @mode, @batch = @batch
 		EXEC SynchronizeTable @SQLServer, @MySQL, 'MeterReading',        @mode = @mode, @batch = @batch
+		EXEC SynchronizeTable @SQLServer, @MySQL, 'Meter',               @mode = @mode, @batch = @batch
 	END TRY
 	BEGIN CATCH
 		EXEC ReportError

@@ -177,73 +177,7 @@ CREATE VIEW SessionMonthSummary AS
     FROM
         expenditure.sessionusage
     GROUP BY YEAR(Start) , MONTH(Start);
-    
-DROP VIEW IF EXISTS BoundedReading;
 
-CREATE VIEW BoundedReading AS
-SELECT
-	J1.Timestamp                         AS Start,
-    J1.Type,
-    J1.Estimated                         AS StartEstimated,
-    J1.Weekday,
-    J2.Timestamp                         AS 'End',
-    J2.Estimated                         AS EndEstimated,
-    DATEDIFF(J2.Timestamp, J1.Timestamp) AS Days,
-    J1.Reading                           AS StartReading,
-    J2.Reading                           AS EndReading,
-    J1.SeqNo,
-    J2.Reading - J1.Reading              AS ReadingChange,
-    CASE J1.Type
-      WHEN 'Gas' THEN 
-        UnitsToKwh(J2.TruncReading - J1.TruncReading, TR.CalorificValue)
-      ELSE 
-		J2.TruncReading - J1.TruncReading
-      END AS Kwh,
-    J1.Tariff,
-    TR.UnitRate,
-    TR.StandingCharge,
-    TR.CalorificValue,
-    J1.Comment
-FROM (
-	SELECT 
-		Timestamp,
-        Weekday,
-        Type,
-        Tariff,
-        Reading,
-        Estimated,
-        TRUNCATE(Reading, 0)                                     AS TruncReading,
-		ROW_NUMBER() OVER (PARTITION BY Type ORDER BY Timestamp) AS SeqNo,
-        Comment
-	FROM MeterReading) AS J1
-JOIN (
-	SELECT 
-		Timestamp,
-        Type,
-        Tariff,
-        Reading,
-        Estimated,
-        TRUNCATE(Reading, 0)                                     AS TruncReading,
-		ROW_NUMBER() OVER (PARTITION BY Type ORDER BY Timestamp) AS SeqNo
-	FROM MeterReading) AS J2
-	ON J1.SeqNo = J2.SeqNo - 1
-	AND J1.Type = J2.Type
-LEFT JOIN Tariff  TR 
-ON   J1.Timestamp >=  TR.Start 
-AND (J1.Timestamp < TR.End OR TR.End IS NULL)
-AND TR.Code = J1.Tariff
-AND TR.Type = J1.Type;
-
-DROP VIEW IF EXISTS CostedReading;
-
-CREATE VIEW CostedReading AS
-SELECT
-	*,    
-    ROUND(UnitRate * Kwh / 100, 3)                           AS KwhCost,
-    ROUND(Days * StandingCharge / 100, 3)                    AS StdCost,
-    ROUND((UnitRate * Kwh + Days * StandingCharge) / 100, 3) AS TotalCost
-FROM BoundedReading;
-    
 DROP VIEW IF EXISTS SessionLog;
 
 CREATE VIEW SessionLog AS
@@ -318,3 +252,85 @@ AND CS.Start       =  CL.Session
 AND CS.Start      <> CL.Timestamp
 AND CL.MilesAdded <= 1
 GROUP BY CS.Start;
+
+
+DROP VIEW IF EXISTS BoundedReading;
+
+CREATE VIEW BoundedReading AS
+SELECT
+	J1.Timestamp                         AS Start,
+    J1.Identifier                        AS Meter,
+    J1.Type,
+    J1.Estimated                         AS StartEstimated,
+    J1.Weekday,
+    J2.Timestamp                         AS 'End',
+    J2.Estimated                         AS EndEstimated,
+    DATEDIFF(J2.Timestamp, J1.Timestamp) AS Days,
+    J1.Reading                           AS StartReading,
+    J2.Reading                           AS EndReading,
+    J1.SeqNo,
+    J2.Reading - J1.Reading              AS ReadingChange,
+    CASE J1.Type
+      WHEN 'Gas' THEN 
+        UnitsToKwh(J2.TruncReading - J1.TruncReading, TR.CalorificValue)
+      ELSE 
+		J2.TruncReading - J1.TruncReading
+      END AS Kwh,
+    J1.Tariff,
+    TR.UnitRate,
+    TR.StandingCharge,
+    TR.CalorificValue,
+    J1.Comment
+FROM (
+SELECT 
+		Timestamp,
+        Weekday,
+        MT.Identifier,
+        MT.Type,
+        Tariff,
+        Reading,
+        Estimated,
+        TRUNCATE(Reading, 0)                                     AS TruncReading,
+		ROW_NUMBER() OVER (PARTITION BY Identifier, Type ORDER BY Timestamp) AS SeqNo,
+        MR.Comment
+	FROM MeterReading MR
+    JOIN Meter AS MT
+    ON  MR.Meter    = MT.Identifier 
+    AND MR.Timestamp >= MT.Installed
+    AND (MT.Removed IS NULL OR MR.Timestamp < MT.Removed)) AS J1
+JOIN (
+SELECT 
+		Timestamp,
+        Weekday,
+        MT.Identifier,
+        MT.Type,
+        Tariff,
+        Reading,
+        Estimated,
+        TRUNCATE(Reading, 0)                                     AS TruncReading,
+		ROW_NUMBER() OVER (PARTITION BY Identifier, Type ORDER BY Timestamp) AS SeqNo,
+        MR.Comment
+	FROM MeterReading MR
+    JOIN Meter AS MT
+    ON  MR.Meter    = MT.Identifier 
+    AND MR.Timestamp >= MT.Installed
+    AND (MT.Removed IS NULL OR MR.Timestamp < MT.Removed)) AS J2
+	ON J1.SeqNo = J2.SeqNo - 1
+    AND J1.Identifier = J2.Identifier
+	AND J1.Type = J2.Type
+LEFT JOIN Tariff  TR 
+ON   J1.Timestamp >=  TR.Start 
+AND (J1.Timestamp < TR.End OR TR.End IS NULL)
+AND TR.Code = J1.Tariff
+AND TR.Type = J1.Type;
+ 
+DROP VIEW IF EXISTS CostedReading;
+
+CREATE VIEW CostedReading AS
+SELECT
+	*,    
+    ROUND(UnitRate * Kwh / 100, 3)                           AS KwhCost,
+    ROUND(Days * StandingCharge / 100, 3)                    AS StdCost,
+    ROUND((UnitRate * Kwh + Days * StandingCharge) / 100, 3) AS TotalCost
+FROM BoundedReading;
+    

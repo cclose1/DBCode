@@ -1,7 +1,7 @@
 USE Expenditure
 GO
 
-DROP VIEW WeeklyFuel
+DROP VIEW IF EXISTS WeeklyFuel
 GO
 
 CREATE VIEW WeeklyFuel AS
@@ -23,22 +23,7 @@ LEFT OUTER JOIN (
 ON J2.Num = J1.Num + 1
 GO
 
-DROP VIEW SessionUsedChargeX
-GO
-
-CREATE VIEW SessionUsedChargeX AS
-SELECT
-	CarReg,
-	Mileage,
-	Count(*)                            AS Sessions,
-	Min(StartPercent)                   AS StartPercent,
-	Max(EndPercent)                     AS EndPercent,
-	Max(EndPercent) - Min(StartPercent) AS UsedPercent 
-FROM Expenditure.dbo.ChargeSession
-GROUP BY CarReg, Mileage
-GO
-
-DROP VIEW Chargers
+DROP VIEW IF EXISTS  Chargers
 GO
 
 CREATE VIEW Chargers AS
@@ -54,8 +39,7 @@ LEFT JOIN Expenditure.dbo.Company CP
 ON CL.Provider = CP.Id
 GO
 
-
-DROP VIEW MergedSession
+DROP VIEW IF EXISTS MergedSession
 GO
 
 CREATE VIEW MergedSession AS
@@ -114,14 +98,14 @@ SELECT
 	LEFT JOIN Expenditure.dbo.ChargerLocation CL
 	ON  CH.Charger = CL.Name
 	LEFT JOIN Expenditure.dbo.Tariff TF
-	ON        CL.Tariff = TF.Name 
+	ON        CL.Tariff = TF.Code 
 	AND       TF.Type   = 'Electric' 
 	AND       CH.Start  > TF.Start 
 	AND      (CH.[End]  < TF.[End] OR TF.[End] IS NULL)
 	JOIN Expenditure.dbo.Car
 	ON Car.Registration = CarReg
 	LEFT JOIN Expenditure.dbo.Tariff TD
-	ON        Car.DefaultTariff = TD.Name 
+	ON        Car.DefaultTariff = TD.Code 
 	AND       TD.Type   = 'Electric' 
 	AND       CH.Start  > TD.Start 
 	AND      (CH.[End]  < TD.[End] OR TD.[End] IS NULL)) CS
@@ -137,7 +121,7 @@ AND J2.CarReg = CS.CarReg
 GROUP BY CS.CarReg, CS.Mileage
 GO
 
-DROP VIEW SessionUsage
+DROP VIEW IF EXISTS SessionUsage
 GO
 
 CREATE VIEW SessionUsage AS
@@ -174,7 +158,7 @@ AND (MS.[End] < WF.[End] OR WF.[End] IS NULL)
 LEFT JOIN Expenditure.dbo.Tariff TR
 ON   MS.Start > TR.Start 
 AND (MS.[End] < TR.[End] OR TR.[End] IS NULL)
-AND TR.Name = DefaultTariff
+AND TR.Code = DefaultTariff
 AND TR.Type = 'Electric'
 GO
     
@@ -238,17 +222,18 @@ GO
 
 CREATE VIEW BoundedReading AS
 SELECT
-	J1.Timestamp                         AS Start,
+	J1.Timestamp                              AS Start,
+    J1.Identifier                             AS Meter,
     J1.Type,
-    J1.Estimated                         AS StartEstimated,
+    J1.Estimated                              AS StartEstimated,
     J1.Weekday,
-    J2.Timestamp                         AS 'End',
-    J2.Estimated                         AS EndEstimated,
+    J2.Timestamp                              AS 'End',
+    J2.Estimated                              AS EndEstimated,
     DATEDIFF(Day, J1.Timestamp, J2.Timestamp) AS Days,
-    J1.Reading                           AS StartReading,
-    J2.Reading                           AS EndReading,
+    J1.Reading                                AS StartReading,
+    J2.Reading                                AS EndReading,
     J1.SeqNo,
-    J2.Reading - J1.Reading              AS ReadingChange,
+    J2.Reading - J1.Reading                   AS ReadingChange,
     CASE J1.Type
       WHEN 'Gas' THEN 
         dbo.UnitsToKwh(J2.TruncReading - J1.TruncReading, TR.CalorificValue)
@@ -264,26 +249,39 @@ FROM (
 	SELECT 
 		Timestamp,
         Weekday,
-        Type,
+		MT.Identifier,
+        MT.Type,
         Tariff,
         Reading,
         Estimated,
-        ROUND(Reading, 0)                                        AS TruncReading,
-		ROW_NUMBER() OVER (PARTITION BY Type ORDER BY Timestamp) AS SeqNo,
-        Comment
-	FROM MeterReading) AS J1
+        ROUND(Reading, 0)                                                    AS TruncReading,
+		ROW_NUMBER() OVER (PARTITION BY Identifier, Type ORDER BY Timestamp) AS SeqNo,
+        MR.Comment
+	FROM MeterReading MR
+	JOIN Meter  AS MT
+	ON  MR.Meter      = MT.Identifier
+    AND MR.Timestamp >= MT.Installed
+    AND (MT.Removed IS NULL OR MR.Timestamp < MT.Removed)) AS J1
 JOIN (
 	SELECT 
 		Timestamp,
-        Type,
+		WeekDay,
+		MT.Identifier,
+        MT.Type,
         Tariff,
         Reading,
         Estimated,
-        ROUND(Reading, 0)                                        AS TruncReading,
-		ROW_NUMBER() OVER (PARTITION BY Type ORDER BY Timestamp) AS SeqNo
-	FROM MeterReading) AS J2
-	ON J1.SeqNo = J2.SeqNo - 1
-	AND J1.Type = J2.Type
+        ROUND(Reading, 0)                                                    AS TruncReading,
+		ROW_NUMBER() OVER (PARTITION BY Identifier, Type ORDER BY Timestamp) AS SeqNo,
+		MR.Comment
+	FROM MeterReading MR
+	JOIN Meter  AS MT
+    ON  MR.Meter    = MT.Identifier 
+    AND MR.Timestamp >= MT.Installed
+    AND (MT.Removed IS NULL OR MR.Timestamp < MT.Removed)) AS J2
+	ON J1.SeqNo       = J2.SeqNo - 1
+	AND J1.Type       = J2.Type
+	AND J1.Identifier = J2.Identifier
 LEFT JOIN Tariff  TR 
 ON   J1.Timestamp >=  TR.Start 
 AND (J1.Timestamp < TR.[End] OR TR.[End] IS NULL)

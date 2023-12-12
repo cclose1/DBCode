@@ -306,18 +306,57 @@ VALUES
 ('Gas',      'SSEStd', '2023-04-22 00:00:00', '2023-06-30 23:59:59',  9.916, 27.720, 39.3),
 ('Gas',      'SSEStd', '2023-07-01 00:00:00', NULL,                   7.607, 29.110, 39.3);
 
+DROP TABLE IF EXISTS Meter;
+
+CREATE TABLE Meter (
+	Identifier VARCHAR(15)    NOT NULL,
+	Type       VARCHAR(15)    NOT NULL,
+	Modified   DATETIME       NULL,    
+	Installed  DATETIME       NOT NULL,
+    Removed    DATETIME       NULL,
+	Comment   VARCHAR(1000),
+	PRIMARY KEY (Identifier, Type)
+);
+
+DELIMITER //
+
+CREATE TRIGGER InsMeter BEFORE INSERT ON Meter
+FOR EACH ROW
+BEGIN
+	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
+END;//
+
+CREATE TRIGGER UpdMeter BEFORE UPDATE ON MeterReading
+FOR EACH ROW
+BEGIN
+	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
+END;//
+
+DELIMITER ;
+
+TRUNCATE Meter;
+
+INSERT INTO Meter(Identifier, Type, Installed, Removed)
+VALUES
+('Elect1',  'Electric', '2021-11-15 14:28:00', '2023-11-17 10:00:00'),
+('Gas1',    'Gas',      '2021-11-15 14:28:00', '2023-11-17 10:00:00'),
+('Solar1',  'Solar',    '2021-11-15 14:28:00', NULL),
+('Elect2',  'Electric', '2023-11-17 10:00:01', NULL),
+('Gas2',    'Gas',      '2023-11-17 10:00:01', NULL),
+('Export2', 'Export',   '2023-11-17 10:00:01', NULL);
+
 DROP TABLE IF EXISTS MeterReading;
 
 CREATE TABLE MeterReading (
+	Meter     VARCHAR(15)    NOT NULL,
 	Timestamp DATETIME       NOT NULL,
-    WeekDay   VARCHAR(3)     GENERATED ALWAYS AS (SUBSTR(DAYNAME(Timestamp), 1, 3)),
-	Type      VARCHAR(15)    NOT NULL,
-	Tariff    VARCHAR(15)    NOT NULL DEFAULT 'SSEStd',
 	Modified  DATETIME       NULL,
+    WeekDay   VARCHAR(3)     GENERATED ALWAYS AS (SUBSTR(DAYNAME(Timestamp), 1, 3)),
+	Tariff    VARCHAR(15)    NOT NULL DEFAULT 'SSEStd',
 	Reading   DECIMAL(10, 2) NULL,
     Estimated CHAR(1)        NULL,
 	Comment   VARCHAR(1000),
-	PRIMARY KEY (Timestamp, Type)
+	PRIMARY KEY (Meter, Timestamp)
 );
 
 DELIMITER //

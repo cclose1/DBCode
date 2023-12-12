@@ -221,22 +221,52 @@ BEGIN
 END
 GO
 
+
+DROP TABLE IF EXISTS TariffName
+GO
+
+CREATE TABLE TariffName (
+	Company     VARCHAR(15)   NOT NULL,
+	Name        VARCHAR(15)   NOT NULL,
+	Code        VARCHAR(15)   NOT NULL,
+	Modified    DATETIME      NULL,
+	Description VARCHAR(1000),
+	PRIMARY KEY (Company, Name)
+)
+GO
+
+CREATE TRIGGER TariffNameModified ON TariffName AFTER INSERT, UPDATE
+AS 
+BEGIN
+	SET NOCOUNT ON;
+
+    -- Insert statements for trigger here
+	UPDATE TN
+		SET Modified = CASE WHEN UPDATE(Modified) AND TN.Modified IS NOT NULL THEN inserted.Modified ELSE BloodPressure.dbo.RemoveFractionalSeconds(GETDATE()) END
+	FROM TariffName TN
+	JOIN inserted 
+	ON  TN.Company = inserted.Company
+	AND TN.Name    = inserted.Name
+END
+GO
+
+CREATE UNIQUE INDEX trnamecode ON TariffName(Code)
+GO
+
 DROP TABLE IF EXISTS Tariff
 GO
 
 CREATE TABLE Tariff (
-	Company        VARCHAR(15)   NOT NULL,
-	Name           VARCHAR(15)   NOT NULL,
-	Type           VARCHAR(15)   NOT NULL,
 	Start          DATE          NOT NULL,
 	[End]          DATE          NULL,
 	Code           VARCHAR(15)   NOT NULL,
+	Type           VARCHAR(15)   NOT NULL,
 	Modified       DATETIME      NULL,
 	UnitRate       DECIMAL(8, 3) NULL,
 	StandingCharge DECIMAL(8, 3) NULL,
 	CalorificValue DECIMAL(8, 3) NULL,
-	Comment        VARCHAR(max),
-	PRIMARY KEY (Company, Name, Type, Start)
+	Comment        VARCHAR(1000),
+	PRIMARY KEY (Start, Code, Type)
 )
 GO
 
@@ -250,29 +280,54 @@ BEGIN
 		SET Modified = CASE WHEN UPDATE(Modified) AND TR.Modified IS NOT NULL THEN inserted.Modified ELSE BloodPressure.dbo.RemoveFractionalSeconds(GETDATE()) END
 	FROM Tariff TR
 	JOIN inserted 
-	ON  TR.Company = inserted.Company
-	AND TR.Start   = inserted.Start
-	AND TR.Type    = inserted.Type
-	AND TR.Name    = inserted.Name
+	ON  TR.Start = inserted.Start
+	AND TR.Code  = inserted.Code
+	AND TR.Type  = inserted.Type
 END
 GO
 
-CREATE UNIQUE INDEX trcode ON Tariff(Start, Type, Code)
+DROP TABLE IF EXISTS Meter
+GO
+
+CREATE TABLE Meter (
+	Identifier VARCHAR(15)    NOT NULL,
+    Type       VARCHAR(15)    NOT NULL,
+	Modified   DATETIME       NULL,
+	Installed  DATETIME       NULL,
+	Removed    DATETIME       NULL,
+	Comment    VARCHAR(1000),
+	PRIMARY KEY (Identifier, Type)
+)
+GO
+
+CREATE TRIGGER MeterModified ON Meter AFTER INSERT, UPDATE
+AS 
+BEGIN
+	SET NOCOUNT ON;
+
+    -- Insert statements for trigger here
+	UPDATE MT
+		SET Modified = CASE WHEN UPDATE(Modified) AND MT.Modified IS NOT NULL THEN inserted.Modified ELSE BloodPressure.dbo.RemoveFractionalSeconds(GETDATE()) END
+	FROM Meter MT
+	JOIN inserted 
+	ON  MT.Identifier = inserted.Identifier
+	AND MT.Type       = inserted.Type
+END
 GO
 
 DROP TABLE IF EXISTS MeterReading
 GO
 
 CREATE TABLE MeterReading (
+	Meter     VARCHAR(15)    NOT NULL,
 	Timestamp DATETIME       NOT NULL,
-    WeekDay                  AS (SUBSTRING(DATENAME(weekday, Timestamp),1, 3)),
-	Type      VARCHAR(15)    NOT NULL,
-	Tariff    VARCHAR(15)    NOT NULL DEFAULT 'SSEStd',
 	Modified  DATETIME       NULL,
+    WeekDay                  AS (SUBSTRING(DATENAME(weekday, Timestamp),1, 3)),
+	Tariff    VARCHAR(15)    NOT NULL DEFAULT 'SSEStd',
 	Reading   DECIMAL(10, 2) NULL,
     Estimated CHAR(1)        NULL,
 	Comment   VARCHAR(1000),
-	PRIMARY KEY (Timestamp, Type)
+	PRIMARY KEY (Meter, Timestamp)
 )
 GO
 
@@ -286,8 +341,7 @@ BEGIN
 		SET Modified = CASE WHEN UPDATE(Modified) AND TR.Modified IS NOT NULL THEN inserted.Modified ELSE BloodPressure.dbo.RemoveFractionalSeconds(GETDATE()) END
 	FROM MeterReading TR
 	JOIN inserted 
-	ON  TR.Timestamp = inserted.Timestamp
-	AND TR.Type      = inserted.Type
-	AND TR.Type      = inserted.Type
+	ON  TR.Meter     = inserted.Meter
+	AND TR.Timestamp = inserted.Timestamp
 END
 GO
