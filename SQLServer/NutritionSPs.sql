@@ -165,7 +165,7 @@ BEGIN
 	BEGIN CATCH
 		DECLARE @msg AS VARCHAR(max)
 		
-		SET @msg = 'GetEnergyCosts'
+		SET @msg = 'SelectQuery'
 		EXEC dbo.ReportError @msg
 		RAISERROR ('Error reported', 16, 1)
 	END CATCH	
@@ -237,6 +237,44 @@ BEGIN
 END
 GO
 
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_NAME = N'AddPeriodGroup' AND ROUTINE_SCHEMA = 'dbo' AND ROUTINE_TYPE = N'PROCEDURE')
+	DROP PROCEDURE dbo.AddPeriodGroup
+GO
+
+CREATE PROCEDURE dbo.AddPeriodGroup(
+	@period    VARCHAR(10), 
+	@groupBy   VARCHAR(max) OUTPUT,
+	@fields    VARCHAR(max) OUTPUT,
+	@orderBy   VARCHAR(max) OUTPUT,
+    @direction VARCHAR(20),
+    @message   VARCHAR(100) OUTPUT)
+AS
+BEGIN
+	SET @message = ''
+    
+    IF @period ='Year'
+	BEGIN
+		 EXEC dbo.AppendGroupField 'Year', @groupBy OUTPUT, @fields OUTPUT, @orderBy OUTPUT, @direction
+    END
+	ELSE IF @period  =  'Month' 
+	BEGIN
+		 EXEC dbo.AppendGroupField 'Year',  @groupBy OUTPUT, @fields OUTPUT, @orderBy OUTPUT, @direction
+		 EXEC dbo.AppendGroupField 'Month', @groupBy OUTPUT, @fields OUTPUT, @orderBy OUTPUT, @direction
+    END	
+	ELSE IF @period  =  'Week' 
+	BEGIN
+		 EXEC dbo.AppendGroupField 'Year', @groupBy OUTPUT, @fields OUTPUT, @orderBy OUTPUT, @direction
+		 EXEC dbo.AppendGroupField 'Week', @groupBy OUTPUT, @fields OUTPUT, @orderBy OUTPUT, @direction
+    END
+	ELSE IF @period  =  'Date' 
+	BEGIN
+		 EXEC dbo.AppendGroupField 'Date', @groupBy OUTPUT, @fields OUTPUT, @orderBy OUTPUT, @direction
+	END
+	ELSE
+		SET @message = CONCAT('Period ', @period, ' is not valid')
+END
+GO
+
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_NAME = N'AppendAggregateField' AND ROUTINE_SCHEMA = 'dbo' AND ROUTINE_TYPE = N'PROCEDURE')
 	DROP PROCEDURE dbo.AppendAggregateField
 GO
@@ -249,7 +287,8 @@ BEGIN
 	DECLARE @aggregate VARCHAR(13)
 	DECLARE @castIndx  INT
 	DECLARE @castCL    VARCHAR(1000)
-    
+	DECLARE @alias     VARCHAR(1000)    
+
 	SET @end       = CHARINDEX('!', @aggregates)
 	SET @start     = 1
 	SET @aggregate = ''
@@ -282,9 +321,15 @@ BEGIN
 		BEGIN
 			SET @castCL    = CONCAT('DECIMAL(', SUBSTRING(@aggregate, @castIndx + 1, LEN(@aggregate)), ')');
             SET @aggregate = SUBSTRING(@aggregate, 1, @castIndx - 1);
-        END
+        END        
         
-        EXEC dbo.AppendSelectField @fields OUTPUT, @field, @castCL, NULL, @aggregate
+        IF RIGHT(@aggregate, 1) = '-'
+		BEGIN
+			SET @alias     = @field
+            SET @aggregate = LEFT(@aggregate, LEN(@aggregate) - 1)
+        END
+
+        EXEC dbo.AppendSelectField @fields OUTPUT, @field, @castCL, @alias, @aggregate
 	END
 END
 GO
@@ -296,7 +341,7 @@ GO
 /*
  * Period specifies the aggregation period and can be Year, Month, Week or Date.
  */
-CREATE PROCEDURE AnalyseBP (@period VARCHAR(10), @whereAnd VARCHAR(1000))
+CREATE PROCEDURE AnalyseBP (@period VARCHAR(10), @whereAnd VARCHAR(1000), @printSQL CHAR(1) = 'N')
 AS
 BEGIN
 	DECLARE @fields    VARCHAR(max)
@@ -314,31 +359,19 @@ BEGIN
     IF @whereAnd IS NOT NULL AND @whereAnd <> '' SET @whereCl = CONCAT(@whereCl, ' AND ', @whereAnd)
     
     EXEC AppendGroupField 'Individual', @groupBy OUTPUT, @fields OUTPUT, @orderBy OUTPUT, NULL
+    EXEC AddPeriodGroup @period,  @groupBy OUTPUT, @fields OUTPUT, @orderBy OUTPUT, 'DESC', @message OUTPUT
     
-	IF @period = 'Year' EXEC AppendGroupField 'Year', @groupBy OUTPUT, @fields OUTPUT, @orderBy OUTPUT, 'DESC'
-	ELSE IF @period = 'Month'
+    
+	IF @message <> ''
 	BEGIN
-		EXEC AppendGroupField 'Year',  @groupBy OUTPUT, @fields OUTPUT, @orderBy OUTPUT, 'DESC'
-		EXEC AppendGroupField 'Month', @GroupBy OUTPUT, @fields OUTPUT, @orderBy OUTPUT, 'DESC'
-	END
-	ELSE IF @period = 'Week'
-	BEGIN	
-		EXEC AppendGroupField 'Year',  @groupBy OUTPUT, @fields OUTPUT, @orderBy OUTPUT, 'DESC'		
-		EXEC AppendGroupField 'Week',  @groupBy OUTPUT, @fields OUTPUT, @orderBy OUTPUT, 'DESC'
-	END
-	ELSE IF @period = 'Date' EXEC AppendGroupField 'Date',  @groupBy OUTPUT, @fields OUTPUT, @orderBy OUTPUT, 'DESC'
-	ELSE
-	BEGIN
-		SET @message = CONCAT('Period ', @period, ' is not valid')
-        SELECT @message
+		SELECT @message
 		RETURN
 	END
-    
+
 	EXEC AppendGroupField 'Side', @groupBy OUTPUT, @fields OUTPUT, @noOrderBy OUTPUT, NULL
 	EXEC AppendSelectField @fields OUTPUT, 'Count(*)', NULL,    'Measures', NULL
-    EXEC AppendAggregateField @fields OUTPUT, 'Systolic',  'Min!Avg:4,1!Max!Stdev:4,2'
-    EXEC AppendAggregateField @fields OUTPUT, 'Diastolic', 'Min!Avg:4,1!Max!Stdev:4,2'
-    PRINT @orderBy
-	EXEC SelectQuery 'BloodPressure.dbo.MeasureTry', @fields, @whereCl, @groupBy, @orderBy
+    EXEC AppendAggregateField @fields OUTPUT, 'Systolic',  'Min!Avg:4,1!Max!Stdev:4,1'
+    EXEC AppendAggregateField @fields OUTPUT, 'Diastolic', 'Min!Avg:4,1!Max!Stdev:4,1'
+	EXEC SelectQuery 'BloodPressure.dbo.MeasureTry', @fields, @whereCl, @groupBy, @orderBy, @printSQL
 END
 GO

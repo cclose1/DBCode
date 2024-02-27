@@ -77,3 +77,46 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+DROP PROCEDURE IF EXISTS GetCarUsageSummary;
+
+DELIMITER $$
+
+CREATE PROCEDURE GetCarUsageSummary(Period VARCHAR(10), WhereAnd VARCHAR(1000))
+BEGIN
+	DECLARE Fields    VARCHAR(10000); 
+    DECLARE GroupBy   VARCHAR(1000); 
+    DECLARE OrderBy   VARCHAR(1000) DEFAULT '';
+    DECLARE WhereCl   VARCHAR(1000) DEFAULT "CarReg = 'EO70 ECC'";
+    DECLARE Message   VARCHAR(1000);
+    
+    CALL BloodPressure.AddPeriodGroup(Period, GroupBy, Fields, OrderBy, 'DESC', Message);
+    
+    IF WhereAnd IS NOT NULL AND WhereAnd <> '' Then
+		SET WhereCl = CONCAT(WhereCl, ' AND ', WhereAnd);
+	END IF;
+        
+	CALL BloodPressure.AddSelectField(Fields, 'Count(*)', NULL,    'Sessions', NULL);
+    CALL BloodPressure.AddAggregateField(Fields, 'Start',       'Min-');
+    CALL BloodPressure.AddAggregateField(Fields, 'Cost',        'Sum-');
+    CALL BloodPressure.AddAggregateField(Fields, 'Charge',      'Sum-');
+    CALL BloodPressure.AddAggregateField(Fields, 'UseCharge',   'Sum-');
+    CALL BloodPressure.AddAggregateField(Fields, 'EstCharge',   'Sum-');
+    CALL BloodPressure.AddAggregateField(Fields, 'UsedMiles',   'Sum-');
+    CALL BloodPressure.AddAggregateField(Fields, 'UsedPercent', 'Sum-');
+    CALL BloodPressure.AddAggregateField(Fields, 'UsedCharge',  'Sum-');
+    CALL BloodPressure.AddAggregateField(Fields, 'HomeCost',    'Sum-');
+    CALL BloodPressure.AddAggregateField(Fields, 'PetrolCost',  'Sum-');
+    SET @Query = CONCAT(
+		'SELECT \n\r', Fields, 
+        '\n\rFROM Expenditure.SessionUsage', 
+        '\n\rWhere ', WhereCl, 
+        '\n\rGroup By ', GroupBy, 
+        '\n\rOrder By ', OrderBy);
+        
+    PREPARE STMT FROM @Query; 
+    EXECUTE STMT; 
+    DEALLOCATE PREPARE STMT;
+END$$
+
+DELIMITER ;

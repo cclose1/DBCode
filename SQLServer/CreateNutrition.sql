@@ -30,7 +30,7 @@ CREATE TABLE NutritionDetail(
 	Sugar        DECIMAL(6, 3),
 	Fibre        DECIMAL(6, 3),
 	Cholesterol  DECIMAL(4, 2),
-	Salt         DECIMAL(6, 3),
+	Salt         DECIMAL(6, 4),
 	DefaultSize  DECIMAL(6, 2),
 	ABV          DECIMAL(4, 1),
 	Simple       CHAR(1),

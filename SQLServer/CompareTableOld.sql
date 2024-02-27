@@ -330,16 +330,10 @@ BEGIN
 	IF @whereCond IS NOT NULL
 	BEGIN
 		SET @whereCond = dbo.rpad(@whereCond, 5, ' ')
+		SET @sql += CHAR(13) + 'WHERE'
 		SET @clause = NULL
 		SELECT @clause = COALESCE(@clause + CHAR(13) + @whereCond, '') + dbo.AddCondition(@whereTest, @fromAlias, @toAlias, [Column], [Type], 1, @namePad, Nullable) FROM #TableDetails WHERE [Key] = @keyWhere ORDER BY Id
-		--
-		-- @clause will be null if the table only has key fields and @keyWhere = 'N', as is the case with ListValue. 
-		-- Set @clause to a condition that will guarantee no rows are retrieved from @fromAlias as there can be no
-		-- records in this case.
-		--
-		IF @clause IS NULL SET @clause = ' 1 = 0'
-
-		SET @sql += CHAR(13) + 'WHERE' + @clause
+		SET @sql += @clause
 	END
 END
 GO
@@ -532,7 +526,7 @@ BEGIN
 		IsComputed CHAR)
 	EXEC LoadTableDetails @SQLServer, @table, @key, @allowIdentity = @allowIdentity, @escapeReserved = 'N'
 	SET @SQLServer += '.dbo'
-	SET @sql  = 'CREATE TABLE #Changes' + dbo.AddCreateTableRow('Id_', 'INT IDENTITY(1,1)', -1, 0, 0, '(', 4, 15, 15, 'N')
+	SET @sql  = 'CREATE TABLE #Changes' + dbo.AddCreateTableRow('Id', 'INT IDENTITY(1,1)', -1, 0, 0, '(', 4, 15, 15, 'N')
 	SET @sql += dbo.AddCreateTableRow('[!Target]',  'VARCHAR', 20, 0, 0, ',', 4, 15, 15, 'N')
 	SET @sql += dbo.AddCreateTableRow('[Table]',    'VARCHAR', 20, 0, 0, ',', 4, 15, 15, 'N')
 	SELECT @sql = @sql + dbo.AddCreateTableRow([Column], [Type], Size, Precision, Scale, ',', 4, 15, 15, 'N')           FROM #TableDetails WHERE [Key] ='Y' ORDER BY Id
@@ -558,20 +552,20 @@ BEGIN
 	SET @sql += CHAR(13) + '   PRINT ''Table ' + dbo.rpad(@table, 20, ' ') + ' matches in databases ' + dbo.rpad(dbo.FirstField(@SQLServer, '.', 'N'), 15, ' ') + ' and ' + dbo.FirstField(@MySQL, '.', 'N') + ''''
 	SET @sql += CHAR(13) + 'ELSE' + CHAR(13) + 'BEGIN'
 	SET @clause = 'SELECT'
-	SET @clause += dbo.AddSelectField('Id_',        NULL,     '',  5, 20)
+	SET @clause += dbo.AddSelectField('Id',        NULL,     '',  5, 20)
 	SET @clause += dbo.AddSelectField('[!Target]', NULL,     ',', 5, 20)
 	SET @clause += dbo.AddSelectField('[Table]',   NULL,     ',', 5, 20)
 	SET @clause += dbo.AddSelectField('''MySQL''', 'Server', ',', 5, 20)
 	SELECT @clause = @clause + dbo.AddSelectField([Column],           NULL,     ',', 5, 20) FROM #TableDetails WHERE [Key] = 'Y'
 	SELECT @clause = @clause + dbo.AddSelectField('MySQL' + [Column], [Column], ',', 5, 20) FROM #TableDetails WHERE [Key] = 'N' ORDER BY Id
 	SET @clause += CHAR(13) + 'FROM #Changes' + CHAR(13) + 'UNION' + CHAR(13) + 'SELECT'
-	SET @clause += dbo.AddSelectField('Id_',         NULL,     '',  5, 20)
+	SET @clause += dbo.AddSelectField('Id',         NULL,     '',  5, 20)
 	SET @clause += dbo.AddSelectField('[!Target]',  NULL,     ',', 5, 20)
 	SET @clause += dbo.AddSelectField('[Table]',    NULL,     ',', 5, 20)
 	SET @clause += dbo.AddSelectField('''SQL''',    'Server', ',', 5, 20)
 	SELECT @clause = @clause + dbo.AddSelectField([Column],         NULL,     ',', 5, 20) FROM #TableDetails WHERE [Key] = 'Y'
 	SELECT @clause = @clause + dbo.AddSelectField('SQL' + [Column], [Column], ',', 5, 20) FROM #TableDetails WHERE [Key] = 'N' ORDER BY Id
-	SET @clause += CHAR(13) + 'FROM #Changes' + CHAR(13) + 'ORDER BY Id_, [Server]'
+	SET @clause += CHAR(13) + 'FROM #Changes' + CHAR(13) + 'ORDER BY Id, [Server]'
 	SET @sql    += CHAR(13) + @clause
 	
 	IF @update = 'MySQL'

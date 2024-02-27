@@ -321,6 +321,8 @@ CREATE TABLE Reminder (
 	WarnDays    DECIMAL(3, 0) NULL,
 	Suspended   VARCHAR(1)    NULL,
 	Description VARCHAR(1000) NULL,
+	Phone       VARCHAR(15)   NULL,
+	Web         VARCHAR(50)   NULL,
 	Comment     VARCHAR(1000) NULL,
 	PRIMARY KEY (RefId ASC) 
 );

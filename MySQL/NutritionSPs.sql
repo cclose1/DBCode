@@ -190,6 +190,38 @@ END$$
 
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS AddPeriodGroup;
+
+DELIMITER $$
+
+CREATE PROCEDURE AddPeriodGroup(
+    IN    Period    VARCHAR(10),
+	INOUT GroupBy   VARCHAR(10000),
+	INOUT Fields    VARCHAR(10000),
+	INOUT OrderBy   VARCHAR(10000),
+    IN    Direction VARCHAR(20),
+    OUT   Message   VARCHAR(100))
+BEGIN
+	SET Message = '';
+    
+    CASE Period
+		WHEN 'Year' THEN
+			CALL AddGroupField('Year', GroupBy, Fields, OrderBy, Direction);
+        WHEN 'Month' THEN
+			CALL AddGroupField('Year',  GroupBy, Fields, OrderBy, Direction);
+			CALL AddGroupField('Month', GroupBy, Fields, OrderBy, Direction);
+        WHEN 'Week'  THEN
+			CALL AddGroupField('Year', GroupBy, Fields, OrderBy, Direction);
+			CALL AddGroupField('Week', GroupBy, Fields, OrderBy, Direction);
+        WHEN 'Date'  THEN
+			CALL AddGroupField('Date', GroupBy, Fields, OrderBy, Direction);
+        ELSE
+			SET Message = CONCAT('Period ', Period, ' is not valid');
+	END CASE;
+END$$
+
+DELIMITER ;
+
 DROP PROCEDURE IF EXISTS AddAggregateField;
 
 DELIMITER $$
@@ -204,6 +236,7 @@ BEGIN
     DECLARE Aggregate VARCHAR(13) DEFAULT '';
     DECLARE CastIndx  INT;
     DECLARE CastCL    VARCHAR(1000);
+    DECLARE Alias     VARCHAR(1000);
     
     WHILE End != -1 DO
         IF End = 0 THEN
@@ -229,7 +262,12 @@ BEGIN
             SET Aggregate = SUBSTRING(Aggregate, 1, CastIndx - 1);
         END IF;
         
-        CALL AddSelectField(Fields, Field, CastCl, NULL, Aggregate);
+        IF RIGHT(Aggregate, 1) = '-' THEN
+			SET Alias     = Field;
+            SET Aggregate = LEFT(Aggregate, LENGTH(Aggregate) - 1);
+        END IF;
+        
+        CALL AddSelectField(Fields, Field, CastCl, Alias, Aggregate);
 	END WHILE;
 END$$
 DELIMITER ;
@@ -254,23 +292,12 @@ sp: BEGIN
 	END IF;
     
     CALL AddGroupField('Individual', GroupBy, Fields, OrderBy, NULL);
+    CALL AddPeriodGroup(Period, GroupBy, Fields, OrderBy, 'DESC', Message);
     
-    CASE Period
-		WHEN 'Year' THEN
-			CALL AddGroupField('Year', GroupBy, Fields, OrderBy, 'DESC');
-        WHEN 'Month' THEN
-			CALL AddGroupField('Year',  GroupBy, Fields, OrderBy, 'DESC');
-			CALL AddGroupField('Month', GroupBy, Fields, OrderBy, 'DESC');
-        WHEN 'Week'  THEN
-			CALL AddGroupField('Year', GroupBy, Fields, OrderBy, 'DESC');
-			CALL AddGroupField('Week', GroupBy, Fields, OrderBy, 'DESC');
-        WHEN 'Date'  THEN
-			CALL AddGroupField('Date', GroupBy, Fields, OrderBy, 'DESC');
-        ELSE
-			SET Message = CONCAT('Period ', Period, ' is not valid');
-            SELECT Message;
-            LEAVE sp;
-	END CASE;
+    IF Message <> '' THEN
+		SELECT Message;
+        LEAVE SP;
+	END IF;
     
 	CALL AddGroupField('Side', GroupBy, Fields, NoOrderBy, NULL);
 	CALL AddSelectField(Fields, 'Count(*)', NULL,    'Measures', NULL);

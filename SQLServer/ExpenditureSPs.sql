@@ -35,6 +35,20 @@ GO
 CREATE SYNONYM dbo.SelectQuery FOR BloodPressure.dbo.SelectQuery
 GO
 
+IF EXISTS (SELECT 0 FROM sys.synonyms WHERE name=N'AddPeriodGroup')
+	DROP SYNONYM dbo.AddPeriodGroup
+GO
+
+CREATE SYNONYM dbo.AddPeriodGroup FOR BloodPressure.dbo.AddPeriodGroup
+GO
+
+IF EXISTS (SELECT 0 FROM sys.synonyms WHERE name=N'AppendAggregateField')
+	DROP SYNONYM dbo.AppendAggregateField
+GO
+
+CREATE SYNONYM dbo.AppendAggregateField FOR BloodPressure.dbo.AppendAggregateField
+GO
+
 IF EXISTS (SELECT 0 FROM sys.synonyms WHERE name=N'PrintSQL')
 	DROP SYNONYM dbo.PrintSQL
 GO
@@ -70,9 +84,9 @@ BEGIN
 	WHERE  
 		@Date >= Start
         AND (@Date < [End] OR [End] IS NULL)
-        AND Name = 'SSEStd'
+        AND Code = 'SSEStd'
         AND Type = 'Gas';
-        
+
 	RETURN dbo.UnitsToKwh(@units, @calVal)
 END
 GO
@@ -96,7 +110,6 @@ BEGIN
 	BEGIN
 		SET @whereCl = CONCAT(@whereCl, ' AND Start <= ''', @end, '''');
 	END
-
     EXEC AppendSelectField @fields OUTPUT, 'Type',                                      NULL,             NULL,         NULL
 	EXEC AppendSelectField @fields OUTPUT, 'Start',                                     NULL,             'Start',      'Min'
     EXEC AppendSelectField @fields OUTPUT, 'dbo.WeekDayName(Min(Start))',               NULL,             'Weekday',    NULL
@@ -110,7 +123,43 @@ BEGIN
     EXEC AppendSelectField @fields OUTPUT, 'KwhCost',                                   'DECIMAL(10, 2)', 'KwhCost',    'Sum'
     EXEC AppendSelectField @fields OUTPUT, 'StdCost',                                   'DECIMAL(10, 2)', 'StdCost',    'Sum'
     EXEC AppendSelectField @fields OUTPUT, 'Sum(TotalCost)',                            'DECIMAL(10, 2)', 'Total',      NULL
-	
+
 	EXEC SelectQuery 'Expenditure.dbo.CostedReading', @fields, @whereCl, 'Type', 'Type', @printSQL
+END
+GO
+
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_NAME = N'GetCarUsageSummary' AND ROUTINE_SCHEMA = 'dbo' AND ROUTINE_TYPE = N'PROCEDURE')
+	DROP PROCEDURE dbo.GetCarUsageSummary
+GO
+
+CREATE PROCEDURE dbo.GetCarUsageSummary(@period VARCHAR(10), @whereAnd VARCHAR(1000), @printSQL CHAR(1) = 'N')
+AS
+BEGIN
+	DECLARE @fields    VARCHAR(max)
+    DECLARE @groupBy   VARCHAR(1000)
+    DECLARE @orderBy   VARCHAR(1000) = ''
+    DECLARE @whereCl   VARCHAR(1000) = 'CarReg = ''EO70 ECC'''
+    DECLARE @message   VARCHAR(1000)
+
+    EXEC AddPeriodGroup @period, @groupBy OUTPUT, @fields OUTPUT, @orderBy OUTPUT, 'DESC', @message  OUTPUT
+
+    IF @whereAnd IS NOT NULL AND @whereAnd <> ''
+	BEGIN
+		SET @whereCl = CONCAT(@whereCl, ' AND ', @whereAnd);
+	END
+        
+	EXEC AppendSelectField @fields OUTPUT, 'Count(*)', NULL,    'Sessions', NULL
+    EXEC AppendAggregateField  @fields OUTPUT, 'Start',       'Min-'
+    EXEC AppendAggregateField  @fields OUTPUT, 'Cost',        'Sum-'
+    EXEC AppendAggregateField  @fields OUTPUT, 'Charge',      'Sum-'
+    EXEC AppendAggregateField  @fields OUTPUT, 'UseCharge',   'Sum-'
+    EXEC AppendAggregateField  @fields OUTPUT, 'EstCharge',   'Sum-'
+    EXEC AppendAggregateField  @fields OUTPUT, 'UsedMiles',   'Sum-'
+    EXEC AppendAggregateField  @fields OUTPUT, 'UsedPercent', 'Sum-'
+    EXEC AppendAggregateField  @fields OUTPUT, 'UsedCharge',  'Sum-'
+    EXEC AppendAggregateField  @fields OUTPUT, 'HomeCost',    'Sum-'
+    EXEC AppendAggregateField  @fields OUTPUT, 'PetrolCost',  'Sum-'
+	
+	EXEC SelectQuery 'Expenditure.dbo.SessionUsage', @fields, @whereCl, @groupBy, @orderBy, @printSQL
 END
 GO

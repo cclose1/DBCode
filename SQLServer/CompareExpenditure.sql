@@ -13,11 +13,7 @@ BEGIN
 	BEGIN TRY
 		EXEC CompareTable @SQLServer, @MySQL, 'ListValues',          @update = @update
 		EXEC CompareTable @SQLServer, @MySQL, 'Currency',            @update = @update
-		--
-		-- CurrencyRate has a field Target that conflicts with a field of the same name in the temporary
-		-- #Changes. Finding a solution to this is probably not worth the effort.
-		--
---		EXEC CompareTable @SQLServer, @MySQL, 'CurrencyRate',        @update = @update
+		EXEC CompareTable @SQLServer, @MySQL, 'CurrencyRate',        @update = @update
 		EXEC CompareTable @SQLServer, @MySQL, 'Bank',                @update = @update
 		EXEC CompareTable @SQLServer, @MySQL, 'BankTransactionType', @update = @update
 		EXEC CompareTable @SQLServer, @MySQL, 'AccountUsAGE',        @update = @update

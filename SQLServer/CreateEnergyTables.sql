@@ -9,6 +9,7 @@ CREATE TABLE Company (
 	Modified  DATETIME      NULL,
 	Phone     VARCHAR(15)   NULL,
 	Web       VARCHAR(50)   NULL,
+	Credit    DECIMAL(6, 2) NULL,
 	Comment   VARCHAR(1000),
 	PRIMARY KEY (Name)
 )
@@ -67,6 +68,7 @@ CREATE TABLE ChargerUnit (
 	Location  VARCHAR(20)   NOT NULL, -- Points to an entry in ChargerLocation with Name = Location
 	Name      VARCHAR(15)   NOT NULL,
 	Modified  DATETIME      NULL,
+	Rate      DECIMAL(6,2)  NULL,
 	Active    CHAR(1),
 	Comment   VARCHAR(max),
 	PRIMARY KEY (Location, Name)
@@ -139,8 +141,8 @@ CREATE TABLE ChargeSessionLog (
 	Timestamp DATETIME      NOT NULL,
 	Session   DATETIME      NOT NULL,
 	Modified  DATETIME      NULL,
-	Miles     INT           NULL,
-	[Percent] INT           NULL,
+	Miles     DECIMAL(4, 1) NULL,
+	[Percent] DECIMAL(4, 1) NULL,
 	PRIMARY KEY (CarReg ASC, Timestamp ASC)
 )
 GO

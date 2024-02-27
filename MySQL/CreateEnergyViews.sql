@@ -24,10 +24,15 @@ DROP VIEW IF EXISTS Chargers;
 
 CREATE VIEW Chargers AS
 SELECT
-	CL.*,
+	CL.Name,
+    CL.Provider,
+    CL.Tariff,
+    CL.Location,
+    COALESCE(CU.Rate, CL.Rate) AS Rate,
     CP.Name  AS Network,
 	CU.Name  AS Unit,
-	CU.Active
+	CU.Active,
+    CL.Comment
 FROM Expenditure.ChargerLocation CL
 LEFT JOIN Expenditure.ChargerUnit CU
 ON CU.Location = CL.Name
@@ -38,147 +43,131 @@ DROP VIEW IF EXISTS MergedSession;
 
 CREATE VIEW MergedSession AS
 SELECT
-	CS.CarReg,
-	CS.Mileage,
-	Count(*)                                  AS Sessions,
-	Min(CS.Start)                             AS Start,
-	Max(CS.End)                               AS End,
-	SUM(CS.EstDuration)                       AS EstDuration,
-	SUM(CS.Duration)                          AS Duration,
-	MAX(CS.EndPerCent)                        AS EndPercent,
-	MAX(CS.EndPerCent) - MIN(CS.StartPerCent) AS SessionPercent,
-	SUM(CS.SessionMiles)                      AS SessionMiles,
-	SUM(CS.Charge)                            AS Charge,
-	SUM(CS.ICharge)                           AS InputCharge,
-	SUM(CS.CCharge)                           AS CalculatedCharge,
-	SUM(CS.Cost)                              AS Cost,
-	SUM(CS.ICost)                             AS InputCost,
-	SUM(CS.CCost)                             AS CalculatedCost,
-	SUM(J2.Mileage    - CS.Mileage)           AS CarMiles,
-	SUM(CS.EndPerCent - J2.StartPercent)      AS CarPercent,
-	MAX(CS.Charger)                           AS Charger,
-	MAX(CS.Unit)                              AS Unit,
-	MAX(CS.UnitRate)                          AS UnitRate,
-	MAX(CS.Capacity)                          AS Capacity,
-	MAX(CS.MilesPerLitre)                     AS MilesPerLitre,
-	MAX(CS.DefaultTariff)                     AS DefaultTariff,
-	MAX(CS.DefaultUnitRate)                   AS DefaultUnitRate
+ CarReg,
+ Mileage,
+ Min(Start)        AS Start,
+ Max(End)          AS End,
+ Count(*)          AS Sessions,
+ Min(Charger)      AS Charger,
+ SUM(Charge)       AS Charge,
+ SUM(Cost)         AS Cost,
+ Min(StartMiles)   AS StartMiles,
+ Max(EndMiles)     AS EndMiles,
+ Min(StartPercent) AS StartPercent,
+ Max(EndPercent)   AS EndPercent,
+ Max(Start)        AS High,
+ Max(Charger)      AS MaxCharger,
+ Min(Unit)         AS MinUnit,
+ Max(Unit)         AS MaxUnit,
+ Min(Charge)       AS MinCharge,
+ Max(Charge)       AS MaxCharge,
+ Min(Cost)         AS MinCost,
+ Max(Cost)         AS MaxCost
+ FROM expenditure.chargesession
+ GROUP BY CarReg, Mileage;
+ 
+DROP VIEW IF EXISTS BoundedChargeSession;
+
+CREATE VIEW BoundedChargeSession AS
+SELECT
+	MS.CarReg,
+    MS.Start,
+    YEAR(MS.Start)    AS Year,
+    MONTH(MS.Start)   AS Month,
+    WEEK(MS.Start, 1) AS Week,
+    MS.Mileage,
+    MS.Charger,
+    MS.Sessions,
+    MS.MinUnit    AS Unit,
+    MS.StartPercent,
+    MS.EndPercent,
+    CS.UsedMiles,
+    CS.UsedPercent,
+    MS.Cost,
+    MS.Charge,
+    ROUND((MS.EndPercent - MS.StartPercent) * Car.Capacity / 100, 2) AS EstCharge,
+    COALESCE(MS.Charge, ROUND((MS.EndPercent - MS.StartPercent) * Car.Capacity / 100, 2)) AS UseCharge,
+    TF.UnitRate,
+    TD.UnitRate AS DefaultUnitRate,
+    COALESCE(TF.UnitRate, TD.UnitRate) AS UseRate,
+    Car.Capacity,
+    Car.MilesPerLitre,
+    WF.PumpPrice
+FROM MergedSession MS
+JOIN (
+	SELECT 
+		J1.CarReg,
+        J1.Start,
+        J2.Mileage    - J1.Mileage      AS UsedMiles,
+        J1.EndPercent - J2.StartPercent AS UsedPercent
 	FROM (
-	SELECT 
-		ROW_NUMBER ( ) OVER (ORDER BY CarReg, CH.Start) Num, 
-	    CarReg,
-		CH.Start,
-		CH.End,
-		EstDuration,
-		CAST(TIMESTAMPDIFF(SECOND, CH.Start, CH.End)/3600.0 AS DECIMAL(9, 5))                 AS Duration,
-		Mileage,
-		StartPerCent,
-		EndPerCent,
-		EndMiles   - StartMiles                                                               AS SessionMiles,
-		EndPercent - StartPercent                                                             AS SessionPercent,
-		Capacity,
-		MilesPerLitre,
-		COALESCE(Charge, CAST((EndPercent - StartPercent) / 100 * Capacity AS DECIMAL(8, 2))) AS Charge,
-		Charge                                                                                AS ICharge,
-		CAST((EndPercent - StartPercent) / 100 * Capacity AS DECIMAL(8, 2))                   AS CCharge,
-		COALESCE(Cost, CAST((TF.UnitRate * Charge / 100) AS DECIMAL(8, 2)))                   AS Cost,
-		Cost                                                                                  AS ICost,
-		CAST(TF.UnitRate * Charge / 100 AS DECIMAL(8, 2))                                     AS CCost,
-		Charger,
-		Unit,
-		COALESCE(TF.UnitRate, 0)                                                              AS UnitRate,
-		DefaultTariff,
-		COALESCE(TD.UnitRate, 0)                                                              AS DefaultUnitRate
-	FROM Expenditure.ChargeSession CH
-	LEFT JOIN Expenditure.ChargerLocation CL
-	ON  CH.Charger = CL.Name
-	LEFT JOIN Expenditure.Tariff TF
-	ON        CL.Tariff = TF.Code 
-	AND       TF.Type   = 'Electric' 
-	AND       CH.Start  > TF.Start 
-	AND      (CH.End    < TF.End OR TF.End IS NULL)
-	JOIN Expenditure.Car
-	ON Car.Registration = CarReg
-	LEFT JOIN Expenditure.Tariff TD
-	ON        Car.DefaultTariff = TD.Code 
-	AND       TD.Type    = 'Electric' 
-	AND       CH.Start  >= TD.Start 
-	AND      (CH.Start  < TD.End OR TD.End IS NULL)) CS
-LEFT OUTER JOIN (
-	SELECT 
+    SELECT 
 		ROW_NUMBER ( ) OVER (ORDER BY CarReg, Start) Num,
 		CarReg,
+        Start,
+        EndPercent,
 		StartPercent,
 		Mileage
-    FROM Expenditure.ChargeSession) J2
-ON  J2.Num    = CS.Num + 1
-AND J2.CarReg = CS.CarReg
-GROUP BY CS.CarReg, CS.Mileage;
+    FROM Expenditure.MergedSession) AS J1
+    JOIN (
+    SELECT 
+		ROW_NUMBER ( ) OVER (ORDER BY CarReg, Start) Num,
+		CarReg,
+        Start,
+		StartPercent,
+		Mileage
+    FROM Expenditure.MergedSession) AS J2
+    ON  J1.CarReg = J2.CarReg
+    AND J1.Num    = J2.num - 1) CS
+ON MS.CarReg = CS.CarReg
+AND MS.Start = CS.Start
+JOIN Expenditure.ChargerLocation CL
+ON  MS.Charger = CL.Name
+LEFT JOIN Expenditure.Tariff TF
+ON        CL.Tariff = TF.Code 
+AND       TF.Type   = 'Electric' 
+AND       MS.Start  > TF.Start 
+AND      (MS.End    < TF.End OR TF.End IS NULL)
+JOIN Expenditure.Car
+ON Car.Registration = MS.CarReg
+LEFT JOIN Expenditure.Tariff TD
+ON        Car.DefaultTariff = TD.Code 
+AND       TD.Type    = 'Electric' 
+AND       MS.Start  >= TD.Start 
+AND      (MS.Start  < TD.End OR TD.End IS NULL)
+JOIN Expenditure.WeeklyFuel WF
+ON        MS.Start  >= WF.Start 
+AND      (MS.Start  < WF.End OR WF.End IS NULL);
 
 DROP VIEW IF EXISTS SessionUsage;
 
 CREATE VIEW SessionUsage AS
 SELECT 
 	CarReg,
-	MS.Start, 
-	MS.End,
-    Duration,
-	Mileage,
-	Charger,
-	Unit,
-	Capacity,
-	MilesPerLitre,
-	WF.PumpPrice,
-	CarMiles,
-	CarPercent,
-	CAST(CarPercent * Capacity / 100 AS DECIMAL(8, 2))                    AS CarCharge,
-	CAST(CarPercent * Capacity * MS.UnitRate / 10000 AS DECIMAL(8, 2))    AS CarElectric,
-	CAST(CarMiles /MilesPerLitre * WF.PumpPrice / 100 AS DECIMAL(8, 2))   AS CarPetrol,
+	Start,
+    Year,
+    Month,
+    Week,
+    Mileage,
+    Charger,
+    Unit,
+    Cost,
+    Charge,
+    EstCharge,
+    StartPercent,
     EndPercent,
-	SessionPercent,
-	MS.UnitRate,
-	Charge,
-    Charge * 100 / SessionPercent                                         AS FullCharge,
-	InputCharge,
-	CalculatedCharge,
-	Cost,
-	InputCost,
-	CalculatedCost,
-	TR.UnitRate                                                           AS DefaultRate,
-	CAST(Charge * TR.UnitRate / 100 AS DECIMAL(8, 2))                     AS DefaultSessionCost,
-	Cost - CAST(Charge * TR.UnitRate / 100 AS DECIMAL(8, 2))              AS DefaultCostDiff
-FROM      Expenditure.MergedSession MS
-LEFT JOIN Expenditure.WeeklyFuel WF
-ON   MS.Start >  WF.Start 
-AND (MS.Start <= WF.End OR WF.End IS NULL)
-LEFT JOIN Expenditure.Tariff TR
-ON   MS.Start >  TR.Start 
-AND (MS.Start <= TR.End OR TR.End IS NULL)
-AND TR.Code = DefaultTariff
-AND TR.Type = 'Electric';
+    UseCharge,
+    UsedMiles,
+    UsedPercent,
+    ROUND(UsedPercent * Capacity / 100, 2)                 AS UsedCharge,            
+    ROUND(UseCharge * UseRate / 100, 2)                    AS HomeCost,
+    ROUND(Cost - UseCharge * UseRate / 100 , 2)            AS HomeCostDiff,
+    ROUND(UsedMiles / MilesPerLitre * PumpPrice / 100, 2)  AS PetrolCost,
+    ROUND(UsedPercent * Capacity / 100 * UseRate / 100, 2) AS UsedHomeCost,
+    ROUND(100 * EstCharge / UseCharge, 1)            AS Efficiency
+FROM expenditure.boundedchargesession;
 
-DROP VIEW IF EXISTS SessionMonthSummary;
-
-CREATE VIEW SessionMonthSummary AS
-    SELECT 
-        YEAR(Start) AS Year,
-        MONTH(Start) AS Month,
-        COUNT(*) AS Sessions,
-        SUM(SessionPercent) AS SessionPercent,
-        CAST(AVG(PumpPrice) AS DECIMAL (8 , 1 )) AS Petrol,
-        SUM(Charge) AS Charge,
-        SUM(Cost) AS Cost,
-        SUM(CarPercent) AS CarPercent,
-        SUM(CarCharge) AS CarCharge,
-        SUM(CarMiles) AS CarMiles,
-        SUM(CarElectric) AS CarElectric,
-        SUM(CarPetrol) AS CarPetrol,
-        SUM(DefaultCostDiff) AS DefaultCostDiff
-    FROM
-        expenditure.sessionusage
-    GROUP BY YEAR(Start) , MONTH(Start);
-
-DROP VIEW IF EXISTS SessionLog;
+DROP VIEW IF EXISTS SessionLog;																															
 
 CREATE VIEW SessionLog AS
 SELECT
