@@ -26,7 +26,7 @@ CREATE VIEW Chargers AS
 SELECT
 	CL.Name,
     CL.Provider,
-    CL.Tariff,
+--  xx  CL.Tariff,
     CL.Location,
     COALESCE(CU.Rate, CL.Rate) AS Rate,
     CP.Name  AS Network,
@@ -88,8 +88,6 @@ SELECT
     ROUND((MS.EndPercent - MS.StartPercent) * Car.Capacity / 100, 2) AS EstCharge,
     COALESCE(MS.Charge, ROUND((MS.EndPercent - MS.StartPercent) * Car.Capacity / 100, 2)) AS UseCharge,
     TF.UnitRate,
-    TD.UnitRate AS DefaultUnitRate,
-    COALESCE(TF.UnitRate, TD.UnitRate) AS UseRate,
     Car.Capacity,
     Car.MilesPerLitre,
     WF.PumpPrice
@@ -124,17 +122,11 @@ AND MS.Start = CS.Start
 JOIN Expenditure.ChargerLocation CL
 ON  MS.Charger = CL.Name
 LEFT JOIN Expenditure.Tariff TF
-ON        CL.Tariff = TF.Code 
-AND       TF.Type   = 'Electric' 
-AND       MS.Start  > TF.Start 
-AND      (MS.End    < TF.End OR TF.End IS NULL)
+ON   TF.Type   = 'Electric' 
+AND  MS.Start  > TF.Start 
+AND (MS.End    < TF.End OR TF.End IS NULL)
 JOIN Expenditure.Car
-ON Car.Registration = MS.CarReg
-LEFT JOIN Expenditure.Tariff TD
-ON        Car.DefaultTariff = TD.Code 
-AND       TD.Type    = 'Electric' 
-AND       MS.Start  >= TD.Start 
-AND      (MS.Start  < TD.End OR TD.End IS NULL)
+ON  Car.Registration = MS.CarReg
 JOIN Expenditure.WeeklyFuel WF
 ON        MS.Start  >= WF.Start 
 AND      (MS.Start  < WF.End OR WF.End IS NULL);
@@ -159,12 +151,12 @@ SELECT
     UseCharge,
     UsedMiles,
     UsedPercent,
-    ROUND(UsedPercent * Capacity / 100, 2)                 AS UsedCharge,            
-    ROUND(UseCharge * UseRate / 100, 2)                    AS HomeCost,
-    ROUND(Cost - UseCharge * UseRate / 100 , 2)            AS HomeCostDiff,
-    ROUND(UsedMiles / MilesPerLitre * PumpPrice / 100, 2)  AS PetrolCost,
-    ROUND(UsedPercent * Capacity / 100 * UseRate / 100, 2) AS UsedHomeCost,
-    ROUND(100 * EstCharge / UseCharge, 1)            AS Efficiency
+    ROUND(UsedPercent * Capacity / 100, 2)                  AS UsedCharge,            
+    ROUND(UseCharge * UnitRate / 100, 2)                    AS HomeCost,
+    ROUND(Cost - UseCharge * UnitRate / 100 , 2)            AS HomeCostDiff,
+    ROUND(UsedMiles / MilesPerLitre * PumpPrice / 100, 2)   AS PetrolCost,
+    ROUND(UsedPercent * Capacity / 100 * UnitRate / 100, 2) AS UsedHomeCost,
+    ROUND(100 * EstCharge / UseCharge, 1)                   AS Efficiency
 FROM expenditure.boundedchargesession;
 
 DROP VIEW IF EXISTS SessionLog;																															
@@ -242,7 +234,6 @@ AND CS.Start      <> CL.Timestamp
 AND CL.MilesAdded <= 1
 GROUP BY CS.Start;
 
-
 DROP VIEW IF EXISTS BoundedReading;
 
 CREATE VIEW BoundedReading AS
@@ -267,6 +258,7 @@ SELECT
       END AS Kwh,
     J1.Tariff,
     TR.UnitRate,
+    TR.OffPeakRate,
     TR.StandingCharge,
     TR.CalorificValue,
     J1.Comment
@@ -276,7 +268,7 @@ SELECT
         Weekday,
         MT.Identifier,
         MT.Type,
-        Tariff,
+        MRT.Tariff,
         Reading,
         Estimated,
         TRUNCATE(Reading, 0)                                     AS TruncReading,
@@ -286,14 +278,17 @@ SELECT
     JOIN Meter AS MT
     ON  MR.Meter    = MT.Identifier 
     AND MR.Timestamp >= MT.Installed
-    AND (MT.Removed IS NULL OR MR.Timestamp < MT.Removed)) AS J1
+    AND (MT.Removed IS NULL OR MR.Timestamp < MT.Removed)
+    JOIN MeterReadingTariff MRT
+    ON MRT.Meter      = MT.Identifier
+    AND MR.Timestamp >= MRT.Start
+    AND (MRT.End IS NULL OR MR.Timestamp < MRT.End)) AS J1
 JOIN (
 SELECT 
 		Timestamp,
         Weekday,
         MT.Identifier,
         MT.Type,
-        Tariff,
         Reading,
         Estimated,
         TRUNCATE(Reading, 0)                                     AS TruncReading,
@@ -301,25 +296,90 @@ SELECT
         MR.Comment
 	FROM MeterReading MR
     JOIN Meter AS MT
-    ON  MR.Meter    = MT.Identifier 
+    ON  MR.Meter      = MT.Identifier 
     AND MR.Timestamp >= MT.Installed
     AND (MT.Removed IS NULL OR MR.Timestamp < MT.Removed)) AS J2
-	ON J1.SeqNo = J2.SeqNo - 1
+	ON J1.SeqNo       = J2.SeqNo - 1
     AND J1.Identifier = J2.Identifier
-	AND J1.Type = J2.Type
+	AND J1.Type       = J2.Type
 LEFT JOIN Tariff  TR 
-ON   J1.Timestamp >=  TR.Start 
-AND (J1.Timestamp < TR.End OR TR.End IS NULL)
-AND TR.Code = J1.Tariff
-AND TR.Type = J1.Type;
- 
+ON   J1.Timestamp >= TR.Start 
+AND (J1.Timestamp <  TR.End OR TR.End IS NULL)
+AND TR.Code        = J1.Tariff
+AND TR.Type        = J1.Type;
+
 DROP VIEW IF EXISTS CostedReading;
 
 CREATE VIEW CostedReading AS
+SELECT 
+	BR.*,
+    OP.OPKwh                                                            AS OffPeakKwh,    
+    BR.Kwh - OPKwh                                                      AS PeakKwh,
+    ROUND(UnitRate * Kwh / 100, 2)                                      AS KwhCost,
+    ROUND(Days * StandingCharge / 100, 2)                               AS StdCost,
+    ROUND(UnitRate * (Kwh - OPKwh) / 100, 2)                            AS PeakKwhCost,
+    COALESCE(ROUND(OffPeakRate * OPKwh / 100, 2), 0)                    AS OffPeakKwhCost,
+    ROUND((UnitRate * (Kwh - OPKwh) + 
+           COALESCE(OffPeakRate * OPKwh, 0) + 
+           Days * StandingCharge) / 100, 2)                             AS TotalCost,
+           COALESCE(ROUND((UnitRate -OffPeakRate) * OPKwh / 100, 2), 0) AS OffPeakSaving
+FROM BoundedReading BR
+JOIN  (
+	SELECT
+		BRI.Meter,
+		Start,
+		COALESCE(Count(*), 0)     AS Count,
+		COALESCE(Sum(OPI.Kwh), 0) AS OPKwh
+	FROM BoundedReading BRI
+	LEFT JOIN MeterOffpeak   OPI
+	ON  BRI.Meter = OPI.Meter
+	AND OPI.Timestamp BETWEEN BRI.Start AND BRI.End
+	GROUP BY BRI.Meter, Start ) OP
+ON  BR.Meter = OP.Meter
+AND BR.Start = OP.Start;
+
+DROP VIEW IF EXISTS SessionChargeDetails;
+
+CREATE VIEW SessionChargeDetails AS
 SELECT
-	*,    
-    ROUND(UnitRate * Kwh / 100, 3)                           AS KwhCost,
-    ROUND(Days * StandingCharge / 100, 3)                    AS StdCost,
-    ROUND((UnitRate * Kwh + Days * StandingCharge) / 100, 3) AS TotalCost
-FROM BoundedReading;
+	CarReg,
+    Start,
+    End,
+    Charger,
+    60 * EstDuration                                                   AS EstDuration,
+    StartPercent,
+    EndPercent,
+    EndPercent - StartPerCent                                          AS PercentGain,
+    Charge,
+    CASE  WHEN  ChargeDuration IS NULL THEN 'Y' ELSE 'N' END           AS DurationCalculated,
+    COALESCE(ChargeDuration, TIMEDIFF(End, Start))                     AS ChargeDuration,
+    TIME_TO_SEC(COALESCE(ChargeDuration, TIMEDIFF(End, Start))) / 60.0 AS ChargeDurationMinutes
+FROM ChargeSession;
+
+DROP VIEW IF EXISTS SmartMeterHourlyData;
+
+CREATE VIEW SmartMeterHourlyData AS
+SELECT
+	Date,
+    Hour,
+    WEEK(Date, 3)               AS Week,
+    SUBSTR(DAYNAME(Date), 1, 3) AS Weekday,
+    Type,
     
+    Min(Peak) AS Peak,
+    SUM(Reading) AS Reading
+FROM (
+	SELECT 
+		DATE(Timestamp)  AS Date,
+		HOUR(Timestamp)  AS Hour,
+        Type,
+		CASE 
+			WHEN Type = 'Electric' AND HOUR(Timestamp) BETWEEN 0 AND 4 THEN 
+				'N'
+			WHEN Type = 'Electric' AND HOUR(Timestamp) BETWEEN 5 AND 24 THEN 
+				'Y'
+			ELSE null
+		END AS Peak,
+        Reading
+	FROM Expenditure.SmartMeterUsageData) UD
+    GROUP BY Date, Hour, Type;

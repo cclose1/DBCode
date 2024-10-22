@@ -33,6 +33,7 @@ BEGIN
 		EXEC CompareTable @SQLServer, @MySQL, 'Tariff',              @update = @update
 		EXEC CompareTable @SQLServer, @MySQL, 'Meter',               @update = @update
 		EXEC CompareTable @SQLServer, @MySQL, 'MeterReading',        @update = @update
+		EXEC CompareTable @SQLServer, @MySQL, 'MeterReadingTariff',  @update = @update
 	END TRY
 	BEGIN CATCH
 		EXEC ReportError

@@ -12,7 +12,7 @@ DROP VIEW IF EXISTS BankTransfers;
 DROP TABLE IF EXISTS LoadLog;
 
 CREATE TABLE LoadLog (
-    Reference  VARCHAR(20)   NOT NULL,
+    Reference  VARCHAR(30)   NOT NULL,
     Type       VARCHAR(20)   NOT NULL,
     `Table`    VARCHAR(20)   NULL,
 	Loaded     DATETIME      NULL,
@@ -321,6 +321,8 @@ CREATE TABLE Reminder (
 	WarnDays    DECIMAL(3, 0) NULL,
 	Suspended   VARCHAR(1)    NULL,
 	Description VARCHAR(1000) NULL,
+	Contact     VARCHAR(50)   NULL,
+	Location    VARCHAR(200)  NULL,
 	Phone       VARCHAR(15)   NULL,
 	Web         VARCHAR(50)   NULL,
 	Comment     VARCHAR(1000) NULL,

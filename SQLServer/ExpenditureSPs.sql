@@ -110,19 +110,23 @@ BEGIN
 	BEGIN
 		SET @whereCl = CONCAT(@whereCl, ' AND Start <= ''', @end, '''');
 	END
-    EXEC AppendSelectField @fields OUTPUT, 'Type',                                      NULL,             NULL,         NULL
-	EXEC AppendSelectField @fields OUTPUT, 'Start',                                     NULL,             'Start',      'Min'
-    EXEC AppendSelectField @fields OUTPUT, 'dbo.WeekDayName(Min(Start))',               NULL,             'Weekday',    NULL
-    EXEC AppendSelectField @fields OUTPUT, 'Start',                                     NULL,             '[End]',      'Max'
-    EXEC AppendSelectField @fields OUTPUT, 'Days',                                      NULL,             'PeriodDays', 'Sum'
-    EXEC AppendSelectField @fields OUTPUT, 'Datediff(Day, Min(Start), Max([End]))',     NULL,             'ActualDays', NULL
-    EXEC AppendSelectField @fields OUTPUT, 'Count(*)',                                  NULL,             'Readings',   NULL
-    EXEC AppendSelectField @fields OUTPUT, 'StartReading',                              NULL,              NULL,        'Min'
-    EXEC AppendSelectField @fields OUTPUT, 'EndReading',                                NULL,              NULL,        'Max'
-    EXEC AppendSelectField @fields OUTPUT, 'Kwh',                                       NULL,             'UsedKwh',    'Sum'
-    EXEC AppendSelectField @fields OUTPUT, 'KwhCost',                                   'DECIMAL(10, 2)', 'KwhCost',    'Sum'
-    EXEC AppendSelectField @fields OUTPUT, 'StdCost',                                   'DECIMAL(10, 2)', 'StdCost',    'Sum'
-    EXEC AppendSelectField @fields OUTPUT, 'Sum(TotalCost)',                            'DECIMAL(10, 2)', 'Total',      NULL
+    EXEC AppendSelectField @fields OUTPUT, 'Type',                                      NULL,             NULL,             NULL
+	EXEC AppendSelectField @fields OUTPUT, 'Start',                                     NULL,             'Start',          'Min'
+    EXEC AppendSelectField @fields OUTPUT, 'dbo.WeekDayName(Min(Start))',               NULL,             'Weekday',        NULL
+    EXEC AppendSelectField @fields OUTPUT, 'Start',                                     NULL,             '[End]',          'Max'
+    EXEC AppendSelectField @fields OUTPUT, 'Days',                                      NULL,             'PeriodDays',     'Sum'
+    EXEC AppendSelectField @fields OUTPUT, 'Datediff(Day, Min(Start), Max([End]))',     NULL,             'ActualDays',     NULL
+    EXEC AppendSelectField @fields OUTPUT, 'Count(*)',                                  NULL,             'Readings',       NULL
+    EXEC AppendSelectField @fields OUTPUT, 'StartReading',                              NULL,              NULL,            'Min'
+    EXEC AppendSelectField @fields OUTPUT, 'EndReading',                                NULL,              NULL,            'Max'
+    EXEC AppendSelectField @fields OUTPUT, 'Kwh',                                       NULL,             'UsedKwh',        'Sum'
+    EXEC AppendSelectField @fields OUTPUT, 'PeakKwh',                                   NULL,             'PeakKwh',        'Sum'
+    EXEC AppendSelectField @fields OUTPUT, 'OffPeakKwh',                                NULL,             'OffPeakKwh',     'Sum'
+    EXEC AppendSelectField @fields OUTPUT, 'KwhCost',                                   'DECIMAL(10, 2)', 'KwhCost',        'Sum'
+    EXEC AppendSelectField @fields OUTPUT, 'PeakKwhCost',                               'DECIMAL(10, 2)', 'PeakKwhCost',    'Sum'
+    EXEC AppendSelectField @fields OUTPUT, 'OffPeakKwhCost',                            'DECIMAL(10, 2)', 'OffPeakKwhCost', 'Sum'
+    EXEC AppendSelectField @fields OUTPUT, 'StdCost',                                   'DECIMAL(10, 2)', 'StdCost',        'Sum'
+    EXEC AppendSelectField @fields OUTPUT, 'Sum(TotalCost)',                            'DECIMAL(10, 2)', 'Total',          NULL
 
 	EXEC SelectQuery 'Expenditure.dbo.CostedReading', @fields, @whereCl, 'Type', 'Type', @printSQL
 END

@@ -353,3 +353,97 @@ CREATE VIEW SessionMonthSummary AS
     FROM
         expenditure.sessionusageOld
     GROUP BY YEAR(Start) , MONTH(Start);
+
+DROP VIEW IF EXISTS BoundedReadingOld;
+
+CREATE VIEW BoundedReadingOld AS
+SELECT
+	J1.Timestamp                         AS Start,
+    J1.Identifier                        AS Meter,
+    J1.Type,
+    J1.Estimated                         AS StartEstimated,
+    J1.Weekday,
+    J2.Timestamp                         AS 'End',
+    J2.Estimated                         AS EndEstimated,
+    DATEDIFF(J2.Timestamp, J1.Timestamp) AS Days,
+    J1.Reading                           AS StartReading,
+    COALESCE(J1.OffPeakKwhx, 0)           AS OffPeakKwhX,
+    J2.Reading                           AS EndReading,
+    J1.SeqNo,
+    J2.Reading - J1.Reading              AS ReadingChange,
+    CASE J1.Type
+      WHEN 'Gas' THEN 
+        UnitsToKwh(J2.TruncReading - J1.TruncReading, TR.CalorificValue)
+      ELSE 
+		J2.TruncReading - J1.TruncReading
+      END AS Kwh,
+    J1.Tariff,
+    TR.UnitRate,
+    TR.OffPeakRate,
+    TR.StandingCharge,
+    TR.CalorificValue,
+    J1.Comment
+FROM (
+SELECT 
+		Timestamp,
+        Weekday,
+        MT.Identifier,
+        MT.Type,
+        MRT.Tariff,
+        Reading,
+        OffPeakKwhx,
+        Estimated,
+        TRUNCATE(Reading, 0)                                     AS TruncReading,
+		ROW_NUMBER() OVER (PARTITION BY Identifier, Type ORDER BY Timestamp) AS SeqNo,
+        MR.Comment
+	FROM MeterReading MR
+    JOIN Meter AS MT
+    ON  MR.Meter    = MT.Identifier 
+    AND MR.Timestamp >= MT.Installed
+    AND (MT.Removed IS NULL OR MR.Timestamp < MT.Removed)
+    JOIN MeterReadingTariff MRT
+    ON MRT.Meter      = MT.Identifier
+    AND MR.Timestamp >= MRT.Start
+    AND (MRT.End IS NULL OR MR.Timestamp < MRT.End)) AS J1
+JOIN (
+SELECT 
+		Timestamp,
+        Weekday,
+        MT.Identifier,
+        MT.Type,
+        Reading,
+        Estimated,
+        TRUNCATE(Reading, 0)                                     AS TruncReading,
+		ROW_NUMBER() OVER (PARTITION BY Identifier, Type ORDER BY Timestamp) AS SeqNo,
+        MR.Comment
+	FROM MeterReading MR
+    JOIN Meter AS MT
+    ON  MR.Meter      = MT.Identifier 
+    AND MR.Timestamp >= MT.Installed
+    AND (MT.Removed IS NULL OR MR.Timestamp < MT.Removed)) AS J2
+	ON J1.SeqNo       = J2.SeqNo - 1
+    AND J1.Identifier = J2.Identifier
+	AND J1.Type       = J2.Type
+LEFT JOIN Tariff  TR 
+ON   J1.Timestamp >= TR.Start 
+AND (J1.Timestamp <  TR.End OR TR.End IS NULL)
+AND TR.Code        = J1.Tariff
+AND TR.Type        = J1.Type;
+
+    
+DROP VIEW IF EXISTS CostedReadingOld;
+
+CREATE VIEW CostedReadingOld AS
+SELECT
+	*,    
+    Kwh - OffPeakKwhx                                                    AS PeakKwh,
+    ROUND(UnitRate * Kwh / 100, 2)                                      AS KwhCost,
+    ROUND(Days * StandingCharge / 100, 2)                               AS StdCost,
+    ROUND(UnitRate * (Kwh - OffPeakKwhx) / 100, 2)                       AS PeakKwhCost,
+    COALESCE(ROUND(OffPeakRate * OffPeakKwhx / 100, 2), 0)               AS OffPeakKwhCost,    
+--    ROUND((UnitRate * Kwh + Days * StandingCharge) / 100, 2) AS TotalCost,
+    ROUND((UnitRate * (Kwh - OffPeakKwhx) + 
+           COALESCE(OffPeakRate * OffPeakKwhx, 0) + 
+           Days * StandingCharge) / 100, 2)                             AS TotalCost,
+    COALESCE(ROUND((UnitRate -OffPeakRate) * OffPeakKwhx / 100, 2), 0)   AS OffPeakSaving
+FROM BoundedReadingOld;

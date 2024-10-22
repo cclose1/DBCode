@@ -51,19 +51,23 @@ BEGIN
 		SET WhereCl = CONCAT(WhereCl, " AND Start <= '", End, "'");
 	END IF;
     
-    CALL BloodPressure.AddSelectField(Fields, 'Type',                              NULL,             NULL,         NULL);
-    CALL BloodPressure.AddSelectField(Fields, 'Start',                             NULL,             'Start',      'Min');
-    CALL BloodPressure.AddSelectField(Fields, 'SUBSTR(DAYNAME(Min(Start)), 1, 3)', NULL,             'Weekday',    NULL);
-    CALL BloodPressure.AddSelectField(Fields, 'Start',                             NULL,             'End',        'Max');
-    CALL BloodPressure.AddSelectField(Fields, 'Days',                              NULL,             'PeriodDays', 'Sum');
-    CALL BloodPressure.AddSelectField(Fields, 'Datediff(Max(End), Min(Start))',    NULL,             'ActualDays', NULL);
-    CALL BloodPressure.AddSelectField(Fields, 'Count(*)',                          NULL,             'Readings',   NULL);
-    CALL BloodPressure.AddSelectField(Fields, 'StartReading',                      NULL,              NULL,        'Min');
-    CALL BloodPressure.AddSelectField(Fields, 'EndReading',                        NULL,              NULL,        'Max');
-    CALL BloodPressure.AddSelectField(Fields, 'Kwh',                               NULL,             'UsedKwh',    'Sum');
-    CALL BloodPressure.AddSelectField(Fields, 'KwhCost',                           'DECIMAL(10, 2)', 'KwhCost',    'Sum');
-    CALL BloodPressure.AddSelectField(Fields, 'StdCost',                           'DECIMAL(10, 2)', 'StdCost',    'Sum');
-    CALL BloodPressure.AddSelectField(Fields, 'Sum(TotalCost)',                    'DECIMAL(10, 2)', 'Total',      NULL);
+    CALL BloodPressure.AddSelectField(Fields, 'Type',                              NULL,             NULL,             NULL);
+    CALL BloodPressure.AddSelectField(Fields, 'Start',                             NULL,             'Start',          'Min');
+    CALL BloodPressure.AddSelectField(Fields, 'SUBSTR(DAYNAME(Min(Start)), 1, 3)', NULL,             'Weekday',        NULL);
+    CALL BloodPressure.AddSelectField(Fields, 'Start',                             NULL,             'End',            'Max');
+    CALL BloodPressure.AddSelectField(Fields, 'Days',                              NULL,             'PeriodDays',     'Sum');
+    CALL BloodPressure.AddSelectField(Fields, 'Datediff(Max(End), Min(Start))',    NULL,             'ActualDays',     NULL);
+    CALL BloodPressure.AddSelectField(Fields, 'Count(*)',                          NULL,             'Readings',       NULL);
+    CALL BloodPressure.AddSelectField(Fields, 'StartReading',                      NULL,              NULL,            'Min');
+    CALL BloodPressure.AddSelectField(Fields, 'EndReading',                        NULL,              NULL,            'Max');
+    CALL BloodPressure.AddSelectField(Fields, 'Kwh',                               NULL,             'UsedKwh',        'Sum');
+    CALL BloodPressure.AddSelectField(Fields, 'PeakKwh',                           NULL,             'PeakKwh',        'Sum');
+    CALL BloodPressure.AddSelectField(Fields, 'OffPeakKwh',                        NULL,             'OffPeakKwh',     'Sum');
+    CALL BloodPressure.AddSelectField(Fields, 'KwhCost',                           'DECIMAL(10, 2)', 'KwhCost',        'Sum');
+    CALL BloodPressure.AddSelectField(Fields, 'PeakKwhCost',                       'DECIMAL(10, 2)', 'PeakKwhCost',    'Sum');
+    CALL BloodPressure.AddSelectField(Fields, 'OffPeakKwhCost',                    'DECIMAL(10, 2)', 'OffPeakKwhCost', 'Sum');
+    CALL BloodPressure.AddSelectField(Fields, 'StdCost',                           'DECIMAL(10, 2)', 'StdCost',        'Sum');
+    CALL BloodPressure.AddSelectField(Fields, 'Sum(TotalCost)',                    'DECIMAL(10, 2)', 'Total',          NULL);
     
     SET @Query = CONCAT(
 		'SELECT \n\r', Fields, 
