@@ -1,18 +1,18 @@
-DROP TABLE NutritionSources
+DROP TABLE IF exists NutritionSources
 GO
 CREATE TABLE NutritionSources(
 	Name     VARCHAR(50) NOT NULL PRIMARY KEY,
 	Created  DATETIME DEFAULT dbo.RemoveFractionalSeconds(GETDATE())
 )
 GO
-DROP TABLE NutritionTypes
+DROP TABLE IF exists NutritionTypes
 GO
 CREATE TABLE NutritionTypes(
 	Name     VARCHAR(50) NOT NULL PRIMARY KEY,
 	Created  DATETIME DEFAULT dbo.RemoveFractionalSeconds(GETDATE())
 )
 GO
-DROP TABLE NutritionDetail
+DROP TABLE IF exists  NutritionDetail
 GO
 CREATE TABLE NutritionDetail(
 	Item         VARCHAR(50) NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE NutritionDetail(
 	Simple       CHAR(1),
 	IsVolume     CHAR(1),
 	PackSize     DECIMAL(6, 1)
-	CONSTRAINT PKNutritionRecord PRIMARY KEY CLUSTERED(
+	CONSTRAINT PKNutritionDetail PRIMARY KEY CLUSTERED(
 		Item   ASC,
 		Source ASC,
 		Start  ASC)
@@ -60,7 +60,7 @@ BEGIN
 	AND ND.Start  = inserted.Start
 END
 GO
-DROP TABLE NutritionEvent
+DROP TABLE IF exists  NutritionEvent
 GO
 CREATE TABLE NutritionEvent (
 	Timestamp   DATETIME NOT NULL PRIMARY KEY,
@@ -88,7 +88,7 @@ BEGIN
 	ON NE.Timestamp = inserted.Timestamp
 END
 GO
-DROP TABLE NutritionRecord
+DROP TABLE IF exists  NutritionRecord
 GO
 CREATE TABLE NutritionRecord (
 	Timestamp   DATETIME    NOT NULL,
@@ -142,7 +142,7 @@ BEGIN
 	AND NR.Source    = inserted.Source
 END
 GO
-DROP TABLE NutritionHistorical
+DROP TABLE IF exists NutritionHistorical
 GO
 CREATE TABLE NutritionHistorical (
 	Timestamp    DATETIME NOT NULL PRIMARY KEY,
@@ -164,7 +164,7 @@ CREATE TABLE NutritionHistorical (
 	Salt         DECIMAL(12, 3),
 	Units        DECIMAL(12, 3)
 )
-DROP TABLE Weight
+DROP TABLE IF exists  Weight
 GO
 CREATE TABLE Weight (
 	Date  DATE NOT NULL Primary Key,
@@ -172,7 +172,7 @@ CREATE TABLE Weight (
 	Kilos NUMERIC(10, 2)) 
 GO
 
-DROP TABLE TempNutrition
+DROP TABLE IF exists  TempNutrition
 GO
 
 CREATE TABLE TempNutrition (
@@ -199,7 +199,7 @@ CREATE TABLE TempNutrition (
 		Source)
 )
 
-DROP TABLE NutritionComposite
+DROP TABLE  IF exists  NutritionComposite
 GO
 CREATE TABLE NutritionComposite(
 	Item          VARCHAR(50) NOT NULL,

@@ -333,7 +333,7 @@ JOIN  (
 	FROM BoundedReading BRI
 	LEFT JOIN MeterOffpeak   OPI
 	ON  BRI.Meter = OPI.Meter
-	AND OPI.Timestamp BETWEEN BRI.Start AND BRI.End
+	AND OPI.Timestamp >= BRI.Start AND OPI.Timestamp < BRI.End
 	GROUP BY BRI.Meter, Start ) OP
 ON  BR.Meter = OP.Meter
 AND BR.Start = OP.Start;
@@ -362,6 +362,7 @@ CREATE VIEW SmartMeterHourlyData AS
 SELECT
 	Date,
     Hour,
+    Year(Date)                  AS Year,
     WEEK(Date, 3)               AS Week,
     SUBSTR(DAYNAME(Date), 1, 3) AS Weekday,
     Type,

@@ -5,7 +5,7 @@ GO
 
 CREATE TABLE Company (
     Id        VARCHAR(15)   NOT NULL,
-	Name      VARCHAR(15)   NOT NULL,
+	Name      VARCHAR(25)   NOT NULL,
 	Modified  DATETIME      NULL,
 	Phone     VARCHAR(15)   NULL,
 	Web       VARCHAR(50)   NULL,
@@ -40,7 +40,7 @@ DROP TABLE IF EXISTS ChargerLocation
 GO
 
 CREATE TABLE ChargerLocation (
-	Name      VARCHAR(20)   NOT NULL,
+	Name      VARCHAR(24)   NOT NULL,
 	Created   DATETIME      NOT NULL,
 	Provider  VARCHAR(15)   NULL,   -- If not null points to an entry in Company with Id = Provider.
 	Modified  DATETIME      NULL,
@@ -69,8 +69,8 @@ DROP TABLE IF EXISTS ChargerUnit
 GO
 
 CREATE TABLE ChargerUnit (
-	Location  VARCHAR(20)   NOT NULL, -- Points to an entry in ChargerLocation with Name = Location
-	Name      VARCHAR(15)   NOT NULL,
+	Location  VARCHAR(25)   NOT NULL, -- Points to an entry in ChargerLocation with Name = Location
+	Name      VARCHAR(25)   NOT NULL,
 	Modified  DATETIME      NULL,
 	Rate      DECIMAL(6,2)  NULL,
 	Active    CHAR(1),
@@ -101,9 +101,10 @@ CREATE TABLE ChargeSession (
     CarReg         VARCHAR(10)   NOT NULL,
 	Start          DATETIME      NOT NULL,
 	Modified       DATETIME      NULL,
-	Charger        VARCHAR(20)   NULL,  -- Pointer to an entry in ChargerLocation
-	Unit           VARCHAR(15)   NULL,  -- Pointer to ChargerUnit where Location = Charger and Name = Unit
+	Charger        VARCHAR(25)   NULL,  -- Pointer to an entry in ChargerLocation
+	Unit           VARCHAR(25)   NULL,  -- Pointer to ChargerUnit where Location = Charger and Name = Unit
 	EstDuration    DECIMAL(5, 3),
+	MaxDuration    TIME          NULL,
 	Mileage	       INT           NULL,
 	StartMiles     DECIMAL(4, 1) NULL,
 	StartPerCent   DECIMAL(4, 1) NULL,
@@ -266,8 +267,8 @@ CREATE TABLE Tariff (
 	Modified       DATETIME      NULL,
 	UnitRate       DECIMAL(8, 3) NULL,
 	OffPeakRate    DECIMAL(8, 3) NULL,
-	OffPeakStart   TIME          NULL,
-	OffPeakEnd     TIME          NULL,
+	OffPeakStart   TIME(0)       NULL,
+	OffPeakEnd     TIME(0)       NULL,
 	StandingCharge DECIMAL(8, 3) NULL,
 	CalorificValue DECIMAL(8, 3) NULL,
 	Comment        VARCHAR(1000),
@@ -328,7 +329,6 @@ CREATE TABLE MeterReading (
 	Modified   DATETIME       NULL,
     WeekDay                  AS (SUBSTRING(DATENAME(weekday, Timestamp),1, 3)),
 	Reading    DECIMAL(10, 2) NULL,
-    OffPeakKwh DECIMAL(10, 2) NOT NULL DEFAULT 0,
     Estimated  CHAR(1)        NULL,
 	Comment    VARCHAR(1000),
 	PRIMARY KEY (Meter, Timestamp)
@@ -436,4 +436,23 @@ BEGIN
 	ON  SU.Timestamp = inserted.Timestamp
 	AND SU.Type      = inserted.Type
 END
+GO
+
+DROP TABLE IF EXISTS ChargeSessionStats
+GO
+
+CREATE TABLE ChargeSessionStats (
+  SessionStart    DATETIME NOT NULL,
+  MeterStart      DATETIME     DEFAULT NULL,
+  Kwh             DECIMAL(6,2) DEFAULT NULL,
+  OpKwH           DECIMAL(6,2) DEFAULT NULL,
+  OpDerivation    VARCHAR(20)  DEFAULT NULL,
+  OpKwhFromCost   DECIMAL(6,2) DEFAULT NULL,
+  OpKwhFromRatio  DECIMAL(6,2) DEFAULT NULL,
+  OpKwhFromApprox DECIMAL(6,2) DEFAULT NULL,
+  PkRate          DECIMAL(6,2) DEFAULT NULL,
+  OpRate          DECIMAL(6,2) DEFAULT NULL,
+  Cost            DECIMAL(6,2) DEFAULT NULL,
+  PRIMARY KEY (SessionStart)
+)
 GO

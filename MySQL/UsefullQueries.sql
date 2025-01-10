@@ -72,9 +72,9 @@ SELECT
 FROM expenditure.sessionchargedetails
 WHERE Charger      = 'HomePodPoint' 
 AND   EndPercent   < 97
-AND   StartPercent < 99 
+-- AND   StartPercent < 99 
 AND   DurationCalculated = 'N'
-ORDER BY PercentGain DESC;
+ORDER BY StartPercent DESC;
 
 -- Check Meter OffPeak
 
@@ -169,4 +169,39 @@ SELECT
     SUM(Reading)  AS Reading
 FROM expenditure.smartmeterhourlydata
 GROUP BY YEAR(Date), Week, Type
-ORDER BY MIN(Date) DESC, Type
+ORDER BY MIN(Date) DESC, Type;
+
+-- Oxford cash spend
+
+SELECT
+	Year,
+    Week,
+    Payment,
+    Min(Timestamp) AS Timestamp,
+    Sum(Amount)    AS Spend
+FROM expenditure.spend 
+WHERE (WeekDay = 'Wed' OR WeekDay = 'Thu' AND Time < '16:00') AND Payment = 'Cash'
+GROUP BY Year, Week, Payment
+ORDER BY Min(Timestamp) DESC;
+
+-- ChargeSessionStats
+
+SELECT
+	CS.Start,
+    CS.EndPerCent,
+    CS.EndPerCent - CS.StartPerCent AS Gain,
+    Kwh,
+    OpKwh,
+    Charge,
+    CS.Cost,
+    OpDerivation,
+    OpKwhFromCost,
+    OpKwhFromRatio,
+    OpKwhFromApprox,
+    Round(100 * CS.Cost / (CS.EndPerCent - CS.StartPerCent), 2) AS CostPerPercent,
+    Round(100 / (CS.EndPerCent - CS.StartPerCent) * Kwh, 2) AS FullCharge
+FROM expenditure.chargesessionstats TT
+JOIN expenditure.chargesession CS
+ON TT.SessionStart = CS.Start
+AND TT.MeterStart IS NOT NULL
+ORDER BY CS.Start DESC

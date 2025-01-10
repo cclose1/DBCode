@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS Company;
 
 CREATE TABLE Company (
     Id        VARCHAR(15)   NOT NULL,
-	Name      VARCHAR(15)   NOT NULL,
+	Name      VARCHAR(25)   NOT NULL,
 	Modified  DATETIME      NULL,
 	Phone     VARCHAR(15)   NULL,
 	Web       VARCHAR(50)   NULL,
@@ -43,7 +43,7 @@ VALUES
 DROP TABLE IF EXISTS ChargerLocation;
 
 CREATE TABLE ChargerLocation (
-	Name      VARCHAR(20)   NOT NULL,
+	Name      VARCHAR(25)   NOT NULL,
 	Created   DATETIME      NOT NULL,
 	Provider  VARCHAR(15)   NULL,   -- If not null points to an entry in Company with Id = Provider.
 	Modified  DATETIME      NULL,
@@ -73,8 +73,8 @@ DELIMITER ;
 DROP TABLE IF EXISTS ChargerUnit;
 
 CREATE TABLE ChargerUnit (
-	Location  VARCHAR(20)   NOT NULL, -- Points to an entry in ChargerLocation with Name = Location
-	Name      VARCHAR(15)   NOT NULL,
+	Location  VARCHAR(25)   NOT NULL, -- Points to an entry in ChargerLocation with Name = Location
+	Name      VARCHAR(25)   NOT NULL,
 	Modified  DATETIME      NULL,
 	Rate      DECIMAL(6,2)  NULL,	
 	Active    CHAR(1),
@@ -104,8 +104,8 @@ CREATE TABLE ChargeSession (
     CarReg         VARCHAR(10)    NOT NULL,
 	Start          DATETIME       NOT NULL,
 	Modified       DATETIME       NULL,
-	Charger        VARCHAR(20)    NULL,
-	Unit           VARCHAR(15)    NULL,
+	Charger        VARCHAR(25)    NULL,
+	Unit           VARCHAR(25)    NULL,
 	EstDuration    DECIMAL(5, 3),
 	Mileage	       INT            NULL,
 	StartMiles     DECIMAL(4, 1)  NULL,
@@ -357,7 +357,6 @@ CREATE TABLE MeterReading (
 	Modified   DATETIME       NULL,
     WeekDay    VARCHAR(3)     GENERATED ALWAYS AS (SUBSTR(DAYNAME(Timestamp), 1, 3)),
 	Reading    DECIMAL(10, 2) NULL,
-    OffPeakKwh DECIMAL(10, 2) NOT NULL DEFAULT 0,
     Estimated  CHAR(1)        NULL,
 	Comment    VARCHAR(1000),
 	PRIMARY KEY (Meter, Timestamp)
@@ -450,6 +449,7 @@ CREATE TABLE SmartMeterUsageData (
 	Timestamp DATETIME       NOT NULL,
 	Type      VARCHAR(15)    NOT NULL,
 	Modified  DATETIME       NULL,
+    WeekDay   VARCHAR(3)     GENERATED ALWAYS AS (SUBSTR(DAYNAME(Timestamp), 1, 3)),
     Reading   DECIMAL(10, 2) NOT NULL DEFAULT 0,
 	Comment   VARCHAR(1000),
 	PRIMARY KEY (Timestamp, Type)
@@ -470,3 +470,20 @@ BEGIN
 END;//
 
 DELIMITER ;
+
+DROP TABLE IF EXISTS ChargeSessionStats;
+
+CREATE TABLE ChargeSessionStats (
+  SessionStart    DATETIME NOT NULL,
+  MeterStart      DATETIME     DEFAULT NULL,
+  Kwh             DECIMAL(6,2) DEFAULT NULL,
+  OpKwH           DECIMAL(6,2) DEFAULT NULL,
+  OpDerivation    VARCHAR(20)  DEFAULT NULL,
+  OpKwhFromCost   DECIMAL(6,2) DEFAULT NULL,
+  OpKwhFromRatio  DECIMAL(6,2) DEFAULT NULL,
+  OpKwhFromApprox DECIMAL(6,2) DEFAULT NULL,
+  PkRate          DECIMAL(6,2) DEFAULT NULL,
+  OpRate          DECIMAL(6,2) DEFAULT NULL,
+  Cost            DECIMAL(6,2) DEFAULT NULL,
+  PRIMARY KEY (SessionStart)
+);
