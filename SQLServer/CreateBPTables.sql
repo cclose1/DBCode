@@ -25,8 +25,7 @@ CREATE TABLE Measure(
 	Orientation int           NULL,
 	PRIMARY KEY (
 		Individual ASC,
-		Timestamp ASC,
-		Side      ASC)
+		Timestamp ASC)
 )
 GO
 DROP TABLE MeasureABPM
@@ -45,8 +44,7 @@ CREATE TABLE MeasureABPM(
 	MAP         INT           NULL,
 	PRIMARY KEY (
 		Individual ASC,
-		Timestamp ASC,
-		Side ASC
+		Timestamp ASC
 	)
 )
 GO
