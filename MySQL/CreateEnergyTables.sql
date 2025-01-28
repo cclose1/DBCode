@@ -315,6 +315,7 @@ DROP TABLE IF EXISTS Meter;
 CREATE TABLE Meter (
 	Identifier VARCHAR(15)    NOT NULL,
 	Type       VARCHAR(15)    NOT NULL,
+    DeviceId   VARCHAR(30)    NULL,
 	Modified   DATETIME       NULL,    
 	Installed  DATETIME       NOT NULL,
     Removed    DATETIME       NULL,

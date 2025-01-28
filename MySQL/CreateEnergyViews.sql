@@ -384,3 +384,36 @@ FROM (
         Reading
 	FROM Expenditure.SmartMeterUsageData) UD
     GROUP BY Date, Hour, Type;
+    
+DROP VIEW IF EXISTS SmartMeterDailyData;
+
+CREATE VIEW SmartMeterDailyData AS
+    SELECT
+	AL.Date,
+    AL.Type,
+    AL.WeekDay,
+    AL.Hours,
+    AL.ReadingChange,
+    Coalesce(OP.Hours, 0)         AS OPHours,
+    Coalesce(Op.ReadingChange, 0) AS OPReadingChange
+FROM (
+	SELECT 
+		Date,
+		Type,
+		Count(*)     AS Hours,
+		Min(Weekday) AS WeekDay,
+		Sum(Reading) AS ReadingChange
+	FROM Expenditure.SmartMeterHourlyData
+	GROUP BY  Date, Type) AL
+LEFT JOIN (
+	SELECT 
+		Date,
+		Type,
+		Count(*)     AS Hours,
+		Min(Weekday) AS WeekDay,
+		Sum(Reading) AS ReadingChange
+	FROM Expenditure.SmartMeterHourlyData
+	WHERE Peak = 'N'
+	GROUP BY  Date, Type) OP
+ON  AL.Date = OP.Date
+AND AL.Type = OP.TYpe;
