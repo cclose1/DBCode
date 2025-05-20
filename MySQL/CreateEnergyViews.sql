@@ -241,10 +241,8 @@ SELECT
 	J1.Timestamp                         AS Start,
     J1.Identifier                        AS Meter,
     J1.Type,
-    J1.Estimated                         AS StartEstimated,
     J1.Weekday,
     J2.Timestamp                         AS 'End',
-    J2.Estimated                         AS EndEstimated,
     DATEDIFF(J2.Timestamp, J1.Timestamp) AS Days,
     J1.Reading                           AS StartReading,
     J2.Reading                           AS EndReading,
@@ -252,7 +250,7 @@ SELECT
     J2.Reading - J1.Reading              AS ReadingChange,
     CASE J1.Type
       WHEN 'Gas' THEN 
-        UnitsToKwh(J2.TruncReading - J1.TruncReading, TR.CalorificValue)
+        UnitsToKwhByDate(J2.TruncReading - J1.TruncReading, J1.Timestamp)
       ELSE 
 		J2.TruncReading - J1.TruncReading
       END AS Kwh,
@@ -260,7 +258,7 @@ SELECT
     TR.UnitRate,
     TR.OffPeakRate,
     TR.StandingCharge,
-    TR.CalorificValue,
+    GetCalorificValue(J1.Timestamp) AS CalorificValue,
     J1.Comment
 FROM (
 SELECT 
@@ -270,7 +268,6 @@ SELECT
         MT.Type,
         MRT.Tariff,
         Reading,
-        Estimated,
         TRUNCATE(Reading, 0)                                     AS TruncReading,
 		ROW_NUMBER() OVER (PARTITION BY Identifier, Type ORDER BY Timestamp) AS SeqNo,
         MR.Comment
@@ -290,7 +287,6 @@ SELECT
         MT.Identifier,
         MT.Type,
         Reading,
-        Estimated,
         TRUNCATE(Reading, 0)                                     AS TruncReading,
 		ROW_NUMBER() OVER (PARTITION BY Identifier, Type ORDER BY Timestamp) AS SeqNo,
         MR.Comment
@@ -324,6 +320,109 @@ SELECT
            Days * StandingCharge) / 100, 2)                             AS TotalCost,
            COALESCE(ROUND((UnitRate -OffPeakRate) * OPKwh / 100, 2), 0) AS OffPeakSaving
 FROM BoundedReading BR
+JOIN  (
+	SELECT
+		BRI.Meter,
+		Start,
+		COALESCE(Count(*), 0)     AS Count,
+		COALESCE(Sum(OPI.Kwh), 0) AS OPKwh
+	FROM BoundedReading BRI
+	LEFT JOIN MeterOffpeak   OPI
+	ON  BRI.Meter = OPI.Meter
+	AND OPI.Timestamp >= BRI.Start AND OPI.Timestamp < BRI.End
+	GROUP BY BRI.Meter, Start ) OP
+ON  BR.Meter = OP.Meter
+AND BR.Start = OP.Start;
+
+
+DROP VIEW IF EXISTS BoundedReadingMon;
+
+CREATE VIEW BoundedReadingMon AS
+SELECT
+	J1.Timestamp                         AS Start,
+    J1.Identifier                        AS Meter,
+    J1.Type,
+    J1.Weekday,
+    J2.Timestamp                         AS 'End',
+    DATEDIFF(J2.Timestamp, J1.Timestamp) AS Days,
+    J1.Reading                           AS StartReading,
+    J2.Reading                           AS EndReading,
+    J1.SeqNo,
+    J2.Reading - J1.Reading              AS ReadingChange,
+    CASE J1.Type
+      WHEN 'Gas' THEN 
+        UnitsToKwhByDate(J2.TruncReading - J1.TruncReading, J1.Timestamp)
+      ELSE 
+		J2.TruncReading - J1.TruncReading
+      END AS Kwh,
+    J1.Tariff,
+    TR.UnitRate,
+    TR.OffPeakRate,
+    TR.StandingCharge,
+    GetCalorificValue(J1.Timestamp) AS CalorificValue,
+    J1.Comment
+FROM (
+SELECT 
+		Timestamp,
+        Weekday,
+        MT.Identifier,
+        MT.Type,
+        MRT.Tariff,
+        Reading,
+        TRUNCATE(Reading, 0)                                     AS TruncReading,
+		ROW_NUMBER() OVER (PARTITION BY Identifier, Type ORDER BY Timestamp) AS SeqNo,
+        MR.Comment
+	FROM MeterReading MR
+    JOIN Meter AS MT
+    ON  MR.Meter    = MT.Identifier 
+    AND MR.Timestamp >= MT.Installed
+    AND (MT.Removed IS NULL OR MR.Timestamp < MT.Removed)
+    JOIN MeterReadingTariff MRT
+    ON MRT.Meter      = MT.Identifier
+    AND MR.Timestamp >= MRT.Start
+    AND MR.WeekDay    = 'Mon'
+    AND (MRT.End IS NULL OR MR.Timestamp < MRT.End)) AS J1
+JOIN (
+SELECT 
+		Timestamp,
+        Weekday,
+        MT.Identifier,
+        MT.Type,
+        Reading,
+        TRUNCATE(Reading, 0)                                     AS TruncReading,
+		ROW_NUMBER() OVER (PARTITION BY Identifier, Type ORDER BY Timestamp) AS SeqNo,
+        MR.Comment
+	FROM MeterReading MR
+    JOIN Meter AS MT
+    ON  MR.Meter      = MT.Identifier 
+    AND MR.Timestamp >= MT.Installed
+    AND MR.WeekDay    = 'Mon'
+    AND (MT.Removed IS NULL OR MR.Timestamp < MT.Removed)) AS J2
+	ON J1.SeqNo       = J2.SeqNo - 1
+    AND J1.Identifier = J2.Identifier
+	AND J1.Type       = J2.Type
+LEFT JOIN Tariff  TR 
+ON   J1.Timestamp >= TR.Start 
+AND (J1.Timestamp <  TR.End OR TR.End IS NULL)
+AND TR.Code        = J1.Tariff
+AND TR.Type        = J1.Type;
+
+DROP VIEW IF EXISTS CostedReadingMon;
+
+CREATE VIEW CostedReadingMon AS
+SELECT 
+	BR.*,
+    OP.OPKwh                                                            AS OffPeakKwh,    
+    BR.Kwh - OPKwh                                                      AS PeakKwh,
+    ROUND(UnitRate * Kwh / 100, 2)                                      AS KwhCost,
+    ROUND(Days * StandingCharge / 100, 2)                               AS StdCost,
+    ROUND(UnitRate * (Kwh - OPKwh) / 100, 2)                            AS PeakKwhCost,
+    COALESCE(ROUND(OffPeakRate * OPKwh / 100, 2), 0)                    AS OffPeakKwhCost,
+    ROUND((UnitRate * (Kwh - OPKwh) + 
+           COALESCE(OffPeakRate * OPKwh, 0) + 
+           Days * StandingCharge) / 100, 2)                             AS TotalCost,
+           COALESCE(ROUND((UnitRate -OffPeakRate) * OPKwh / 100, 2), 0) AS OffPeakSaving
+FROM BoundedReadingMon BR
 JOIN  (
 	SELECT
 		BRI.Meter,
@@ -417,3 +516,24 @@ LEFT JOIN (
 	GROUP BY  Date, Type) OP
 ON  AL.Date = OP.Date
 AND AL.Type = OP.TYpe;
+
+DROP VIEW IF EXISTS BoundedCalorificValue;
+
+CREATE VIEW BoundedCalorificValue AS
+SELECT 
+	J1.Date   AS Start,
+    J2.Date   AS End,
+    J1.Value  AS Value
+FROM (    
+	SELECT 
+		ROW_NUMBER ( ) OVER (ORDER BY Date) Num, 
+	    Date,
+		Value
+    FROM Expenditure.CalorificValue) J1	
+	LEFT OUTER JOIN (
+	SELECT 
+		Date,
+		ROW_NUMBER ( ) OVER (ORDER BY Date ) Num,
+        Value
+	FROM Expenditure.CalorificValue) J2
+ON J2.Num = J1.Num + 1;

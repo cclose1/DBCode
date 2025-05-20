@@ -256,6 +256,32 @@ VALUES
 ('Scottish Power', 'Standard', 'SSEStd'),
 ('Scottish Power', 'Test',     'SSTest');
 
+DROP TABLE IF EXISTS CalorificValue;
+
+CREATE TABLE CalorificValue (
+	Timestamp DATETIME      NOT NULL,
+	Modified  DATETIME      NOT NULL,
+    Value     DECIMAL(8, 3) NULL,
+	Comment   VARCHAR(1000),
+	PRIMARY KEY (Timestamp)
+);
+
+DELIMITER //
+
+CREATE TRIGGER InsCalorificValue BEFORE INSERT ON CalorificValue
+FOR EACH ROW
+BEGIN
+	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
+END;//
+
+CREATE TRIGGER UpdCalorificValue BEFORE UPDATE ON CalorificValue
+FOR EACH ROW
+BEGIN
+	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
+END;//
+
+DELIMITER ;
+
 DROP TABLE IF EXISTS Tariff;
 
 CREATE TABLE Tariff (
@@ -269,7 +295,6 @@ CREATE TABLE Tariff (
     OffPeakStart   TIME,
     OffPeakEnd     TIME,
 	StandingCharge DECIMAL(8, 3) NULL,
-    CalorificValue DECIMAL(8, 3) NULL,
 	Comment        VARCHAR(1000),
 	PRIMARY KEY (Start, Type)
 );
@@ -357,8 +382,9 @@ CREATE TABLE MeterReading (
 	Timestamp  DATETIME       NOT NULL,
 	Modified   DATETIME       NULL,
     WeekDay    VARCHAR(3)     GENERATED ALWAYS AS (SUBSTR(DAYNAME(Timestamp), 1, 3)),
-	Reading    DECIMAL(10, 2) NULL,
-    Estimated  CHAR(1)        NULL,
+	Reading    DECIMAL(10, 3) NULL,
+    Status     VARCHAR(10)    NULL,
+    Source     VARCHAR(10)    NULL,
 	Comment    VARCHAR(1000),
 	PRIMARY KEY (Meter, Timestamp)
 );
@@ -385,7 +411,7 @@ CREATE TABLE MeterOffPeak (
 	Timestamp  DATETIME       NOT NULL,
 	Modified   DATETIME       NULL,
     WeekDay    VARCHAR(3)     GENERATED ALWAYS AS (SUBSTR(DAYNAME(Timestamp), 1, 3)),
-    Kwh        DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    Kwh        DECIMAL(10, 3) NOT NULL DEFAULT 0,
     Minutes    INT,
 	Comment    VARCHAR(1000),
 	PRIMARY KEY (Meter, Timestamp)
@@ -448,10 +474,11 @@ DROP TABLE IF EXISTS SmartMeterUsageData;
 
 CREATE TABLE SmartMeterUsageData (
 	Timestamp DATETIME       NOT NULL,
+    Start     DATETIME       AS (SUBTIME(Timestamp, 3000)),
 	Type      VARCHAR(15)    NOT NULL,
 	Modified  DATETIME       NULL,
     WeekDay   VARCHAR(3)     GENERATED ALWAYS AS (SUBSTR(DAYNAME(Timestamp), 1, 3)),
-    Reading   DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    Reading   DECIMAL(10, 3) NOT NULL DEFAULT 0,
 	Comment   VARCHAR(1000),
 	PRIMARY KEY (Timestamp, Type)
 );
@@ -465,6 +492,35 @@ BEGIN
 END;//
 
 CREATE TRIGGER UpdSmartMeterUsageData BEFORE UPDATE ON SmartMeterUsageData
+FOR EACH ROW
+BEGIN
+	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
+END;//
+
+DELIMITER ;
+
+DROP TABLE IF EXISTS OctEnSMData;
+
+CREATE TABLE OctEnSMData (
+	Start     DATETIME       NOT NULL,
+    End       DATETIME       NULL,
+	Type      VARCHAR(15)    NOT NULL,
+	Modified  DATETIME       NULL,
+    WeekDay   VARCHAR(3)     GENERATED ALWAYS AS (SUBSTR(DAYNAME(Start), 1, 3)),
+    Reading   DECIMAL(10, 3) NOT NULL DEFAULT 0,
+	Comment   VARCHAR(1000),
+	PRIMARY KEY (Start, Type)
+);
+
+DELIMITER //
+
+CREATE TRIGGER InsOctEnSMData BEFORE INSERT ON OctEnSMData
+FOR EACH ROW
+BEGIN
+	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
+END;//
+
+CREATE TRIGGER UpdOctEnSMData BEFORE UPDATE ON OctEnSMData
 FOR EACH ROW
 BEGIN
 	SET NEW.Modified = COALESCE(NEW.Modified, NOW());

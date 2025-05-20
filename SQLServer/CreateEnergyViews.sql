@@ -256,10 +256,8 @@ SELECT
 	J1.Timestamp                              AS Start,
     J1.Identifier                             AS Meter,
     J1.Type,
-    J1.Estimated                              AS StartEstimated,
     J1.Weekday,
     J2.Timestamp                              AS 'End',
-    J2.Estimated                              AS EndEstimated,
     DATEDIFF(Day, J1.Timestamp, J2.Timestamp) AS Days,
     J1.Reading                                AS StartReading,
     J2.Reading                                AS EndReading,
@@ -267,14 +265,14 @@ SELECT
     J2.Reading - J1.Reading                   AS ReadingChange,
     CASE J1.Type
       WHEN 'Gas' THEN 
-        dbo.UnitsToKwh(J2.TruncReading - J1.TruncReading, TR.CalorificValue)
+        dbo.UnitsToKwhByDate(J2.TruncReading - J1.TruncReading, J1.Timestamp)
       ELSE 
 		J2.TruncReading - J1.TruncReading
       END                                     AS Kwh,
     TR.UnitRate,
 	TR.OffPeakRate,
     TR.StandingCharge,
-    TR.CalorificValue,
+    dbo.GetCalorificValue(J1.Timestamp) AS CalorificValue,
     J1.Comment
 FROM (
 	SELECT 
@@ -284,7 +282,6 @@ FROM (
         MT.Type,
         MRT.Tariff,
         Reading,
-        Estimated,
         ROUND(Reading, 0)                                                    AS TruncReading,
 		ROW_NUMBER() OVER (PARTITION BY Identifier, Type ORDER BY Timestamp) AS SeqNo,
         MR.Comment
@@ -304,7 +301,6 @@ JOIN (
 		MT.Identifier,
         MT.Type,
         Reading,
-        Estimated,
         ROUND(Reading, 0)                                                    AS TruncReading,
 		ROW_NUMBER() OVER (PARTITION BY Identifier, Type ORDER BY Timestamp) AS SeqNo,
 		MR.Comment
@@ -356,7 +352,7 @@ ON  BR.Meter = OP.Meter
 AND BR.Start = OP.Start
 GO
 
-DROP VIEW IF EXISTS SessionChargeDetails;
+DROP VIEW IF EXISTS SessionChargeDetails
 GO
 
 CREATE VIEW SessionChargeDetails AS
@@ -374,3 +370,27 @@ SELECT
     COALESCE(ChargeDuration, CAST(([End] - Start) AS TIME(0))) AS ChargeDuration,
 	DATEDIFF(SECOND, '1/1/1900', CONVERT(DATETIME, COALESCE(ChargeDuration, CAST(([End] - Start) AS TIME(0))))) / 60.0 AS ChargeDurationMinutes
 FROM ChargeSession;
+GO
+
+DROP VIEW IF EXISTS BoundedCalorificValue
+GO
+
+CREATE VIEW BoundedCalorificValue AS
+SELECT 
+	J1.Date  AS Start,
+    J2.Date  AS [End],
+    J2.Value AS Value
+FROM (    
+	SELECT 
+		ROW_NUMBER ( ) OVER (ORDER BY Date) Num, 
+	    Date,
+		Value
+    FROM CalorificValue) J1	
+	LEFT OUTER JOIN (
+	SELECT 
+		Date,
+		ROW_NUMBER ( ) OVER (ORDER BY Date ) Num,
+        Value
+	FROM CalorificValue) J2
+ON J2.Num = J1.Num + 1
+GO

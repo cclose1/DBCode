@@ -79,13 +79,11 @@ AS
 BEGIN
 	DECLARE @calVal AS DECIMAL(10, 3)
     
-    SELECT  @calval = CalorificValue
-	FROM Tariff
+    SELECT  @calval = Value
+	FROM BoundedCalorificValue
 	WHERE  
 		@Date >= Start
         AND (@Date < [End] OR [End] IS NULL)
-        AND Code = 'SSEStd'
-        AND Type = 'Gas';
 
 	RETURN dbo.UnitsToKwh(@units, @calVal)
 END
@@ -165,5 +163,26 @@ BEGIN
     EXEC AppendAggregateField  @fields OUTPUT, 'PetrolCost',  'Sum-'
 	
 	EXEC SelectQuery 'Expenditure.dbo.SessionUsage', @fields, @whereCl, @groupBy, @orderBy, @printSQL
+END
+GO
+
+IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'dbo.GetCalorificValue') and OBJECTPROPERTY(id, N'IsScalarFunction') = 1)
+	DROP FUNCTION dbo.GetCalorificValue
+GO
+
+CREATE FUNCTION GetCalorificValue (@date Date)
+	RETURNS DECIMAL(10, 3)
+AS
+BEGIN
+	DECLARE @calval DECIMAL(10, 3);
+    
+    SELECT 
+		@calval = [Value]
+	FROM BoundedCalorificValue
+	WHERE  
+		@date >= Start
+        AND (@date < [End] OR [End] IS NULL);
+        
+	RETURN @calval;
 END
 GO

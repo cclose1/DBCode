@@ -4,11 +4,45 @@ DROP FUNCTION IF EXISTS UnitsToKwh;
 
 DELIMITER $$
 
-CREATE FUNCTION UnitsToKwh (Units  DECIMAL(10,2), CalorificValue DECIMAL(10,2))
-	RETURNS DECIMAL(10, 2)
+CREATE FUNCTION UnitsToKwh (Units  DECIMAL(10,3), CalorificValue DECIMAL(10,3))
+	RETURNS DECIMAL(10, 3)
 	DETERMINISTIC
 BEGIN
 	RETURN 1.02264 * Units * CalorificValue / 3.6;
+END$$
+
+DELIMITER ;
+
+DROP FUNCTION IF EXISTS KwhToUnits;
+
+DELIMITER $$
+
+CREATE FUNCTION KwhToUnits (Kwh DECIMAL(10,3), CalorificValue DECIMAL(10,3))
+	RETURNS DECIMAL(10, 3)
+	DETERMINISTIC
+BEGIN
+	RETURN 3.6 * Kwh / CalorificValue / 1.02264;
+END$$
+
+DELIMITER ;
+
+DROP FUNCTION IF EXISTS GetCalorificValue;
+
+DELIMITER $$
+
+CREATE FUNCTION GetCalorificValue (Date Date)
+	RETURNS DECIMAL(10, 3) DETERMINISTIC
+BEGIN
+	DECLARE CalVal DECIMAL(10, 3);
+    
+    SELECT 
+		Value INTO Calval
+	FROM BoundedCalorificValue
+	WHERE  
+		Date >= Start
+        AND (Date < End OR End IS NULL);
+        
+	RETURN CalVal;
 END$$
 
 DELIMITER ;
@@ -17,21 +51,39 @@ DROP FUNCTION IF EXISTS UnitsToKwhByDate;
 
 DELIMITER $$
 
-CREATE FUNCTION UnitsToKwhByDate (Units  DECIMAL(10,2), Date Date)
-	RETURNS DECIMAL(10, 2) DETERMINISTIC
+CREATE FUNCTION UnitsToKwhByDate (Units  DECIMAL(10,3), Date Date)
+	RETURNS DECIMAL(10, 3) DETERMINISTIC
 BEGIN
 	DECLARE CalVal DECIMAL(10, 3);
     
     SELECT 
-		CalorificValue INTO Calval
-	FROM Tariff
+		Value INTO Calval
+	FROM BoundedCalorificValue
 	WHERE  
 		Date >= Start
-        AND (Date < End OR End IS NULL)
-        AND Name = 'SSEStd'
-        AND Type = 'Gas';
+        AND (Date < End OR End IS NULL);
         
 	RETURN UnitsToKwh(Units, CalVal);
+END$$
+
+DELIMITER ;
+DROP FUNCTION IF EXISTS KwhToUnitsByDate;
+
+DELIMITER $$
+
+CREATE FUNCTION KwhToUnitsByDate (Kwh DECIMAL(10,3), Date Date)
+	RETURNS DECIMAL(10, 3) DETERMINISTIC
+BEGIN
+	DECLARE CalVal DECIMAL(10, 3);
+    
+    SELECT 
+		Value INTO Calval
+	FROM BoundedCalorificValue
+	WHERE  
+		Date >= Start
+        AND (Date < End OR End IS NULL);
+        
+	RETURN KwhToUnits(Kwh, CalVal);
 END$$
 
 DELIMITER ;

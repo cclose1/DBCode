@@ -256,6 +256,32 @@ GO
 CREATE UNIQUE INDEX trnamecode ON TariffName(Code)
 GO
 
+DROP TABLE IF EXISTS CalorificValue;
+
+CREATE TABLE CalorificValue (
+	Date     DATE      NOT NULL,
+	Modified DATETIME      NULL,
+    Value    DECIMAL(8, 3) NULL,
+	Comment  VARCHAR(1000),
+	PRIMARY KEY (Date)
+)
+GO
+
+
+CREATE TRIGGER CalorificValueModified ON CalorificValue AFTER INSERT, UPDATE
+AS 
+BEGIN
+	SET NOCOUNT ON;
+
+    -- Insert statements for trigger here
+	UPDATE TR
+		SET Modified = CASE WHEN UPDATE(Modified) AND TR.Modified IS NOT NULL THEN inserted.Modified ELSE BloodPressure.dbo.RemoveFractionalSeconds(GETDATE()) END
+	FROM CalorificValue TR
+	JOIN inserted 
+	ON  TR.Date = inserted.Date
+END
+GO
+
 DROP TABLE IF EXISTS Tariff
 GO
 
@@ -270,7 +296,6 @@ CREATE TABLE Tariff (
 	OffPeakStart   TIME(0)       NULL,
 	OffPeakEnd     TIME(0)       NULL,
 	StandingCharge DECIMAL(8, 3) NULL,
-	CalorificValue DECIMAL(8, 3) NULL,
 	Comment        VARCHAR(1000),
 	PRIMARY KEY (Start, Type)
 )
@@ -328,8 +353,9 @@ CREATE TABLE MeterReading (
 	Timestamp  DATETIME       NOT NULL,
 	Modified   DATETIME       NULL,
     WeekDay                  AS (SUBSTRING(DATENAME(weekday, Timestamp),1, 3)),
-	Reading    DECIMAL(10, 2) NULL,
-    Estimated  CHAR(1)        NULL,
+	Reading    DECIMAL(10, 3) NULL,
+    Status     VARCHAR(10)    NULL,
+    Source     VARCHAR(10)    NULL,
 	Comment    VARCHAR(1000),
 	PRIMARY KEY (Meter, Timestamp)
 )
@@ -358,7 +384,7 @@ CREATE TABLE MeterOffPeak (
 	Timestamp  DATETIME       NOT NULL,
 	Modified   DATETIME       NULL,
     WeekDay                   AS (SUBSTRING(DATENAME(weekday, Timestamp),1, 3)),
-    Kwh        DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    Kwh        DECIMAL(10, 3) NOT NULL DEFAULT 0,
     Minutes    INT,
 	Comment    VARCHAR(1000),
 	PRIMARY KEY (Meter, Timestamp)
@@ -412,12 +438,12 @@ GO
 
 DROP TABLE IF EXISTS SmartMeterUsageData
 GO
-
 CREATE TABLE SmartMeterUsageData (
 	Timestamp DATETIME       NOT NULL,
+    Start     AS   (DATEADD(MINUTE, -30, Timestamp)),
 	Type      VARCHAR(15)    NOT NULL,
 	Modified  DATETIME       NULL,
-    Reading   DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    Reading   DECIMAL(10, 3) NOT NULL DEFAULT 0,
 	Comment   VARCHAR(1000),
 	PRIMARY KEY (Timestamp, Type)
 )
