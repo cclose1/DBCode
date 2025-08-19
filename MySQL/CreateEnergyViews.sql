@@ -470,13 +470,13 @@ SELECT
     SUM(Reading) AS Reading
 FROM (
 	SELECT 
-		DATE(Timestamp)  AS Date,
-		HOUR(Timestamp)  AS Hour,
+		DATE(End)  AS Date,
+		HOUR(End)  AS Hour,
         Type,
 		CASE 
-			WHEN Type = 'Electric' AND HOUR(Timestamp) BETWEEN 0 AND 4 THEN 
+			WHEN Type = 'Electric' AND HOUR(End) BETWEEN 0 AND 4 THEN 
 				'N'
-			WHEN Type = 'Electric' AND HOUR(Timestamp) BETWEEN 5 AND 24 THEN 
+			WHEN Type = 'Electric' AND HOUR(End) BETWEEN 5 AND 24 THEN 
 				'Y'
 			ELSE null
 		END AS Peak,
@@ -537,3 +537,55 @@ FROM (
         Value
 	FROM Expenditure.CalorificValue) J2
 ON J2.Num = J1.Num + 1;
+
+DROP VIEW IF EXISTS SmartMeterUsageKwh;
+
+CREATE VIEW SmartMeterUsageKwh AS
+SELECT 
+	Start,
+    End,
+    Type,
+    Year(Start)      AS Year,
+    DayOfYear(Start) AS Day,
+    Hour(Start)      AS Hour,
+    Month(Start)     AS Month,
+    Week(Start)      AS Week,
+    Weekday,
+    Reading,    
+    CASE
+      WHEN Type = 'Gas' THEN 
+        UnitsToKwhByDate(Reading, Start)
+      ELSE 
+        Reading
+	  END AS Kwh,
+      Comment
+    FROM Expenditure.SmartMeterUsageData;
+
+DROP VIEW IF EXISTS SolarGain;
+
+CREATE VIEW SolarGain AS    
+SELECT 
+	J1.Timestamp AS Start,
+    J2.Timestamp AS End,
+    DATEDIFF(J2.Timestamp, J1.Timestamp) AS DiffDays,
+    J1.Reading,
+    J2.Reading - J1.Reading AS Gain    
+FROM (
+	SELECT
+		Timestamp,
+		ROW_NUMBER () OVER (ORDER BY Timestamp) Num,
+        Reading
+	FROM expenditure.meterreading MR
+	JOIN expenditure.meter        MT
+	ON MR.Meter = MT.Identifier
+	WHERE MT.Type = 'Solar' AND Reading IS NOT NULL) J1
+JOIN (
+	SELECT
+		Timestamp,
+		ROW_NUMBER () OVER (ORDER BY Timestamp) Num,
+        Reading
+	FROM expenditure.meterreading MR
+	JOIN expenditure.meter        MT
+	ON MR.Meter = MT.Identifier
+	WHERE MT.Type = 'Solar' AND Reading IS NOT NULL) J2
+ON J1.NUM + 1 = J2.Num;

@@ -435,17 +435,17 @@ BEGIN
 END
 GO
 
-
 DROP TABLE IF EXISTS SmartMeterUsageData
 GO
 CREATE TABLE SmartMeterUsageData (
-	Timestamp DATETIME       NOT NULL,
-    Start     AS   (DATEADD(MINUTE, -30, Timestamp)),
+	Start     DATETIME       NOT NULL,
+    [End]     DATETIME       NOT NULL,
 	Type      VARCHAR(15)    NOT NULL,
+    WeekDay                  AS (SUBSTRING(DATENAME(weekday, Start),1, 3)),
 	Modified  DATETIME       NULL,
     Reading   DECIMAL(10, 3) NOT NULL DEFAULT 0,
 	Comment   VARCHAR(1000),
-	PRIMARY KEY (Timestamp, Type)
+	PRIMARY KEY (Start, Type)
 )
 GO
 
@@ -459,8 +459,8 @@ BEGIN
 		SET Modified = CASE WHEN UPDATE(Modified) AND SU.Modified IS NOT NULL THEN inserted.Modified ELSE BloodPressure.dbo.RemoveFractionalSeconds(GETDATE()) END
 	FROM SmartMeterUsageData SU
 	JOIN inserted 
-	ON  SU.Timestamp = inserted.Timestamp
-	AND SU.Type      = inserted.Type
+	ON  SU.Start = inserted.Start
+	AND SU.Type  = inserted.Type
 END
 GO
 

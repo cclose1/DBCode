@@ -469,36 +469,6 @@ VALUES
 ('Elect2',  '2024-03-13 00:00:00', NULL, 'SSEVSv'),
 ('Gas2',    '2024-03-13 00:00:00', NULL, 'SSEVSv');
 
-
-DROP TABLE IF EXISTS SmartMeterUsageData;
-
-CREATE TABLE SmartMeterUsageData (
-	Timestamp DATETIME       NOT NULL,
-    Start     DATETIME       AS (SUBTIME(Timestamp, 3000)),
-	Type      VARCHAR(15)    NOT NULL,
-	Modified  DATETIME       NULL,
-    WeekDay   VARCHAR(3)     GENERATED ALWAYS AS (SUBSTR(DAYNAME(Timestamp), 1, 3)),
-    Reading   DECIMAL(10, 3) NOT NULL DEFAULT 0,
-	Comment   VARCHAR(1000),
-	PRIMARY KEY (Timestamp, Type)
-);
-
-DELIMITER //
-
-CREATE TRIGGER InsSmartMeterUsageData BEFORE INSERT ON SmartMeterUsageData
-FOR EACH ROW
-BEGIN
-	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
-END;//
-
-CREATE TRIGGER UpdSmartMeterUsageData BEFORE UPDATE ON SmartMeterUsageData
-FOR EACH ROW
-BEGIN
-	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
-END;//
-
-DELIMITER ;
-
 DROP TABLE IF EXISTS OctEnSMData;
 
 CREATE TABLE OctEnSMData (
@@ -528,6 +498,42 @@ END;//
 
 DELIMITER ;
 
+DROP TABLE IF EXISTS PeakTariffOverride;
+
+CREATE TABLE PeakTariffOverride (
+	Start     DATETIME       NOT NULL,
+    WeekDay   VARCHAR(3)     GENERATED ALWAYS AS (SUBSTR(DAYNAME(Start), 1, 3)),
+    End       DATETIME       NOT NULL,
+	Type      VARCHAR(15)    NOT NULL DEFAULT 'Electric',
+	Modified  DATETIME       NULL,
+	Comment   VARCHAR(1000),
+	PRIMARY KEY (Start, Type)
+);
+
+DELIMITER //
+
+CREATE TRIGGER InsPeakTariffOverride BEFORE INSERT ON PeakTariffOverride
+FOR EACH ROW
+BEGIN
+	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
+END;//
+
+CREATE TRIGGER UpdPeakTariffOverride BEFORE UPDATE ON PeakTariffOverride
+FOR EACH ROW
+BEGIN
+	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
+END;//
+
+DELIMITER ;
+
+INSERT INTO Expenditure.PeakTariffOverride(Start, End) VALUES 
+('2025-05-16 04:30:00', '2025-05-16 5:0:00'),
+('2025-05-17 05:00:00', '2025-05-17 6:00:00'),
+('2025-05-18 04:30:00', '2025-05-18 6:00:00'),
+('2025-05-21 04:30:00', '2025-05-21 5:00:00'),
+('2025-05-23 04:30:00', '2025-05-23 5:00:00'),
+('2025-05-25 04:30:00', '2025-05-25 6:00:00');
+
 DROP TABLE IF EXISTS ChargeSessionStats;
 
 CREATE TABLE ChargeSessionStats (
@@ -544,3 +550,32 @@ CREATE TABLE ChargeSessionStats (
   Cost            DECIMAL(6,2) DEFAULT NULL,
   PRIMARY KEY (SessionStart)
 );
+
+DROP TABLE IF EXISTS SmartMeterUsageData;
+
+CREATE TABLE SmartMeterUsageData (
+	Start     DATETIME       NOT NULL,
+    End       DATETIME       NOT NULL,
+	Type      VARCHAR(15)    NOT NULL,
+	Modified  DATETIME       NULL,
+    WeekDay   VARCHAR(3)     GENERATED ALWAYS AS (SUBSTR(DAYNAME(Start), 1, 3)),
+    Reading   DECIMAL(10, 3) NOT NULL DEFAULT 0,
+	Comment   VARCHAR(1000),
+	PRIMARY KEY (Start, Type)
+);
+
+DELIMITER //
+
+CREATE TRIGGER InsSmartMeterUsageData BEFORE INSERT ON SmartMeterUsageData
+FOR EACH ROW
+BEGIN
+	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
+END;//
+
+CREATE TRIGGER UpdSmartMeterUsageData BEFORE UPDATE ON SmartMeterUsageData
+FOR EACH ROW
+BEGIN
+	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
+END;//
+
+DELIMITER ;

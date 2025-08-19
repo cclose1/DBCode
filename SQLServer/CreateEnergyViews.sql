@@ -394,3 +394,88 @@ FROM (
 	FROM CalorificValue) J2
 ON J2.Num = J1.Num + 1
 GO
+
+DROP VIEW IF EXISTS SmartMeterHourlyData;
+GO
+
+CREATE VIEW SmartMeterHourlyData AS
+SELECT
+	Date,
+    Hour,
+    Year(Date)                              AS Year,
+    DATEPART(week, Date)                    AS Week,
+	SUBSTRING(DATENAME(weekday, Date),1, 3) AS Weekday,
+    Type,    
+    Min(Peak)                               AS Peak,
+    SUM(Reading)                            AS Reading
+FROM (
+	SELECT 
+		CAST([End] AS Date)   AS Date,
+		DATEPART(hour, [End]) AS Hour,
+        Type,
+		CASE 
+			WHEN Type = 'Electric' AND DATEPART(hour, [End]) BETWEEN 0 AND 4 THEN 
+				'N'
+			WHEN Type = 'Electric' AND DATEPART(hour, [End]) BETWEEN 5 AND 24 THEN 
+				'Y'
+			ELSE null
+		END AS Peak,
+        Reading
+	FROM SmartMeterUsageData) UD
+    GROUP BY Date, Hour, Type;
+ GO
+ 
+DROP VIEW IF EXISTS SmartMeterDailyData;
+GO
+
+CREATE VIEW SmartMeterDailyData AS
+    SELECT
+	AL.Date,
+    AL.Type,
+    AL.WeekDay,
+    AL.Hours,
+    AL.ReadingChange,
+    Coalesce(OP.Hours, 0)         AS OPHours,
+    Coalesce(Op.ReadingChange, 0) AS OPReadingChange
+FROM (
+	SELECT 
+		Date,
+		Type,
+		Count(*)     AS Hours,
+		Min(Weekday) AS WeekDay,
+		Sum(Reading) AS ReadingChange
+	FROM SmartMeterHourlyData
+	GROUP BY  Date, Type) AL
+LEFT JOIN (
+	SELECT 
+		Date,
+		Type,
+		Count(*)     AS Hours,
+		Min(Weekday) AS WeekDay,
+		Sum(Reading) AS ReadingChange
+	FROM SmartMeterHourlyData
+	WHERE Peak = 'N'
+	GROUP BY  Date, Type) OP
+ON  AL.Date = OP.Date
+AND AL.Type = OP.TYpe;
+GO
+
+DROP VIEW IF EXISTS SmartMeterUsageKwh
+GO
+
+CREATE VIEW SmartMeterUsageKwh AS
+SELECT 
+	Start,
+    [End],
+    Type,
+    [Weekday],
+    Reading,    
+    CASE
+      WHEN Type = 'Gas' THEN 
+        dbo.UnitsToKwhByDate(Reading, Start)
+      ELSE 
+        Reading
+	  END Kwh,
+      Comment
+FROM SmartMeterUsageData
+GO

@@ -62,7 +62,7 @@ WHERE Charger    = 'HomePodPoint'
 AND   EndPercent = 100 
 AND   StartPercent < 99
 AND   DurationCalculated = 'N'
-ORDER BY StartPercent DESC;
+ORDER BY Start DESC;
 
 SELECT 
 	*,
@@ -270,7 +270,7 @@ WHERE Charger    = 'HomePodPoint'
 AND   EndPercent = 100 
 AND   StartPercent < 99
 AND   DurationCalculated = 'N'
-ORDER BY PercentGain DESC;
+ORDER BY Start DESC;
 
 SELECT 
 	*,
@@ -428,4 +428,19 @@ SELECT
 LEFT OUTER JOIN expenditure.smartmeterusagedata SM
 ON OC.Start = SM.Start
 AND OC.Type = SM.Type
-WHERE Timestamp IS NULL
+WHERE Timestamp IS NULL;
+
+SELECT 
+	SG.Start,
+    Max(SG.End)                 AS End,
+    Min(DiffDays)               AS Days,
+    Min(Gain)                   AS Gain,
+    SUM(SD.Reading)             AS Export,
+    Min(Gain) - SUM(SD.Reading) AS UsedKwh,
+    Min(SD.Start)               AS SMStart,
+    Max(SD.Start)               AS SMEndh
+FROM expenditure.solargain SG
+JOIN expenditure.smartmeterusagedata SD
+ON SD.Start BETWEEN SG.Start AND SG.End AND SD.Type = 'Export'
+GROUP BY Start
+ORDER BY Start;
