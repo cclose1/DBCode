@@ -460,7 +460,7 @@ ON  AL.Date = OP.Date
 AND AL.Type = OP.TYpe;
 GO
 
-DROP VIEW IF EXISTS SmartMeterUsageKwh
+DROP VIEW IF EXISTS SmartMeterUsageKwh;
 GO
 
 CREATE VIEW SmartMeterUsageKwh AS
@@ -478,4 +478,63 @@ SELECT
 	  END Kwh,
       Comment
 FROM SmartMeterUsageData
+GO
+
+DROP VIEW IF EXISTS SolarReadings;
+GO
+
+CREATE VIEW SolarReadings AS    
+SELECT
+	J1.Timestamp                               AS Start,
+    J2.Timestamp                               AS [End],
+    'Solar'                                    AS Type,
+    Year(J1.Timestamp)                         AS Year,
+	DATEPART(DAYOFYEAR, J1.Timestamp)          AS Day,
+    DATEPART(Hour, J1.Timestamp)               AS Hour,
+    Month(J1.Timestamp)                        AS Month,
+    DATEPART(Week, J1.Timestamp)               AS Week,
+    DATEDIFF(Day, J1.Timestamp, J2.Timestamp) AS Days,
+    J1.Reading                                 AS StartReading,
+    J2.Reading - J1.Reading                    AS Kwh,
+	CAST((J2.Reading - J1.Reading) / DATEDIFF(Day, J1.Timestamp, J2.Timestamp) AS DECIMAL(10, 2)) AS KwhPerDay
+FROM (
+	SELECT
+		Timestamp,
+		ROW_NUMBER () OVER (ORDER BY Timestamp) Num,
+        CAST(Reading AS DECIMAL(10, 1)) AS Reading
+	FROM Meterreading MR
+	JOIN Meter        MT
+	ON MR.Meter = MT.Identifier
+	WHERE MT.Type = 'Solar' AND MR.Reading IS NOT NULL AND (MR.Status <> 'Ignore' OR MR.Status IS NULL)) J1
+JOIN (
+	SELECT
+		Timestamp,
+		ROW_NUMBER () OVER (ORDER BY Timestamp) Num,
+        CAST(Reading AS DECIMAL(10, 1)) AS Reading
+	FROM Meterreading MR
+	JOIN Meter        MT
+	ON MR.Meter = MT.Identifier
+	WHERE MT.Type = 'Solar' AND Reading IS NOT NULL AND (MR.Status <> 'Ignore' OR MR.Status IS NULL)) J2
+ON J1.NUM + 1 = J2.Num;
+GO
+
+DROP VIEW IF EXISTS SolarExportData;
+GO
+
+CREATE VIEW SolarExportData AS    
+SELECT 
+	SR.Start,
+    Max(SR.[End])                                                    AS [End],
+    Min(Days)                                                        AS Days,
+    Min(Kwh)                                                         AS Kwh,
+    SUM(SD.Reading)                                                  AS KwhExported,
+    Min(Kwh) - SUM(SD.Reading)                                       AS KwhUsed,
+    CAST(100 * SUM(SD.Reading) / Min(Kwh)         AS DECIMAL(10, 2)) AS [%Exported],                                                   
+    CAST(Min(Kwh) / Min(Days)                     AS DECIMAL(10, 3)) AS KwhPerDay,
+    CAST(SUM(SD.Reading) / Min(Days)              AS DECIMAL(10, 3)) AS KwhExportedPerDay,
+    CAST((Min(Kwh) - SUM(SD.Reading)) / Min(Days) AS DECIMAL(10, 3)) AS KwhUsedPerDay
+FROM SolarReadings SR
+JOIN SmartMeterUsageData SD
+ON SD.Start BETWEEN SR.Start AND SR.[End] AND SD.Type = 'Export'
+GROUP BY SR.Start
 GO
