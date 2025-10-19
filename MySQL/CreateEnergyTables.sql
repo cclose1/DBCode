@@ -505,6 +505,7 @@ CREATE TABLE PeakTariffOverride (
     WeekDay   VARCHAR(3)     GENERATED ALWAYS AS (SUBSTR(DAYNAME(Start), 1, 3)),
     End       DATETIME       NOT NULL,
 	Type      VARCHAR(15)    NOT NULL DEFAULT 'Electric',
+    Status    VARCHAR(15),
 	Modified  DATETIME       NULL,
 	Comment   VARCHAR(1000),
 	PRIMARY KEY (Start, Type)
@@ -579,3 +580,73 @@ BEGIN
 END;//
 
 DELIMITER ;
+
+DROP TABLE IF EXISTS Chart;
+
+CREATE TABLE Chart (
+	Name	   VARCHAR(30) NOT NULL,
+    Title      VARCHAR(50) NULL,
+	Modified   DATETIME    NULL,
+    `Database` VARCHAR(30) NOT NULL,
+    DataSource VARCHAR(30) NOT NULL,
+    XColumn    VARCHAR(20) NOT NULL,
+    Valid      CHAR(1)     DEFAULT 'N',
+	Comment    VARCHAR(1000),
+	PRIMARY KEY (Name)
+);
+
+DELIMITER //
+
+CREATE TRIGGER InsChart BEFORE INSERT ON Chart
+FOR EACH ROW
+BEGIN
+	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
+END;//
+
+CREATE TRIGGER UpdChart BEFORE UPDATE ON Chart
+FOR EACH ROW
+BEGIN
+	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
+END;//
+
+DELIMITER ;
+
+DROP TABLE IF EXISTS ChartDefinition;
+
+CREATE TABLE ChartDefinition (
+	Chart	   VARCHAR(30) NOT NULL,
+    PartType   VARCHAR(15) NOT NULL,
+    PartName   VARCHAR(15) NOT NULL,
+    PartIndex  Int         NOT NULL,
+	Modified   DATETIME    NULL,
+    Params     VARCHAR(100),
+	Comment    VARCHAR(1000),
+	PRIMARY KEY (Chart, PartType, PartName, PartIndex)
+);
+
+DELIMITER //
+
+CREATE TRIGGER InsChartDefinition BEFORE INSERT ON ChartDefinition
+FOR EACH ROW
+BEGIN
+	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
+END;//
+
+CREATE TRIGGER UpdChartDefinition BEFORE UPDATE ON ChartDefinition
+FOR EACH ROW
+BEGIN
+	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
+END;//
+
+DELIMITER ;
+
+INSERT INTO Expenditure.ChartDefinition(Chart, PartType, PartName, PartIndex, Params)
+VALUES
+('SMData', 'Group', 'Hour',  1, 'Year,Day,Hour'),
+('SMData', 'Group', 'Day',   2, 'Year,Day'),
+('SMData', 'Group', 'Week',  3, 'Year,Week'),
+('SMData', 'Group', 'Month', 4, 'Year,Month'),
+('SMData', 'Filter', '', 1, ''),
+('SMData',  'Line',  'Electric', 1, 'Blue,Kwh:Sum:Kwh,Type=Electric'),
+('SMData',  'Line',  'Gas',      1, 'Yellow,Kwh:Sum:Kwh,Type=Gas'),
+('SMData',  'Line',  'Export',   1, 'Red,Kwh:Sum:Kwh,Type=Export');

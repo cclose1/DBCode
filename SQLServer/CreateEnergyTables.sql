@@ -482,3 +482,33 @@ CREATE TABLE ChargeSessionStats (
   PRIMARY KEY (SessionStart)
 )
 GO
+
+DROP TABLE IF EXISTS PeakTariffOverride
+GO
+
+CREATE TABLE PeakTariffOverride (
+	Start     DATETIME       NOT NULL,
+	Modified  DATETIME       NULL,
+    WeekDay                  AS (SUBSTRING(DATENAME(weekday, Start),1, 3)),
+    [End]     DATETIME       NOT NULL,
+	Type      VARCHAR(15)    NOT NULL DEFAULT 'Electric',
+    Status    VARCHAR(15),
+	Comment   VARCHAR(1000),
+	PRIMARY KEY (Start, Type)
+)
+GO
+
+CREATE TRIGGER PeakTariffOverrideModified ON PeakTariffOverride AFTER INSERT, UPDATE
+AS 
+BEGIN
+	SET NOCOUNT ON;
+
+    -- Insert statements for trigger here
+	UPDATE SU
+		SET Modified = CASE WHEN UPDATE(Modified) AND SU.Modified IS NOT NULL THEN inserted.Modified ELSE BloodPressure.dbo.RemoveFractionalSeconds(GETDATE()) END
+	FROM PeakTariffOverride SU
+	JOIN inserted 
+	ON  SU.Start = inserted.Start
+	AND SU.Type  = inserted.Type
+END
+GO
