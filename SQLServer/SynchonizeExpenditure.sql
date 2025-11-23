@@ -39,6 +39,9 @@ BEGIN
 		EXEC SynchronizeTable @SQLServer, @MySQL, 'SmartMeterUsageData', @mode = @mode, @batch = @batch
 		EXEC SynchronizeTable @SQLServer, @MySQL, 'ChargeSessionStats',  @mode = @mode, @batch = @batch
 		EXEC SynchronizeTable @SQLServer, @MySQL, 'CalorificValue',      @mode = @mode, @batch = @batch
+		EXEC SynchronizeTable @SQLServer, @MySQL, 'PeakTariffOverride',  @mode = @mode, @batch = @batch
+		EXEC SynchronizeTable @SQLServer, @MySQL, 'Chart',               @mode = @mode, @batch = @batch	
+		EXEC SynchronizeTable @SQLServer, @MySQL, 'ChartDefinition',     @mode = @mode, @batch = @batch	
 	END TRY
 	BEGIN CATCH
 		EXEC ReportError

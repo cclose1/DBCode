@@ -512,3 +512,66 @@ BEGIN
 	AND SU.Type  = inserted.Type
 END
 GO
+
+DROP TABLE IF EXISTS Chart
+GO
+
+CREATE TABLE Chart (
+	Name	   VARCHAR(30) NOT NULL,
+    Title      VARCHAR(50) NULL,
+	Modified   DATETIME    NULL,
+    [Database] VARCHAR(30) NOT NULL,
+    DataSource VARCHAR(30) NOT NULL,
+    XColumn    VARCHAR(20) NOT NULL,
+    Valid      CHAR(1)     DEFAULT 'N',
+	Comment    VARCHAR(1000),
+	PRIMARY KEY (Name)
+)
+GO
+
+CREATE TRIGGER ChartModified ON Chart AFTER INSERT, UPDATE
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+    -- Insert statements for trigger here
+	UPDATE CH
+		SET Modified = CASE WHEN UPDATE(Modified) AND CH.Modified IS NOT NULL THEN inserted.Modified ELSE BloodPressure.dbo.RemoveFractionalSeconds(GETDATE()) END
+	FROM Chart CH
+	JOIN inserted 
+	ON  CH.Name = inserted.Name
+END
+GO
+ 
+DROP TABLE IF EXISTS ChartDefinition;
+GO
+
+CREATE TABLE ChartDefinition (
+	Chart	   VARCHAR(30) NOT NULL,
+    PartType   VARCHAR(15) NOT NULL,
+    PartName   VARCHAR(15) NOT NULL,
+    PartIndex  Int         NOT NULL,
+	Modified   DATETIME    NULL,
+    Params     VARCHAR(100),
+	Comment    VARCHAR(1000),
+	PRIMARY KEY (Chart, PartType, PartName, PartIndex)
+)
+GO
+
+CREATE TRIGGER ChartDefinitionModified ON ChartDefinition AFTER INSERT, UPDATE
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+    -- Insert statements for trigger here
+	UPDATE CD
+		SET Modified = CASE WHEN UPDATE(Modified) AND CD.Modified IS NOT NULL THEN inserted.Modified ELSE BloodPressure.dbo.RemoveFractionalSeconds(GETDATE()) END
+	FROM ChartDefinition CD
+	JOIN inserted 
+	ON  CD.Chart     = inserted.Chart
+	AND CD.PartType  = inserted.PartType
+	AND CD.PartName  = inserted.PartName
+	AND CD.PartIndex = inserted.PartIndex
+END
+GO
+

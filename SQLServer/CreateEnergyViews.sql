@@ -379,7 +379,7 @@ CREATE VIEW BoundedCalorificValue AS
 SELECT 
 	J1.Date  AS Start,
     J2.Date  AS [End],
-    J2.Value AS Value
+    J1.Value AS Value
 FROM (    
 	SELECT 
 		ROW_NUMBER ( ) OVER (ORDER BY Date) Num, 
@@ -468,6 +468,10 @@ SELECT
 	Start,
     [End],
     Type,
+    Year(Start)         AS Year,
+    DATEPART(dy, Start) AS Day,
+    DATEPART(hh, Start) AS Hour,
+    DATEPART(wk, Start) AS Week,
     [Weekday],
     Reading,    
     CASE

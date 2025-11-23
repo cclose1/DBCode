@@ -85,7 +85,7 @@ CREATE FUNCTION dbo.ConvertReserved(@name AS sysname)
    RETURNS sysname
 AS
 BEGIN
-	IF @name IS NOT NULL AND @name IN ('End', 'Key', 'Function', 'Server', 'Column', 'Percent')
+	IF @name IS NOT NULL AND @name IN ('End', 'Key', 'Function', 'Server', 'Column', 'Percent', 'Database')
 		RETURN '[' + @name + ']'
 	
 	RETURN @name
