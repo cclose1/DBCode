@@ -590,6 +590,7 @@ CREATE TABLE Chart (
     `Database` VARCHAR(30) NOT NULL,
     DataSource VARCHAR(30) NOT NULL,
     XColumn    VARCHAR(20) NOT NULL,
+    YUnits     VARCHAR(10) NULL,
     Valid      CHAR(1)     DEFAULT 'N',
 	Comment    VARCHAR(1000),
 	PRIMARY KEY (Name)
