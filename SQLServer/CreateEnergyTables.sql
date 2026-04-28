@@ -103,8 +103,9 @@ CREATE TABLE ChargeSession (
 	Modified       DATETIME      NULL,
 	Charger        VARCHAR(25)   NULL,  -- Pointer to an entry in ChargerLocation
 	Unit           VARCHAR(25)   NULL,  -- Pointer to ChargerUnit where Location = Charger and Name = Unit
+    TargetPerCent  DECIMAL(4, 1) NULL,
 	EstDuration    DECIMAL(5, 3),
-	MaxDuration    TIME          NULL,
+	EstKwh         DECIMAL(6, 2) NULL,   
 	Mileage	       INT           NULL,
 	StartMiles     DECIMAL(4, 1) NULL,
 	StartPerCent   DECIMAL(4, 1) NULL,

@@ -603,6 +603,7 @@ DROP VIEW IF EXISTS SolarExportData;
 CREATE VIEW SolarExportData AS    
 SELECT 
 	SR.Start,
+    ChargeUnit,
     Max(SR.End)                                                      AS End,
     Min(Days)                                                        AS Days,
     Min(Kwh)                                                         AS Kwh,
@@ -617,3 +618,92 @@ JOIN expenditure.smartmeterusagedata SD
 ON SD.Start BETWEEN SR.Start AND SR.End AND SD.Type = 'Export'
 GROUP BY Start
 ORDER BY Start;
+
+DROP VIEW IF EXISTS ChargeSessionAnalysis;
+
+CREATE VIEW ChargeSessionAnalysis AS    
+SELECT 
+	CarReg,
+	Start,
+    Unit,
+    StartPerCent,
+    EndPerCent,
+    EndPerCent - StartPerCent AS Gain,
+    EstDuration,
+    (EndPerCent - StartPerCent) / 13  AS EstDurOld,
+    ChargeDuration,
+    Charge,
+    time_to_sec(ChargeDuration) /3600 As ChargeHours,
+    TIMESTAMPDIFF(Minute, Start, End) / 60 AS SesDuration,
+    TIMESTAMPDIFF(Minute, Start, End) / 60 - time_to_sec(ChargeDuration) /3600 AS ChargeSessDurDiff,
+    Charge / (EndPerCent - StartPerCent) As `ChargePer%`
+FROM expenditure.chargesession
+WHERE CarReg = 'EO70 ECC'
+AND  Charger = 'HomePodPoint';
+
+DROP VIEW IF EXISTS ChargeParamsLinear;
+
+CREATE VIEW ChargeParamsLinear AS    
+SELECT 
+	CarReg,
+    Charger,
+    Avg(EndPerCent - StartPerCent)                                                    AS Gain,
+    Min(Charge)                                                                       AS MinCharge,
+    Avg(charge)                                                                       AS AvgCharge,
+    Max(Charge)                                                                       AS MaxCharge,
+    Std(Charge)                                                                       AS StdCharge,
+    Max(Charge) - Min(Charge)                                                         AS ChargeRange,
+    Min(time_to_sec(ChargeDuration) / 3600)                                           AS MinDuration,
+    Avg(time_to_sec(ChargeDuration) / 3600)                                           AS AvgDuration,
+    Max(time_to_sec(ChargeDuration) / 3600)                                           AS MaxDuration,
+    Std(time_to_sec(ChargeDuration) / 3600)                                           AS StdDuration,
+    Max(time_to_sec(ChargeDuration) / 3600) - Min(time_to_sec(ChargeDuration) / 3600) AS DurationRange,
+    Count(*)                                                                          AS Sessions
+FROM Expenditure.CHargeSession
+WHERE EndPerCent <= 90
+AND   ChargeDuration IS NOT NULL
+GROUP BY CarReg, Charger, EndPerCent - StartPerCent;
+
+DROP VIEW IF EXISTS ChargeParamsNonLinear;
+
+CREATE VIEW ChargeParamsNonLinear AS    
+SELECT 
+	CarReg,
+    Charger,
+    StartPerCent,
+    EndPerCent,
+    EndPerCent - StartPerCent                                                         AS Gain,
+    Min(Charge)                                                                       AS MinCharge,
+    Avg(charge)                                                                       AS AvgCharge,
+    Max(Charge)                                                                       AS MaxCharge,
+    Std(Charge)                                                                       AS StdCharge,
+    Max(Charge) - Min(Charge)                                                         AS ChargeRange,
+    Min(time_to_sec(ChargeDuration) / 3600)                                           AS MinDuration,
+    Avg(time_to_sec(ChargeDuration) / 3600)                                           AS AvgDuration,
+    Max(time_to_sec(ChargeDuration) / 3600)                                           AS MaxDuration,
+    Std(time_to_sec(ChargeDuration) / 3600)                                           AS StdDuration,
+    Max(time_to_sec(ChargeDuration) / 3600) - Min(time_to_sec(ChargeDuration) / 3600) AS DurationRange,
+    Count(*)                            AS Sessions
+FROM Expenditure.CHargeSession
+WHERE ChargeDuration IS NOT NULL
+GROUP BY CarReg, Charger, StartPerCent, EndPerCent;
+
+
+DROP VIEW IF EXISTS ChargeDurationAnalysis;
+
+CREATE VIEW ChargeDurationAnalysis AS    
+SELECT 
+	Start,
+    End,
+    StartPerCent,
+    EndPerCent,
+    EndPercent - StartPerCent  AS Gain,
+    (EndPerCent - StartPerCent) / 13 AS EstHours,
+    time_to_sec(ChargeDuration) / 3600 AS Hours,
+    time_to_sec(ChargeDuration) / 3600 - ((EndPerCent - StartPerCent) / 13) AS EstGap,
+    ((EndPerCent - StartPerCent) / 13) / 
+    (time_to_sec(ChargeDuration) / 3600) AS Accuracy
+FROM expenditure.chargesession
+WHERE CarReg = 'EO70 ECC'
+AND  Charger = 'HomePodPoint'
+AND ChargeDuration IS NOT NULL

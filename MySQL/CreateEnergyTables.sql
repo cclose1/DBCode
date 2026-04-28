@@ -106,7 +106,9 @@ CREATE TABLE ChargeSession (
 	Modified       DATETIME       NULL,
 	Charger        VARCHAR(25)    NULL,
 	Unit           VARCHAR(25)    NULL,
+    TargetPerCent  DECIMAL(4, 1)  NULL,
 	EstDuration    DECIMAL(5, 3),
+	EstKwh         DECIMAL(6, 2)  NULL,    
 	Mileage	       INT            NULL,
 	StartMiles     DECIMAL(4, 1)  NULL,
 	StartPerCent   DECIMAL(4, 1)  NULL,
@@ -136,6 +138,35 @@ BEGIN
 END;//
 
 DELIMITER ;
+
+DROP TABLE IF EXISTS  CarChargeParams;
+
+CREATE TABLE CarChargeParams (
+    CarReg       VARCHAR(10)    NOT NULL DEFAULT 'EO70 ECC',
+	Charger      VARCHAR(25)    NOT NULL DEFAULT 'HomePodPoint',
+	StartPerCent DECIMAL(4, 1)  NOT NULL,
+	EndPerCent   DECIMAL(4, 1)  NOT NULL,
+	Modified     DATETIME       NULL,
+	Duration     DECIMAL(5, 3),
+	Kwh          DECIMAL(6, 2),   
+    Sessions     INT,
+	Comment      VARCHAR(1000),
+	PRIMARY KEY (CarReg ASC, Charger ASC, StartPerCent ASC, EndPerCent ASC)
+);
+
+DELIMITER //
+
+CREATE TRIGGER InsCarChargeParams BEFORE INSERT ON CarChargeParams
+FOR EACH ROW
+BEGIN
+	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
+END;//
+
+CREATE TRIGGER UpdCarChargeParams BEFORE UPDATE ON CarChargeParams
+FOR EACH ROW
+BEGIN
+	SET NEW.Modified = COALESCE(NEW.Modified, NOW());
+END;//
 
 DROP TABLE IF EXISTS  ChargeSessionLog;
 
@@ -550,6 +581,27 @@ CREATE TABLE ChargeSessionStats (
   OpRate          DECIMAL(6,2) DEFAULT NULL,
   Cost            DECIMAL(6,2) DEFAULT NULL,
   PRIMARY KEY (SessionStart)
+);
+
+DROP TABLE IF EXISTS PodPointData;
+
+CREATE TABLE PodPointData (
+	PluggedInDate     DATE         NOT NULL,
+    PluggedInTime     TIME         NOT NULL,
+    PluggedIn         TIMESTAMP GENERATED ALWAYS AS (TIMESTAMP(PluggedInDate, PluggedInTime)) VIRTUAL,
+    ChargeStart       TIME         DEFAULT NULL,
+    ChargeDuration    TIME         DEFAULT NULL,
+    ChargeHours       DECIMAL(6,2) GENERATED ALWAYS AS (time_to_sec(ChargeDuration) / 3600) VIRTUAL,
+    ChargeEnd         TIME         DEFAULT NULL,
+    PluggedInDuration TIME         DEFAULT NULL,
+    Unplugged         TIME         DEFAULT NULL,
+    Matched           CHAR(1)      DEFAULT NULL,
+    Cost              DECIMAL(6,2) DEFAULT NULL,
+    Kwh               DECIMAL(6,2) DEFAULT NULL,
+    KwhPerHour        DECIMAL(6,2) GENERATED ALWAYS AS (CASE WHEN ChargeHours = 0 THEN Null Else Kwh / ChargeHours END) VIRTUAL,
+    LocationType      VARCHAR(10)  NULL,
+    Location          VARCHAR(50)  NULL,
+    PRIMARY KEY (PluggedInDate, PluggedInTime)
 );
 
 DROP TABLE IF EXISTS SmartMeterUsageData;
